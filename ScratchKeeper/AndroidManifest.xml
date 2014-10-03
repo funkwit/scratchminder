@@ -32,7 +32,8 @@
         <activity
             android:name=".AddPlayerActivity"
             android:label="@string/title_activity_add_player"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:theme="@style/AppBaseTheme" >
         </activity>
     </application>
 
