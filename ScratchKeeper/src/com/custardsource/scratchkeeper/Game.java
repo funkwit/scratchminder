@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.google.common.base.Joiner;
+
 import android.util.Log;
 
 public class Game implements Serializable {
@@ -12,6 +14,8 @@ public class Game implements Serializable {
 	
 	private final List<Player> players = new ArrayList<Player>();
 	int activePlayerIndex = 0;
+
+	private String description;
 
 	public void addPlayer(Player player) {
 		players.add(player);
@@ -150,6 +154,26 @@ public class Game implements Serializable {
 			total += player.getScore();
 		}
 		return total;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String description() {
+		return description;
+	}
+
+	public String getNameList() {
+		List<String> values = new ArrayList<String>(players.size());
+		for (Player p : players) {
+			if (p.active()) {
+				values.add(p.getName());
+			} else {
+				values.add("(" + p.getName() + ")");
+			}
+		}
+		return Joiner.on(", ").join(values);
 	}
 
 }
