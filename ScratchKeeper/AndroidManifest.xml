@@ -38,5 +38,5 @@
         </activity>
         <meta-data android:name="com.google.android.backup.api_key" android:value="AEdPqrEAAAAIXsmIqDAOizimrOYLAHBEdAaKR20RwqremSG_EA" />
     </application>
-
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
 </manifest>
