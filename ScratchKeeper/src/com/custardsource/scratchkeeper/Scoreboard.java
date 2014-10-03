@@ -444,6 +444,12 @@ public class Scoreboard extends Activity {
 			Intent intent = new Intent(this, AddPlayerActivity.class);
 			startActivityForResult(intent, ACTION_ADD);
 			return true;
+		} else if (id == R.id.reset_scores) {
+			// TODO: add confirmation dialog
+			game.resetScores();
+			scoreboardAdapter.notifyDataSetChanged();
+			notPlayingAdapter.notifyDataSetChanged();
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}

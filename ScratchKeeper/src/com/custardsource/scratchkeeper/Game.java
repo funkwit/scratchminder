@@ -138,4 +138,10 @@ public class Game implements Serializable {
 		return inactive;
 	}
 
+	public void resetScores() {
+		for (Player player : players) {
+			player.resetScore();
+		}
+	}
+
 }

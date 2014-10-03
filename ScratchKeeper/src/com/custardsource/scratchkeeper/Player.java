@@ -93,4 +93,9 @@ public class Player implements Serializable {
 	public void setColour(Integer colour) {
 		this.color = colour;
 	}
+
+	public void resetScore() {
+		this.score = 0;
+		this.scores.clear();
+	}
 }
