@@ -17,7 +17,7 @@
         tools:context="com.custardsource.scratchkeeper.AddPlayerActivity" >
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/totalScoreText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -30,8 +30,8 @@
             android:id="@+id/editName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/textView1"
-            android:layout_below="@+id/textView1"
+            android:layout_alignLeft="@+id/totalScoreText"
+            android:layout_below="@+id/totalScoreText"
             android:ems="10"
             android:inputType="textPersonName" >
 
@@ -39,7 +39,7 @@
         </EditText>
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/totalScoreValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/editName"
@@ -51,8 +51,8 @@
             android:id="@+id/galleryColour"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/textView2"
-            android:layout_below="@+id/textView2"
+            android:layout_alignLeft="@+id/totalScoreValue"
+            android:layout_below="@+id/totalScoreValue"
             android:layout_marginRight="20dp"
             android:entries="@array/player_icons"
             android:spacing="-20dp" />
@@ -61,7 +61,7 @@
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/textView2"
+            android:layout_alignLeft="@+id/totalScoreValue"
             android:layout_below="@+id/galleryColour"
             android:layout_marginTop="46dp"
             android:text="Icon" />

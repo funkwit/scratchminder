@@ -236,6 +236,7 @@ public class Scoreboard extends Activity {
 								.toString(inProgressScore));
 						game.nextPlayer();
 						scoreboardAdapter.notifyDataSetChanged();
+						updateTotalScoreDisplay();
 					}
 				});
 
@@ -413,6 +414,7 @@ public class Scoreboard extends Activity {
 			notPlayingAdapter.addAll(game.getInactivePlayers());
 			scoreboardAdapter.clear();
 			scoreboardAdapter.addAll(game.getActivePlayers());
+			updateTotalScoreDisplay();
 			inputStream.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -449,8 +451,14 @@ public class Scoreboard extends Activity {
 			game.resetScores();
 			scoreboardAdapter.notifyDataSetChanged();
 			notPlayingAdapter.notifyDataSetChanged();
+			updateTotalScoreDisplay();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void updateTotalScoreDisplay() {
+		((TextView) findViewById(R.id.totalScoreValue)).setText(Integer
+				.toString(game.totalScore()));
 	}
 }

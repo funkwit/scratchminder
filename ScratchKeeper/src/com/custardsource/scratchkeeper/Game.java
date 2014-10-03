@@ -144,4 +144,12 @@ public class Game implements Serializable {
 		}
 	}
 
+	public int totalScore() {
+		int total = 0;
+		for (Player player : players) {
+			total += player.getScore();
+		}
+		return total;
+	}
+
 }
