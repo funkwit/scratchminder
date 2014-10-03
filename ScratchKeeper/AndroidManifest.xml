@@ -15,11 +15,11 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".Scoreboard"
-            android:configChanges="orientation|keyboardHidden|screenSize" 
-            android:screenOrientation="portrait"
             android:alwaysRetainTaskState="true"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
-            android:theme="@style/AppBaseTheme">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppBaseTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,6 +32,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppBaseTheme" >
         </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings" >
+        </activity>
+        <meta-data android:name="com.google.android.backup.api_key" android:value="AEdPqrEAAAAIXsmIqDAOizimrOYLAHBEdAaKR20RwqremSG_EA" />
     </application>
 
 </manifest>
