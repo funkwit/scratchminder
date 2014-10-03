@@ -90,25 +90,4 @@
             android:text="@string/minusone" />
 
     </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/fullscreen_content_controls"
-        style="?metaButtonBarStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="@color/black_overlay"
-        android:orientation="horizontal"
-        tools:ignore="UselessParent" >
-
-        <Button
-            android:id="@+id/add_player"
-            style="?metaButtonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_weight="1"
-            android:text="@string/add_player" />
-    </LinearLayout>
-
 </LinearLayout>

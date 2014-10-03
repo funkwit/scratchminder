@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -237,20 +238,9 @@ public class Scoreboard extends Activity {
 						scoreboardAdapter.notifyDataSetChanged();
 					}
 				});
-		((Button) findViewById(R.id.add_player))
-				.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						Intent intent = new Intent(context,
-								AddPlayerActivity.class);
-						startActivityForResult(intent, ACTION_ADD);
-					}
-				});
 
 		registerForContextMenu(scoreboard);
 		registerForContextMenu(notPlaying);
-		leave(2);
-
 	}
 
 	// TODO: total score
@@ -444,5 +434,22 @@ public class Scoreboard extends Activity {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.scoreboard, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		if (id == R.id.add_player) {
+			Intent intent = new Intent(this, AddPlayerActivity.class);
+			startActivityForResult(intent, ACTION_ADD);
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 }
