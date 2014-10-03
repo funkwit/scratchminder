@@ -7,9 +7,11 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -41,6 +43,7 @@ import com.custardsource.scratchkeeper.util.SystemUiHider;
 public class Scoreboard extends Activity {
 	private static final int ACTION_ADD = 1;
 	private static final int ACTION_EDIT = 2;
+	private static final int ACTION_SETTINGS = 3;
 
 	/**
 	 * Whether or not the system UI should be auto-hidden after
@@ -77,11 +80,15 @@ public class Scoreboard extends Activity {
 
 	private ArrayAdapter<Player> notPlayingAdapter;
 	private Player editingPlayer;
+	private SharedPreferences sharedPref;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
+		sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+		
 		this.game = new Game();
 		game.addPlayer(new Player("Cow", R.drawable.remember_the_milk, Color
 				.rgb(0, 0, 80)));
@@ -243,6 +250,7 @@ public class Scoreboard extends Activity {
 		registerForContextMenu(scoreboard);
 		registerForContextMenu(notPlaying);
 		reloadGameState();
+		reapplyPreferences();
 	}
 
 	// TODO: total score
@@ -396,6 +404,16 @@ public class Scoreboard extends Activity {
 				scoreboardAdapter.notifyDataSetChanged();
 			}
 		}
+		if (requestCode == ACTION_SETTINGS) {
+			reapplyPreferences();
+		}
+	}
+
+	private void reapplyPreferences() {
+		findViewById(R.id.totalScorePanel).setVisibility(
+				sharedPref.getBoolean("show_total", true) ? View.VISIBLE
+						: View.GONE);
+		// TODO: lock screen pref
 	}
 
 	@Override
@@ -419,6 +437,9 @@ public class Scoreboard extends Activity {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		findViewById(R.id.notPlayingPanel).setVisibility(
+				game.getInactivePlayers().isEmpty() ? View.GONE : View.VISIBLE);
+
 	}
 
 	private void saveGameState() {
@@ -453,6 +474,10 @@ public class Scoreboard extends Activity {
 			notPlayingAdapter.notifyDataSetChanged();
 			updateTotalScoreDisplay();
 			return true;
+		} else if (id == R.id.settings) {
+			Intent intent = new Intent(this, SettingsActivity.class);
+			startActivity(intent);
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -460,5 +485,15 @@ public class Scoreboard extends Activity {
 	private void updateTotalScoreDisplay() {
 		((TextView) findViewById(R.id.totalScoreValue)).setText(Integer
 				.toString(game.totalScore()));
+	}
+
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onResume()
+	 */
+	@Override
+	protected void onResume() {
+		super.onResume();
+		// TODO: use a listener
+		reapplyPreferences();
 	}
 }

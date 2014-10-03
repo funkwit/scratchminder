@@ -14,5 +14,5 @@
     <string name="reset_scores">Reset Scores</string>
     <string name="not_playing">Not Playing</string>
     <string name="total_score">Total Score:</string>
-
+    <string name="settings">Settings</string>
 </resources>
