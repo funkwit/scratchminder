@@ -1,5 +1,8 @@
 package com.custardsource.scratchkeeper;
 
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -61,6 +64,7 @@ public class Scoreboard extends Activity {
 	 * The flags to pass to {@link SystemUiHider#getInstance}.
 	 */
 	private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
+	private static final String GAME_FILE = "savegame";
 
 	/**
 	 * The instance of the {@link SystemUiHider} for this activity.
@@ -400,6 +404,46 @@ public class Scoreboard extends Activity {
 				game.replacePlayer(editingPlayer, p);
 				scoreboardAdapter.notifyDataSetChanged();
 			}
+		}
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		saveGameState();
+	}
+
+	private void reloadGameState() {
+		try {
+			ObjectInputStream inputStream = new ObjectInputStream(
+					openFileInput(GAME_FILE));
+			game = (Game) inputStream.readObject();
+			inProgressScore = inputStream.readInt();
+			notPlayingAdapter.clear();
+			notPlayingAdapter.addAll(game.getInactivePlayers());
+			scoreboardAdapter.clear();
+			scoreboardAdapter.addAll(game.getActivePlayers());
+			inputStream.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		reloadGameState();
+	}
+
+	private void saveGameState() {
+		try {
+			ObjectOutputStream outputStream = new ObjectOutputStream(
+					openFileOutput(GAME_FILE, Context.MODE_PRIVATE));
+			outputStream.writeObject(game);
+			outputStream.writeInt(inProgressScore);
+			outputStream.close();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 }

@@ -1,11 +1,15 @@
 package com.custardsource.scratchkeeper;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import android.util.Log;
 
-public class Game {
+public class Game implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
 	private final List<Player> players = new ArrayList<Player>();
 	int activePlayerIndex = 0;
 
@@ -18,7 +22,6 @@ public class Game {
 	}
 
 	public int playerCount() {
-		// TODO Auto-generated method stub
 		return players.size();
 	}
 
@@ -123,6 +126,16 @@ public class Game {
 		players.add(index, newPlayer);
 
 	}
-	// TODO(bump)
+	// TODO(beam)
+
+	public Collection<? extends Player> getInactivePlayers() {
+		List<Player> inactive = new ArrayList<Player>();
+		for (Player player : players) {
+			if (!player.active()) {
+				inactive.add(player);
+			}
+		}
+		return inactive;
+	}
 
 }
