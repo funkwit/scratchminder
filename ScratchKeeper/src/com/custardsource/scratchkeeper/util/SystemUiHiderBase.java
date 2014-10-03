@@ -3,6 +3,7 @@ package com.custardsource.scratchkeeper.util;
 import android.app.Activity;
 import android.view.View;
 import android.view.WindowManager;
+import com.custardsource.scratchkeeper.R;
 
 /**
  * A base implementation of {@link SystemUiHider}. Uses APIs available in all

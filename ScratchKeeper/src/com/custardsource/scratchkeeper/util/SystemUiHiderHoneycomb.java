@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.os.Build;
 import android.view.View;
 import android.view.WindowManager;
+import com.custardsource.scratchkeeper.R;
 
 /**
  * An API 11+ implementation of {@link SystemUiHider}. Uses APIs available in
