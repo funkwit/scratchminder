@@ -17,12 +17,9 @@
             android:name=".Scoreboard"
             android:configChanges="orientation|keyboardHidden|screenSize" 
             android:screenOrientation="portrait"
-            android:alwaysRetainTaskState="true" >
-
-            <!--
+            android:alwaysRetainTaskState="true"
             android:label="@string/app_name"
-            android:theme="@style/FullscreenTheme"
-            -->
+            android:theme="@style/AppBaseTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
