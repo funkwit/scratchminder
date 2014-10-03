@@ -241,6 +241,7 @@ public class Scoreboard extends Activity {
 
 		registerForContextMenu(scoreboard);
 		registerForContextMenu(notPlaying);
+		reloadGameState();
 	}
 
 	// TODO: total score
@@ -397,9 +398,9 @@ public class Scoreboard extends Activity {
 	}
 
 	@Override
-	protected void onStop() {
-		super.onStop();
+	protected void onDestroy() {
 		saveGameState();
+		super.onDestroy();
 	}
 
 	private void reloadGameState() {
@@ -416,12 +417,6 @@ public class Scoreboard extends Activity {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	protected void onStart() {
-		super.onStart();
-		reloadGameState();
 	}
 
 	private void saveGameState() {
