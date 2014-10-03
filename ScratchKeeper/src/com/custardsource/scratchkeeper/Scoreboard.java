@@ -1,0 +1,405 @@
+package com.custardsource.scratchkeeper;
+
+import java.util.ArrayList;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.custardsource.scratchkeeper.util.SystemUiHider;
+
+/**
+ * An example full-screen activity that shows and hides the system UI (i.e.
+ * status bar and navigation/system bar) with user interaction.
+ * 
+ * @see SystemUiHider
+ */
+public class Scoreboard extends Activity {
+	private static final int ACTION_ADD = 1;
+	private static final int ACTION_EDIT = 2;
+
+	/**
+	 * Whether or not the system UI should be auto-hidden after
+	 * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
+	 */
+	private static final boolean AUTO_HIDE = false;
+
+	/**
+	 * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
+	 * user interaction before hiding the system UI.
+	 */
+	private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
+
+	/**
+	 * If set, will toggle the system UI visibility upon interaction. Otherwise,
+	 * will show the system UI visibility upon interaction.
+	 */
+	private static final boolean TOGGLE_ON_CLICK = false;
+
+	/**
+	 * The flags to pass to {@link SystemUiHider#getInstance}.
+	 */
+	private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
+
+	/**
+	 * The instance of the {@link SystemUiHider} for this activity.
+	 */
+	private SystemUiHider mSystemUiHider;
+
+	private int inProgressScore = 0;
+
+	private Game game;
+
+	private ArrayAdapter<Player> notPlayingAdapter;
+	private Player editingPlayer;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		this.game = new Game();
+		game.addPlayer(new Player("Cow", R.drawable.remember_the_milk, Color
+				.rgb(0, 0, 80)));
+		game.addPlayer(new Player("Chris", R.drawable.pterodactyl, Color.rgb(
+				80, 0, 0)));
+		game.addPlayer(new Player("Krijesta", R.drawable.dino_orange, Color
+				.rgb(80, 0, 80)));
+		game.addPlayer(new Player("Bod", R.drawable.caveman, Color.rgb(80, 80,
+				0)));
+		setContentView(R.layout.activity_scoreboard);
+
+		/*
+		 * final View controlsView =
+		 * findViewById(R.id.fullscreen_content_controls); final View
+		 * contentView = findViewById(R.id.fullscreen_content);
+		 * 
+		 * // Set up an instance of SystemUiHider to control the system UI for
+		 * // this activity. mSystemUiHider = SystemUiHider.getInstance(this,
+		 * contentView, HIDER_FLAGS); mSystemUiHider.setup(); mSystemUiHider
+		 * .setOnVisibilityChangeListener(new
+		 * SystemUiHider.OnVisibilityChangeListener() { // Cached values. int
+		 * mControlsHeight; int mShortAnimTime;
+		 * 
+		 * @Override
+		 * 
+		 * @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2) public void
+		 * onVisibilityChange(boolean visible) { if (Build.VERSION.SDK_INT >=
+		 * Build.VERSION_CODES.HONEYCOMB_MR2) { // If the ViewPropertyAnimator
+		 * API is available // (Honeycomb MR2 and later), use it to animate the
+		 * // in-layout UI controls at the bottom of the // screen. if
+		 * (mControlsHeight == 0) { mControlsHeight = controlsView.getHeight();
+		 * } if (mShortAnimTime == 0) { mShortAnimTime =
+		 * getResources().getInteger( android.R.integer.config_shortAnimTime); }
+		 * controlsView .animate() .translationY(visible ? 0 : mControlsHeight)
+		 * .setDuration(mShortAnimTime); } else { // If the ViewPropertyAnimator
+		 * APIs aren't // available, simply show or hide the in-layout UI //
+		 * controls. controlsView.setVisibility(visible ? View.VISIBLE :
+		 * View.GONE); }
+		 * 
+		 * if (visible && AUTO_HIDE) { // Schedule a hide().
+		 * delayedHide(AUTO_HIDE_DELAY_MILLIS); } } });
+		 * 
+		 * // Set up the user interaction to manually show or hide the system
+		 * UI. contentView.setOnClickListener(new View.OnClickListener() {
+		 * 
+		 * @Override public void onClick(View view) { if (TOGGLE_ON_CLICK) {
+		 * mSystemUiHider.toggle(); } else { mSystemUiHider.show(); } } });
+		 * 
+		 * // Upon interacting with UI controls, delay any scheduled hide() //
+		 * operations to prevent the jarring behavior of controls going away //
+		 * while interacting with the UI.
+		 * findViewById(R.id.dummy_button).setOnTouchListener(
+		 * mDelayHideTouchListener);
+		 */
+		final Context context = getApplicationContext();
+		final ListView scoreboard = (ListView) findViewById(R.id.scoreboardListView);
+		scoreboardAdapter = new ArrayAdapter<Player>(this,
+				android.R.layout.simple_list_item_1, game.getActivePlayers()) {
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent) {
+				final Player player = game.playerInActivePosition(position);
+				LayoutInflater inflater = (LayoutInflater) context
+						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				View rowView = inflater.inflate(R.layout.score, parent, false);
+				TextView nameView = (TextView) rowView.findViewById(R.id.name);
+				TextView scoreView = (TextView) rowView
+						.findViewById(R.id.score);
+				TextView scoreHistoryView = (TextView) rowView
+						.findViewById(R.id.scoreHistory);
+				ImageView imageView = (ImageView) rowView
+						.findViewById(R.id.icon);
+				imageView.setImageResource(player.getDrawable());
+				imageView.setScaleX(0.5f);
+				imageView.setScaleY(0.5f);
+				nameView.setText(player.getName());
+				scoreView.setText(Integer.toString(player.getScore()));
+				scoreHistoryView.setText(player.getScoreHistoryString());
+				rowView.setBackgroundColor(game.isPlaying(player) ? player
+						.getColor() : Color.DKGRAY);
+				// rowView.setSelected(game.isPlaying(player));
+				return rowView;
+
+			}
+		};
+		scoreboard.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				setPlaying((Player) scoreboard.getItemAtPosition(position));
+			}
+
+			private void setPlaying(Player player) {
+				game.switchPlayTo(player);
+				scoreboardAdapter.notifyDataSetChanged();
+			}
+		});
+		scoreboard.setAdapter(scoreboardAdapter);
+		// scoreboard.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
+		notPlaying = (ListView) findViewById(R.id.notPlayingListView);
+		notPlayingAdapter = new ArrayAdapter<Player>(this,
+				android.R.layout.simple_list_item_1, new ArrayList<Player>()) {
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent) {
+				Player player = notPlayingAdapter.getItem(position);
+				LayoutInflater inflater = (LayoutInflater) context
+						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				View rowView = inflater.inflate(R.layout.disabled_score,
+						parent, false);
+				TextView nameView = (TextView) rowView.findViewById(R.id.name);
+				TextView scoreView = (TextView) rowView
+						.findViewById(R.id.score);
+				ImageView imageView = (ImageView) rowView
+						.findViewById(R.id.icon);
+				imageView.setImageResource(player.getDrawable());
+				imageView.setScaleX(0.5f);
+				imageView.setScaleY(0.5f);
+				nameView.setText(player.getName());
+				scoreView.setText(Integer.toString(player.getScore()));
+				rowView.setBackgroundColor(Color.DKGRAY);
+				return rowView;
+			}
+		};
+		notPlaying.setAdapter(notPlayingAdapter);
+
+		final TextView inProgressScoreView = (TextView) findViewById(R.id.inprogressScore);
+		((Button) findViewById(R.id.plusone))
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						inProgressScore += 1;
+						inProgressScoreView.setText(Integer
+								.toString(inProgressScore));
+					}
+				});
+		((Button) findViewById(R.id.minusone))
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						inProgressScore -= 1;
+						inProgressScoreView.setText(Integer
+								.toString(inProgressScore));
+					}
+				});
+		((Button) findViewById(R.id.commitScore))
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						game.recordScoreForActivePlayer(inProgressScore);
+						inProgressScore = 0;
+						inProgressScoreView.setText(Integer
+								.toString(inProgressScore));
+						game.nextPlayer();
+						scoreboardAdapter.notifyDataSetChanged();
+					}
+				});
+		((Button) findViewById(R.id.add_player))
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						Intent intent = new Intent(context,
+								AddPlayerActivity.class);
+						startActivityForResult(intent, ACTION_ADD);
+					}
+				});
+
+		registerForContextMenu(scoreboard);
+		registerForContextMenu(notPlaying);
+		leave(2);
+
+	}
+
+	// TODO: total score
+	// TODO: graphs
+
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+
+		// Trigger the initial hide() shortly after the activity has been
+		// created, to briefly hint to the user that UI controls
+		// are available.
+		// delayedHide(100);
+	}
+
+	/**
+	 * Touch listener to use for in-layout UI controls to delay hiding the
+	 * system UI. This is to prevent the jarring behavior of controls going away
+	 * while interacting with activity UI.
+	 */
+	View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
+		@Override
+		public boolean onTouch(View view, MotionEvent motionEvent) {
+			if (AUTO_HIDE) {
+				delayedHide(AUTO_HIDE_DELAY_MILLIS);
+			}
+			return false;
+		}
+	};
+
+	Handler mHideHandler = new Handler();
+	Runnable mHideRunnable = new Runnable() {
+		@Override
+		public void run() {
+			mSystemUiHider.hide();
+		}
+	};
+
+	private ArrayAdapter<Player> scoreboardAdapter;
+
+	private ListView notPlaying;
+
+	/**
+	 * Schedules a call to hide() in [delay] milliseconds, canceling any
+	 * previously scheduled calls.
+	 */
+	private void delayedHide(int delayMillis) {
+		mHideHandler.removeCallbacks(mHideRunnable);
+		mHideHandler.postDelayed(mHideRunnable, delayMillis);
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		MenuInflater inflater = getMenuInflater();
+		if (v.getId() == R.id.notPlayingListView) {
+			inflater.inflate(R.menu.inactive_player_menu, menu);
+		} else {
+			inflater.inflate(R.menu.active_player_menu, menu);
+			menu.findItem(R.id.leave).setEnabled(
+					game.getActivePlayers().size() > 1);
+		}
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+				.getMenuInfo();
+		switch (item.getItemId()) {
+		case R.id.leave:
+			leave(info.id);
+			return true;
+		case R.id.rejoin:
+			rejoin(info.id);
+			return true;
+		case R.id.rejoinnext:
+			rejoinNext(info.id);
+			return true;
+		case R.id.rejoinlast:
+			rejoinLast(info.id);
+			return true;
+			// TODO: show who's next down the bottom
+		case R.id.edit:
+			edit((int) info.id);
+			return true;
+		default:
+			return super.onContextItemSelected(item);
+		}
+	}
+
+	private void edit(int position) {
+		editingPlayer = game.playerInActivePosition(position);
+		Intent intent = new Intent(this, AddPlayerActivity.class);
+		intent.putExtra(AddPlayerActivity.PLAYER_DATA, editingPlayer);
+		startActivityForResult(intent, ACTION_EDIT);
+
+		// TODO Rematch in action bar
+
+	}
+
+	private void rejoinLast(long id) {
+		Player player = notPlayingAdapter.getItem((int) id);
+		game.movePlayerLast(player);
+		rejoin(id);
+	}
+
+	private void rejoinNext(long id) {
+		Player player = notPlayingAdapter.getItem((int) id);
+		game.movePlayerNext(player);
+		rejoin(id);
+	}
+
+	private void rejoin(long id) {
+		Player player = notPlayingAdapter.getItem((int) id);
+		game.rejoin(player);
+		Log.e("SK", "Rejoining player" + player);
+		scoreboardAdapter.insert(player, game.playingPositionOf(player));
+		notPlayingAdapter.remove(player);
+		if (notPlayingAdapter.isEmpty()) {
+			findViewById(R.id.notPlayingPanel).setVisibility(View.GONE);
+		}
+	}
+
+	private void leave(long id) {
+		Player player = game.playerInActivePosition((int) id);
+		game.leave(player);
+		Log.e("SK", "Removing player" + player);
+		scoreboardAdapter.remove(player);
+		notPlayingAdapter.add(player);
+		findViewById(R.id.notPlayingPanel).setVisibility(View.VISIBLE);
+
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == ACTION_ADD) {
+			// Make sure the request was successful
+			if (resultCode == RESULT_OK) {
+				Player p = (Player) data
+						.getSerializableExtra(AddPlayerActivity.PLAYER_DATA);
+				game.addPlayer(p);
+				scoreboardAdapter.add(p);
+			}
+		}
+		if (requestCode == ACTION_EDIT) {
+			if (resultCode == RESULT_OK) {
+				Player p = (Player) data
+						.getSerializableExtra(AddPlayerActivity.PLAYER_DATA);
+				game.replacePlayer(editingPlayer, p);
+				scoreboardAdapter.notifyDataSetChanged();
+			}
+		}
+	}
+}

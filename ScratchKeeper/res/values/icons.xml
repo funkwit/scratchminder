@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="player_icons">
+        <item>@drawable/caveman</item>
+        <item>@drawable/dino_blue</item>
+        <item>@drawable/dino_orange</item>
+        <item>@drawable/pterodactyl</item>
+        <item>@drawable/remember_the_milk</item>
+    </string-array>
+
+</resources>

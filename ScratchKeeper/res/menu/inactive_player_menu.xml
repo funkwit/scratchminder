@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/rejoin"
+        android:enabled="true"
+        android:title="@string/rejoin_game">
+    </item>
+    <item
+        android:id="@+id/rejoinnext"
+        android:enabled="true"
+        android:title="@string/rejoin_game_play_next">
+    </item>
+    <item
+        android:id="@+id/rejoinlast"
+        android:enabled="true"
+        android:title="@string/rejoin_game_play_last">
+    </item>
+
+</menu>
