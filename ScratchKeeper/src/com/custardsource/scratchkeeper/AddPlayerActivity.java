@@ -19,7 +19,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 
 @SuppressWarnings("deprecation")
 public class AddPlayerActivity extends Activity {
