@@ -339,7 +339,7 @@ public class ScoreboardActivity extends Activity {
 
 	private void edit(int position) {
 		Intent intent = new Intent(this, AddPlayerActivity.class);
-		intent.putExtra(AddPlayerActivity.PLAYER_DATA, game
+		intent.putExtra(AddPlayerActivity.PLAYER_ID, game
 				.partipantInActivePosition(position).playerId());
 		startActivityForResult(intent, ACTION_EDIT);
 
@@ -385,18 +385,13 @@ public class ScoreboardActivity extends Activity {
 		if (requestCode == ACTION_ADD) {
 			// Make sure the request was successful
 			if (resultCode == RESULT_OK) {
-				Player p = (Player) data
-						.getSerializableExtra(AddPlayerActivity.PLAYER_DATA);
-				game.addPlayer(p);
-				// scoreboardAdapter.add(p);
+				Player p = lobby.playerById(data
+						.getLongExtra(AddPlayerActivity.PLAYER_ID, 0));
+				scoreboardAdapter.add(game.addPlayer(p));
 			}
 		}
 		if (requestCode == ACTION_EDIT) {
 			if (resultCode == RESULT_OK) {
-				// TODO: delete()
-				// Player p = (Player) data
-				// .getSerializableExtra(AddPlayerActivity.PLAYER_DATA);
-				// game.replacePlayer(editingPlayer, p);
 				scoreboardAdapter.notifyDataSetChanged();
 			}
 		}

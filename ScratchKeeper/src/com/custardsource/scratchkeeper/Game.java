@@ -16,8 +16,10 @@ public class Game implements Serializable {
 	private int activePlayerIndex = 0;
 	private long id = UUID.randomUUID().getLeastSignificantBits();
 
-	public void addPlayer(Player player) {
-		participants.add(new Participant(player));
+	public Participant addPlayer(Player player) {
+		Participant p = new Participant(player);
+		participants.add(p);
+		return p;
 	}
 
 	public List<Participant> getParticipants() {

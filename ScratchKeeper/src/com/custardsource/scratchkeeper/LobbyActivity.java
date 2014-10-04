@@ -77,5 +77,15 @@ public class LobbyActivity extends Activity {
 		((GlobalState) getApplication()).flush();
 		super.onPause();
 	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		updateAllDisplay();
+	}
+
+	private void updateAllDisplay() {
+		gamesAdapter.notifyDataSetChanged();
+	}
 
 }

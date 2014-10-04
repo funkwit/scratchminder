@@ -23,15 +23,17 @@ import android.widget.ImageView;
 @SuppressWarnings("deprecation")
 public class AddPlayerActivity extends Activity {
 
-	static final String PLAYER_DATA = "Player";
+	static final String PLAYER_ID = "PlayerID";
 
 	private Player editingPlayer;
+	private GlobalState state;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO: replace gallery.
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add_player);
+		state = (GlobalState) getApplication();
 		final Gallery g = (Gallery) findViewById(R.id.galleryPicture);
 		final ImageAdapter imageAdapter = new ImageAdapter();
 		g.setAdapter(imageAdapter);
@@ -56,9 +58,8 @@ public class AddPlayerActivity extends Activity {
 						// TODO - string?
 						Intent result = new Intent("foo");
 						Player p = editingPlayer;
-						/*
 						if (p == null) {
-							p = new Player(
+							p = state.getLobby().addPlayer(
 									((EditText) findViewById(R.id.editName))
 											.getText().toString(),
 
@@ -75,11 +76,9 @@ public class AddPlayerActivity extends Activity {
 									.getSelectedItemPosition()));
 
 						}
-						result.putExtra(PLAYER_DATA, p);
+						result.putExtra(PLAYER_ID, p.id());
 						setResult(Activity.RESULT_OK, result);
 						finish();
-						*/
-
 					}
 				});
 
@@ -101,9 +100,9 @@ public class AddPlayerActivity extends Activity {
 
 					}
 				});
-		if (getIntent().hasExtra(PLAYER_DATA)) {
+		if (getIntent().hasExtra(PLAYER_ID)) {
 			// It's an edit
-			Player p = (Player) getIntent().getSerializableExtra(PLAYER_DATA);
+			Player p = state.getLobby().playerById(getIntent().getLongExtra(PLAYER_ID, 0));
 			((EditText) findViewById(R.id.editName)).setText(p.getName());
 			g.setSelection(getIndexFromAdapter(imageAdapter, p.getDrawable()));
 			colours.setSelection(getIndexFromAdapter(colourAdapter,
