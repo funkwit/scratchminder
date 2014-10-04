@@ -8,8 +8,6 @@
         android:minSdkVersion="16"
         android:targetSdkVersion="20" />
 
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-
     <application
         android:name="com.custardsource.scratchminder.GlobalState"
         android:allowBackup="true"

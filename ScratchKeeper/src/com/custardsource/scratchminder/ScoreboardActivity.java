@@ -1,7 +1,5 @@
 package com.custardsource.scratchminder;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -23,6 +21,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -404,7 +403,11 @@ public class ScoreboardActivity extends Activity {
 		findViewById(R.id.totalScorePanel).setVisibility(
 				sharedPref.getBoolean("show_total", true) ? View.VISIBLE
 						: View.GONE);
-		// TODO: lock screen pref
+		if (sharedPref.getBoolean("lock_screen", false)) {
+			getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		} else {
+			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		}
 	}
 
 	private void updateAllDisplay() {
