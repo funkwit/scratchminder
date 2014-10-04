@@ -66,4 +66,9 @@ public class Lobby implements Serializable {
 		gamesById.put(g.id(), g);
 		return g;
 	}
+
+	public void deleteGame(Game g) {
+		allGames.remove(g);
+		gamesById.remove(g.id());
+	}
 }

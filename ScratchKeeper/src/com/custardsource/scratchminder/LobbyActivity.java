@@ -1,17 +1,23 @@
 package com.custardsource.scratchminder;
 
+import com.custardsource.scratchminder.util.DialogUtils;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -72,6 +78,7 @@ public class LobbyActivity extends Activity {
 				startActivity(intent);
 			}
 		});
+		registerForContextMenu(gamesList);
 	}
 
 	@Override
@@ -109,5 +116,43 @@ public class LobbyActivity extends Activity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		MenuInflater inflater = getMenuInflater();
+		if (v.getId() == R.id.lobbyGames) {
+			inflater.inflate(R.menu.game_menu, menu);
+		}
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+				.getMenuInfo();
+		switch (item.getItemId()) {
+		case R.id.leave:
+
+		case R.id.removeGame:
+			removeGame((int) info.id);
+			return true;
+		default:
+			return super.onContextItemSelected(item);
+		}
+	}
+
+	private void removeGame(int position) {
+		final Game g = gamesAdapter.getItem(position);
+		DialogUtils.confirmDialog(this, new Runnable() {
+			@Override
+			public void run() {
+				lobby.deleteGame(g);
+				gamesAdapter.remove(g);
+				
+			}
+		}, R.string.confirm_remove_title, R.string.confirm_remove_game_text);
+		
 	}
 }

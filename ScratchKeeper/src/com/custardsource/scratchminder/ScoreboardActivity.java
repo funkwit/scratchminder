@@ -3,9 +3,7 @@ package com.custardsource.scratchminder;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -33,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.custardsource.scratchminder.util.DialogUtils;
 import com.custardsource.scratchminder.util.SystemUiHider;
 
 /**
@@ -253,9 +252,6 @@ public class ScoreboardActivity extends Activity {
 		updateAllDisplay();
 	}
 
-	// TODO: total score
-	// TODO: graphs
-
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
@@ -399,41 +395,28 @@ public class ScoreboardActivity extends Activity {
 	}
 
 	private void confirmRemove(final int position) {
-		new AlertDialog.Builder(this)
-				.setTitle(R.string.confirm_remove_title)
-				.setMessage(R.string.confirm_remove_text)
-				.setIcon(android.R.drawable.ic_dialog_alert)
-				.setPositiveButton(android.R.string.yes,
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int whichButton) {
-								Participant participant = game
-										.partipantInActivePosition((int) position);
-								game.remove(participant);
-								scoreboardAdapter.remove(participant);
-							}
-						}).setNegativeButton(android.R.string.no, null).show();
+		DialogUtils.confirmDialog(this, new Runnable() {
+			public void run() {
+				Participant participant = game
+						.partipantInActivePosition((int) position);
+				game.remove(participant);
+				scoreboardAdapter.remove(participant);
+			}
+		}, R.string.confirm_remove_title, R.string.confirm_remove_text);
 	}
 
 	private void confirmRemoveInactive(final int position) {
-		new AlertDialog.Builder(this)
-				.setTitle(R.string.confirm_remove_title)
-				.setMessage(R.string.confirm_remove_text)
-				.setIcon(android.R.drawable.ic_dialog_alert)
-				.setPositiveButton(android.R.string.yes,
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int whichButton) {
-								Participant participant = notPlayingAdapter
-										.getItem(position);
-								game.remove(participant);
-								notPlayingAdapter.remove(participant);
-								if (notPlayingAdapter.isEmpty()) {
-									findViewById(R.id.notPlayingPanel)
-											.setVisibility(View.GONE);
-								}
-							}
-						}).setNegativeButton(android.R.string.no, null).show();
+		DialogUtils.confirmDialog(this, new Runnable() {
+			@Override
+			public void run() {
+				Participant participant = notPlayingAdapter.getItem(position);
+				game.remove(participant);
+				notPlayingAdapter.remove(participant);
+				if (notPlayingAdapter.isEmpty()) {
+					findViewById(R.id.notPlayingPanel).setVisibility(View.GONE);
+				}
+			}
+		}, R.string.confirm_remove_title, R.string.confirm_remove_text);
 	}
 
 	@Override
