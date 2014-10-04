@@ -15,6 +15,7 @@ public class Game implements Serializable {
 	private String description;
 	private int activePlayerIndex = 0;
 	private long id = UUID.randomUUID().getLeastSignificantBits();
+	private int abandonedPoints = 0;
 
 	public Participant addPlayer(Player player) {
 		Participant p = new Participant(player);
@@ -174,6 +175,14 @@ public class Game implements Serializable {
 			ids[i] = participants.get(i).playerId();
 		}
 		return ids;
+	}
+
+	public void remove(Participant participant) {
+		if (isCurrentParticipant(participant)) {
+			nextPlayer();
+		}
+		participants.remove(participant);
+		abandonedPoints += participant.getScore();
 	}
 
 }

@@ -307,6 +307,8 @@ public class ScoreboardActivity extends Activity {
 			inflater.inflate(R.menu.active_player_menu, menu);
 			menu.findItem(R.id.leave).setEnabled(
 					game.getActiveParticipants().size() > 1);
+			menu.findItem(R.id.removeFromGame).setEnabled(
+					game.getActiveParticipants().size() > 1);
 		}
 	}
 
@@ -317,6 +319,9 @@ public class ScoreboardActivity extends Activity {
 		switch (item.getItemId()) {
 		case R.id.leave:
 			leave(info.id);
+			return true;
+		case R.id.removeFromGame:
+			remove(info.id);
 			return true;
 		case R.id.rejoin:
 			rejoin(info.id);
@@ -376,7 +381,13 @@ public class ScoreboardActivity extends Activity {
 		scoreboardAdapter.remove(participant);
 		notPlayingAdapter.add(participant);
 		findViewById(R.id.notPlayingPanel).setVisibility(View.VISIBLE);
+	}
 
+	private void remove(long id) {
+		Participant participant = game.partipantInActivePosition((int) id);
+		game.remove(participant);
+		scoreboardAdapter.remove(participant);
+		notPlayingAdapter.add(participant);
 	}
 
 	@Override
