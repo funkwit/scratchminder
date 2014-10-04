@@ -1,4 +1,4 @@
-package com.custardsource.scratchkeeper;
+package com.custardsource.scratchminder;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

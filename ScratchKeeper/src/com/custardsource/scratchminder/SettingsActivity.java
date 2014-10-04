@@ -1,4 +1,4 @@
-package com.custardsource.scratchkeeper;
+package com.custardsource.scratchminder;
 
 import android.annotation.TargetApi;
 import android.content.Context;

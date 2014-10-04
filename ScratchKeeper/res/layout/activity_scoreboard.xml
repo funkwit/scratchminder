@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/darker_gray"
     android:orientation="vertical"
-    tools:context="com.custardsource.scratchkeeper.ScoreboardActivity" >
+    tools:context="com.custardsource.scratchminder.ScoreboardActivity" >
 
     <!--
          The primary full-screen view. This can be replaced with whatever view

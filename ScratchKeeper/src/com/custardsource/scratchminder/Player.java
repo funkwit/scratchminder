@@ -1,4 +1,4 @@
-package com.custardsource.scratchkeeper;
+package com.custardsource.scratchminder;
 
 import java.io.Serializable;
 import java.util.UUID;

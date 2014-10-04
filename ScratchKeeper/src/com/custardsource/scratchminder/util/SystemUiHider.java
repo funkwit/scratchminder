@@ -1,4 +1,4 @@
-package com.custardsource.scratchkeeper.util;
+package com.custardsource.scratchminder.util;
 
 import android.app.Activity;
 import android.os.Build;

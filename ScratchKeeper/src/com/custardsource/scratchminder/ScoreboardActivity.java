@@ -1,4 +1,4 @@
-package com.custardsource.scratchkeeper;
+package com.custardsource.scratchminder;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -32,7 +32,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.custardsource.scratchkeeper.util.SystemUiHider;
+import com.custardsource.scratchminder.util.SystemUiHider;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
