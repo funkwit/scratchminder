@@ -24,5 +24,7 @@
     <string name="leave_table">Leave table temporarily</string>
     <string name="remove_from_game">Remove from game</string>
     <string name="edit">Edit</string>
-
+    <string name="confirm_remove_title">Confirm removal</string>
+    <string name="confirm_remove_text">Are you sure you want to PERMANENTLY remove the selected player?</string>
+    
 </resources>

@@ -3,7 +3,9 @@ package com.custardsource.scratchminder;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -321,10 +323,10 @@ public class ScoreboardActivity extends Activity {
 			leave(info.id);
 			return true;
 		case R.id.removeFromGame:
-			remove((int) info.id);
+			confirmRemove((int) info.id);
 			return true;
 		case R.id.removeFromGameInactive:
-			removeInactive((int) info.id);
+			confirmRemoveInactive((int) info.id);
 			return true;
 		case R.id.rejoin:
 			rejoin(info.id);
@@ -396,19 +398,42 @@ public class ScoreboardActivity extends Activity {
 		findViewById(R.id.notPlayingPanel).setVisibility(View.VISIBLE);
 	}
 
-	private void remove(int position) {
-		Participant participant = game.partipantInActivePosition((int) position);
-		game.remove(participant);
-		scoreboardAdapter.remove(participant);
+	private void confirmRemove(final int position) {
+		new AlertDialog.Builder(this)
+				.setTitle(R.string.confirm_remove_title)
+				.setMessage(R.string.confirm_remove_text)
+				.setIcon(android.R.drawable.ic_dialog_alert)
+				.setPositiveButton(android.R.string.yes,
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,
+									int whichButton) {
+								Participant participant = game
+										.partipantInActivePosition((int) position);
+								game.remove(participant);
+								scoreboardAdapter.remove(participant);
+							}
+						}).setNegativeButton(android.R.string.no, null).show();
 	}
-	
-	private void removeInactive(int position) {
-		Participant participant = notPlayingAdapter.getItem((int)position);
-		game.remove(participant);
-		notPlayingAdapter.remove(participant);
-		if (notPlayingAdapter.isEmpty()) {
-			findViewById(R.id.notPlayingPanel).setVisibility(View.GONE);
-		}
+
+	private void confirmRemoveInactive(final int position) {
+		new AlertDialog.Builder(this)
+				.setTitle(R.string.confirm_remove_title)
+				.setMessage(R.string.confirm_remove_text)
+				.setIcon(android.R.drawable.ic_dialog_alert)
+				.setPositiveButton(android.R.string.yes,
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,
+									int whichButton) {
+								Participant participant = notPlayingAdapter
+										.getItem(position);
+								game.remove(participant);
+								notPlayingAdapter.remove(participant);
+								if (notPlayingAdapter.isEmpty()) {
+									findViewById(R.id.notPlayingPanel)
+											.setVisibility(View.GONE);
+								}
+							}
+						}).setNegativeButton(android.R.string.no, null).show();
 	}
 
 	@Override
