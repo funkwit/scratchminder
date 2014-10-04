@@ -40,7 +40,7 @@ import com.custardsource.scratchkeeper.util.SystemUiHider;
  * 
  * @see SystemUiHider
  */
-public class Scoreboard extends Activity {
+public class ScoreboardActivity extends Activity {
 	private static final int ACTION_ADD = 1;
 	private static final int ACTION_EDIT = 2;
 	private static final int ACTION_SETTINGS = 3;

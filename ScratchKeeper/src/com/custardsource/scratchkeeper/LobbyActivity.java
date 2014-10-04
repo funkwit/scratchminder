@@ -65,8 +65,8 @@ public class LobbyActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Game g = gamesAdapter.getItem(position);
-				Intent intent = new Intent(LobbyActivity.this, Scoreboard.class);
-				intent.putExtra(Scoreboard.GAME_ID, g.id());
+				Intent intent = new Intent(LobbyActivity.this, ScoreboardActivity.class);
+				intent.putExtra(ScoreboardActivity.GAME_ID, g.id());
 				startActivity(intent);
 			}
 		});
