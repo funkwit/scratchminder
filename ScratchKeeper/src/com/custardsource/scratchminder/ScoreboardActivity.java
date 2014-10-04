@@ -433,6 +433,8 @@ public class ScoreboardActivity extends Activity {
 		int id = item.getItemId();
 		if (id == R.id.add_player) {
 			Intent intent = new Intent(this, PlayerChooserActivity.class);
+			intent.putExtra(PlayerChooserActivity.EXCLUDE_PLAYERS, game
+					.playerIdsAsArray());
 			startActivityForResult(intent, ACTION_ADD);
 			return true;
 		} else if (id == R.id.reset_scores) {

@@ -1,5 +1,11 @@
 package com.custardsource.scratchminder;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -16,9 +22,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.common.primitives.Longs;
+
 public class PlayerChooserActivity extends Activity {
 
 	private static final int ACTION_NEW_PLAYER = 1;
+
+	public static final String EXCLUDE_PLAYERS = "EXCLUDE_PLAYERS";
 
 	private Lobby lobby;
 	private ArrayAdapter<Player> playerAdapter;
@@ -30,8 +40,20 @@ public class PlayerChooserActivity extends Activity {
 		this.lobby = ((GlobalState) getApplication()).getLobby();
 
 		final ListView playerList = (ListView) findViewById(R.id.choosePlayer);
+		
+		List<Player> players = new ArrayList<Player>(lobby.allPlayers());
+		long[] exclude = getIntent().getLongArrayExtra(EXCLUDE_PLAYERS);
+		if (exclude != null) {
+			Set<Long> excludeSet = new HashSet<Long>(Longs.asList(exclude));
+			Iterator<Player> iter = players.iterator();
+			while (iter.hasNext()) {
+			    if (excludeSet.contains(iter.next().id())) {
+			        iter.remove();
+			    }
+			}
+		}
 		this.playerAdapter = new ArrayAdapter<Player>(this,
-				android.R.layout.simple_list_item_2, lobby.allPlayers()) {
+				android.R.layout.simple_list_item_2, players) {
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
 				Player player = getItem(position);

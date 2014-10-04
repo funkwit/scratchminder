@@ -168,4 +168,12 @@ public class Game implements Serializable {
 		return this.id;
 	}
 
+	public long[] playerIdsAsArray() {
+		long[] ids = new long[participants.size()];
+		for (int i = 0; i < ids.length; i++) {
+			ids[i] = participants.get(i).playerId();
+		}
+		return ids;
+	}
+
 }
