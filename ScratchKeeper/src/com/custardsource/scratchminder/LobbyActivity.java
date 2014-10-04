@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -42,7 +44,7 @@ public class LobbyActivity extends Activity {
 				View rowView = inflater.inflate(R.layout.game_list_entry,
 						parent, false);
 				TextView nameView = (TextView) rowView
-						.findViewById(R.id.gameName);
+						.findViewById(R.id.newGameName);
 				TextView descriptionView = (TextView) rowView
 						.findViewById(R.id.gameDescription);
 
@@ -88,4 +90,24 @@ public class LobbyActivity extends Activity {
 		gamesAdapter.notifyDataSetChanged();
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.lobby, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		if (id == R.id.add_game) {
+			Intent intent = new Intent(this, NewGameActivity.class);
+			startActivity(intent);
+			return true;
+		} else if (id == R.id.action_settings) {
+			Intent intent = new Intent(this, SettingsActivity.class);
+			startActivity(intent);
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 }

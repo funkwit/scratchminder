@@ -419,7 +419,8 @@ public class ScoreboardActivity extends Activity {
 		findViewById(R.id.notPlayingPanel).setVisibility(
 				game.getInactiveParticipants().isEmpty() ? View.GONE
 						: View.VISIBLE);
-
+		findViewById(R.id.scoringPanel).setVisibility(
+				game.getParticipants().isEmpty() ? View.GONE : View.VISIBLE);
 	}
 
 	@Override

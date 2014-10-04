@@ -24,26 +24,18 @@ public class Lobby implements Serializable {
 				Color.rgb(80, 0, 80));
 		Player p4 = addPlayer("Bod", R.drawable.caveman, Color.rgb(80, 80, 0));
 		
-		Game g1 = new Game();
-		Game g2 = new Game();
-		g2.setDescription("Awesome Game");
+		Game g1 = addGame(null);
+		Game g2 = addGame("Awesome Game");
 		g1.addPlayer(p1);
 		g1.addPlayer(p2);
 		g1.addPlayer(p3);
 		g1.leave(g1.partipantInActivePosition(2));
 		g2.addPlayer(p1);
 		g2.addPlayer(p4);
-		addGame(g1);
-		addGame(g2);
 	}
 
 	List<Game> allGames() {
 		return this.allGames;
-	}
-
-	void addGame(Game game) {
-		allGames.add(game);
-		gamesById.put(game.id(), game);
 	}
 
 	public Game gameById(long id) {
@@ -63,5 +55,15 @@ public class Lobby implements Serializable {
 
 	public Player playerById(long id) {
 		return playersById.get(id);
+	}
+
+	public Game addGame(String description) {
+		Game g = new Game();
+		if (!"".equals(description)) {
+			g.setDescription(description);
+		}
+		allGames.add(g);
+		gamesById.put(g.id(), g);
+		return g;
 	}
 }
