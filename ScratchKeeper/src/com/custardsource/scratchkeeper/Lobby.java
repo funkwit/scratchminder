@@ -9,7 +9,7 @@ import java.util.Map;
 import android.graphics.Color;
 
 public class Lobby implements Serializable {
-	private static final long serialVersionUID = 2L;
+	private static final long serialVersionUID = 3L;
 	private List<Game> allGames = new ArrayList<Game>();
 	private Map<Long, Game> gamesById = new HashMap<Long, Game>();
 
