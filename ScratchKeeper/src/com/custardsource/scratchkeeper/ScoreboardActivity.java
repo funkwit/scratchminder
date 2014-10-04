@@ -429,7 +429,7 @@ public class ScoreboardActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.add_player) {
-			Intent intent = new Intent(this, AddPlayerActivity.class);
+			Intent intent = new Intent(this, PlayerChooserActivity.class);
 			startActivityForResult(intent, ACTION_ADD);
 			return true;
 		} else if (id == R.id.reset_scores) {
