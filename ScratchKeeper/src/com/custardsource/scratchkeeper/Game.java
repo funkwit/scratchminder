@@ -4,154 +4,140 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import com.google.common.base.Joiner;
-
-import android.util.Log;
 
 public class Game implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	private final List<Player> players = new ArrayList<Player>();
-	int activePlayerIndex = 0;
-
+	private final List<Participant> participants = new ArrayList<Participant>();
 	private String description;
+	private int activePlayerIndex = 0;
+	private long id = UUID.randomUUID().getLeastSignificantBits();
 
 	public void addPlayer(Player player) {
-		players.add(player);
+		participants.add(new Participant(player));
 	}
 
-	public List<Player> getPlayers() {
-		return players;
+	public List<Participant> getParticipants() {
+		return participants;
 	}
 
 	public int playerCount() {
-		return players.size();
+		return participants.size();
 	}
 
 	public void recordScoreForActivePlayer(int score) {
-		players.get(activePlayerIndex).recordScore(score);
+		participants.get(activePlayerIndex).recordScore(score);
 	}
 
 	public void nextPlayer() {
-		activePlayerIndex = (activePlayerIndex + 1) % players.size();
-		while (!players.get(activePlayerIndex).active()) {
-			activePlayerIndex = (activePlayerIndex + 1) % players.size();
+		activePlayerIndex = (activePlayerIndex + 1) % participants.size();
+		while (!participants.get(activePlayerIndex).active()) {
+			activePlayerIndex = (activePlayerIndex + 1) % participants.size();
 
 		}
 	}
 
-	public boolean isPlaying(Player player) {
-		return players.get(activePlayerIndex) == player;
+	public boolean isCurrentParticipant(Participant participant) {
+		return participants.get(activePlayerIndex) == participant;
 	}
 
-	public List<Player> getActivePlayers() {
-		List<Player> active = new ArrayList<Player>();
-		for (Player player : players) {
-			if (player.active()) {
-				active.add(player);
+	public List<Participant> getActiveParticipants() {
+		List<Participant> active = new ArrayList<Participant>();
+		for (Participant participant : participants) {
+			if (participant.active()) {
+				active.add(participant);
 			}
 		}
 		return active;
 	}
 
-	public Player playerInActivePosition(int position) {
-		Log.i("SK", "Position: " + position);
+	public Participant partipantInActivePosition(int position) {
 		int current = -1;
-		for (Player player : players) {
-			Log.i("SK", "Checking player: " + player.toString());
-			if (player.active()) {
+		for (Participant participant : participants) {
+			if (participant.active()) {
 				current++;
-				Log.i("SK", "Player is active");
 				if (current == position) {
-					Log.i("SK", "returning");
-					return player;
+					return participant;
 				}
 			}
 		}
 		return null;
 	}
 
-	public void leave(Player player) {
-		player.leave();
-		if (isPlaying(player)) {
+	public void leave(Participant participant) {
+		participant.leave();
+		if (isCurrentParticipant(participant)) {
 			nextPlayer();
 		}
 
 	}
 
-	public Player playerInInactivePosition(int position) {
+	public Participant participantInInactivePosition(int position) {
 		// TODO-refactor
-		Log.i("SK", "Position: " + position);
 		int current = -1;
-		for (Player player : players) {
-			Log.i("SK", "Checking player: " + player.toString());
-			if (!player.active()) {
+		for (Participant participant : participants) {
+			if (!participant.active()) {
 				current++;
-				Log.i("SK", "Player is inactive");
 				if (current == position) {
-					Log.i("SK", "returning");
-					return player;
+					return participant;
 				}
 			}
 		}
 		return null;
 	}
 
-	public void movePlayerLast(Player player) {
-		Player active = players.get(activePlayerIndex);
-		players.remove(player);
-		players.add(player);
+	public void moveParticipantLast(Participant participant) {
+		Participant active = participants.get(activePlayerIndex);
+		participants.remove(participant);
+		participants.add(participant);
 		switchPlayTo(active);
 	}
 
-	public void movePlayerNext(Player player) {
-		Player active = players.get(activePlayerIndex);
-		players.remove(player);
-		players.add(activePlayerIndex + 1, player);
+	public void moveParticipantNext(Participant participant) {
+		Participant active = participants.get(activePlayerIndex);
+		participants.remove(participant);
+		participants.add(activePlayerIndex + 1, participant);
 		switchPlayTo(active);
 	}
 
-	public void rejoin(Player player) {
-		player.join();
+	public void rejoin(Participant participant) {
+		participant.join();
 	}
 
-	public int playingPositionOf(Player player) {
-		return getActivePlayers().indexOf(player);
+	public int playingPositionOf(Participant participant) {
+		return getActiveParticipants().indexOf(participant);
 	}
 
-	public void switchPlayTo(Player player) {
-		activePlayerIndex = players.indexOf(player);
+	public void switchPlayTo(Participant participant) {
+		activePlayerIndex = participants.indexOf(participant);
 	}
 
-	public void replacePlayer(Player oldPlayer, Player newPlayer) {
-		int index = players.indexOf(oldPlayer);
-		players.remove(index);
-		players.add(index, newPlayer);
-
-	}
+	
 	// TODO(beam)
 
-	public Collection<? extends Player> getInactivePlayers() {
-		List<Player> inactive = new ArrayList<Player>();
-		for (Player player : players) {
-			if (!player.active()) {
-				inactive.add(player);
+	public Collection<Participant> getInactiveParticipants() {
+		List<Participant> inactive = new ArrayList<Participant>();
+		for (Participant participant : participants) {
+			if (!participant.active()) {
+				inactive.add(participant);
 			}
 		}
 		return inactive;
 	}
 
 	public void resetScores() {
-		for (Player player : players) {
-			player.resetScore();
+		for (Participant participant : participants) {
+			participant.resetScore();
 		}
 	}
 
 	public int totalScore() {
 		int total = 0;
-		for (Player player : players) {
-			total += player.getScore();
+		for (Participant participant : participants) {
+			total += participant.getScore();
 		}
 		return total;
 	}
@@ -165,15 +151,19 @@ public class Game implements Serializable {
 	}
 
 	public String getNameList() {
-		List<String> values = new ArrayList<String>(players.size());
-		for (Player p : players) {
+		List<String> values = new ArrayList<String>(participants.size());
+		for (Participant p : participants) {
 			if (p.active()) {
-				values.add(p.getName());
+				values.add(p.playerName());
 			} else {
-				values.add("(" + p.getName() + ")");
+				values.add("(" + p.playerName() + ")");
 			}
 		}
 		return Joiner.on(", ").join(values);
+	}
+
+	public Long id() {
+		return this.id;
 	}
 
 }

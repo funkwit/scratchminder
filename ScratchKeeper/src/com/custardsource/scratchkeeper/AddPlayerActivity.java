@@ -56,6 +56,7 @@ public class AddPlayerActivity extends Activity {
 						// TODO - string?
 						Intent result = new Intent("foo");
 						Player p = editingPlayer;
+						/*
 						if (p == null) {
 							p = new Player(
 									((EditText) findViewById(R.id.editName))
@@ -77,6 +78,7 @@ public class AddPlayerActivity extends Activity {
 						result.putExtra(PLAYER_DATA, p);
 						setResult(Activity.RESULT_OK, result);
 						finish();
+						*/
 
 					}
 				});

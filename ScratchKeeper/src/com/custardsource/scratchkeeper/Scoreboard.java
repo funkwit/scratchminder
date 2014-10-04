@@ -67,7 +67,7 @@ public class Scoreboard extends Activity {
 	 * The flags to pass to {@link SystemUiHider#getInstance}.
 	 */
 	private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
-	private static final String GAME_FILE = "savegame";
+	protected static final String GAME_ID = "GAME_ID";
 
 	/**
 	 * The instance of the {@link SystemUiHider} for this activity.
@@ -78,27 +78,21 @@ public class Scoreboard extends Activity {
 
 	private Game game;
 
-	private ArrayAdapter<Player> notPlayingAdapter;
-	private Player editingPlayer;
+	private ArrayAdapter<Participant> scoreboardAdapter;
+	private ArrayAdapter<Participant> notPlayingAdapter;
 	private SharedPreferences sharedPref;
-
-
+	private ListView notPlaying;
+	private Lobby lobby;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
 		sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-		
-		this.game = new Game();
-		game.addPlayer(new Player("Cow", R.drawable.remember_the_milk, Color
-				.rgb(0, 0, 80)));
-		game.addPlayer(new Player("Chris", R.drawable.pterodactyl, Color.rgb(
-				80, 0, 0)));
-		game.addPlayer(new Player("Krijesta", R.drawable.dino_orange, Color
-				.rgb(80, 0, 80)));
-		game.addPlayer(new Player("Bod", R.drawable.caveman, Color.rgb(80, 80,
-				0)));
 		setContentView(R.layout.activity_scoreboard);
+		lobby = ((GlobalState) getApplication()).getLobby();
+
+		this.game = lobby.gameById(getIntent().getLongExtra(GAME_ID, 0));
 
 		/*
 		 * final View controlsView =
@@ -145,11 +139,13 @@ public class Scoreboard extends Activity {
 		 */
 		final Context context = getApplicationContext();
 		final ListView scoreboard = (ListView) findViewById(R.id.scoreboardListView);
-		scoreboardAdapter = new ArrayAdapter<Player>(this,
-				android.R.layout.simple_list_item_1, game.getActivePlayers()) {
+		scoreboardAdapter = new ArrayAdapter<Participant>(this,
+				android.R.layout.simple_list_item_1,
+				game.getActiveParticipants()) {
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
-				final Player player = game.playerInActivePosition(position);
+				final Participant participant = game
+						.partipantInActivePosition(position);
 				LayoutInflater inflater = (LayoutInflater) context
 						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				View rowView = inflater.inflate(R.layout.score, parent, false);
@@ -160,14 +156,15 @@ public class Scoreboard extends Activity {
 						.findViewById(R.id.scoreHistory);
 				ImageView imageView = (ImageView) rowView
 						.findViewById(R.id.icon);
-				imageView.setImageResource(player.getDrawable());
+				imageView.setImageResource(participant.playerDrawable());
 				imageView.setScaleX(0.5f);
 				imageView.setScaleY(0.5f);
-				nameView.setText(player.getName());
-				scoreView.setText(Integer.toString(player.getScore()));
-				scoreHistoryView.setText(player.getScoreHistoryString());
-				rowView.setBackgroundColor(game.isPlaying(player) ? player
-						.getColor() : Color.DKGRAY);
+				nameView.setText(participant.playerName());
+				scoreView.setText(Integer.toString(participant.getScore()));
+				scoreHistoryView.setText(participant.getScoreHistoryString());
+				rowView.setBackgroundColor(game
+						.isCurrentParticipant(participant) ? participant
+						.playerColor() : Color.DKGRAY);
 				// rowView.setSelected(game.isPlaying(player));
 				return rowView;
 
@@ -177,10 +174,10 @@ public class Scoreboard extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				setPlaying((Player) scoreboard.getItemAtPosition(position));
+				setPlaying((Participant) scoreboard.getItemAtPosition(position));
 			}
 
-			private void setPlaying(Player player) {
+			private void setPlaying(Participant player) {
 				game.switchPlayTo(player);
 				scoreboardAdapter.notifyDataSetChanged();
 			}
@@ -189,11 +186,13 @@ public class Scoreboard extends Activity {
 		// scoreboard.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
 		notPlaying = (ListView) findViewById(R.id.notPlayingListView);
-		notPlayingAdapter = new ArrayAdapter<Player>(this,
-				android.R.layout.simple_list_item_1, new ArrayList<Player>()) {
+		// TODO - persist the list
+		notPlayingAdapter = new ArrayAdapter<Participant>(this,
+				android.R.layout.simple_list_item_1,
+				new ArrayList<Participant>()) {
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
-				Player player = notPlayingAdapter.getItem(position);
+				Participant participant = notPlayingAdapter.getItem(position);
 				LayoutInflater inflater = (LayoutInflater) context
 						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				View rowView = inflater.inflate(R.layout.disabled_score,
@@ -203,11 +202,11 @@ public class Scoreboard extends Activity {
 						.findViewById(R.id.score);
 				ImageView imageView = (ImageView) rowView
 						.findViewById(R.id.icon);
-				imageView.setImageResource(player.getDrawable());
+				imageView.setImageResource(participant.playerDrawable());
 				imageView.setScaleX(0.5f);
 				imageView.setScaleY(0.5f);
-				nameView.setText(player.getName());
-				scoreView.setText(Integer.toString(player.getScore()));
+				nameView.setText(participant.playerName());
+				scoreView.setText(Integer.toString(participant.getScore()));
 				rowView.setBackgroundColor(Color.DKGRAY);
 				return rowView;
 			}
@@ -249,8 +248,8 @@ public class Scoreboard extends Activity {
 
 		registerForContextMenu(scoreboard);
 		registerForContextMenu(notPlaying);
-		reloadGameState();
 		reapplyPreferences();
+		updateAllDisplay();
 	}
 
 	// TODO: total score
@@ -289,10 +288,6 @@ public class Scoreboard extends Activity {
 		}
 	};
 
-	private ArrayAdapter<Player> scoreboardAdapter;
-
-	private ListView notPlaying;
-
 	/**
 	 * Schedules a call to hide() in [delay] milliseconds, canceling any
 	 * previously scheduled calls.
@@ -312,7 +307,7 @@ public class Scoreboard extends Activity {
 		} else {
 			inflater.inflate(R.menu.active_player_menu, menu);
 			menu.findItem(R.id.leave).setEnabled(
-					game.getActivePlayers().size() > 1);
+					game.getActiveParticipants().size() > 1);
 		}
 	}
 
@@ -343,9 +338,9 @@ public class Scoreboard extends Activity {
 	}
 
 	private void edit(int position) {
-		editingPlayer = game.playerInActivePosition(position);
 		Intent intent = new Intent(this, AddPlayerActivity.class);
-		intent.putExtra(AddPlayerActivity.PLAYER_DATA, editingPlayer);
+		intent.putExtra(AddPlayerActivity.PLAYER_DATA, game
+				.partipantInActivePosition(position).playerId());
 		startActivityForResult(intent, ACTION_EDIT);
 
 		// TODO Rematch in action bar
@@ -353,34 +348,34 @@ public class Scoreboard extends Activity {
 	}
 
 	private void rejoinLast(long id) {
-		Player player = notPlayingAdapter.getItem((int) id);
-		game.movePlayerLast(player);
+		Participant participant = notPlayingAdapter.getItem((int) id);
+		game.moveParticipantLast(participant);
 		rejoin(id);
 	}
 
 	private void rejoinNext(long id) {
-		Player player = notPlayingAdapter.getItem((int) id);
-		game.movePlayerNext(player);
+		Participant participant = notPlayingAdapter.getItem((int) id);
+		game.moveParticipantNext(participant);
 		rejoin(id);
 	}
 
 	private void rejoin(long id) {
-		Player player = notPlayingAdapter.getItem((int) id);
-		game.rejoin(player);
-		Log.e("SK", "Rejoining player" + player);
-		scoreboardAdapter.insert(player, game.playingPositionOf(player));
-		notPlayingAdapter.remove(player);
+		Participant participant = notPlayingAdapter.getItem((int) id);
+		game.rejoin(participant);
+		scoreboardAdapter.insert(participant,
+				game.playingPositionOf(participant));
+		notPlayingAdapter.remove(participant);
 		if (notPlayingAdapter.isEmpty()) {
 			findViewById(R.id.notPlayingPanel).setVisibility(View.GONE);
 		}
 	}
 
 	private void leave(long id) {
-		Player player = game.playerInActivePosition((int) id);
-		game.leave(player);
-		Log.e("SK", "Removing player" + player);
-		scoreboardAdapter.remove(player);
-		notPlayingAdapter.add(player);
+		Participant participant = game.partipantInActivePosition((int) id);
+		game.leave(participant);
+		Log.e("SK", "Removing player" + participant);
+		scoreboardAdapter.remove(participant);
+		notPlayingAdapter.add(participant);
 		findViewById(R.id.notPlayingPanel).setVisibility(View.VISIBLE);
 
 	}
@@ -393,14 +388,15 @@ public class Scoreboard extends Activity {
 				Player p = (Player) data
 						.getSerializableExtra(AddPlayerActivity.PLAYER_DATA);
 				game.addPlayer(p);
-				scoreboardAdapter.add(p);
+				// scoreboardAdapter.add(p);
 			}
 		}
 		if (requestCode == ACTION_EDIT) {
 			if (resultCode == RESULT_OK) {
-				Player p = (Player) data
-						.getSerializableExtra(AddPlayerActivity.PLAYER_DATA);
-				game.replacePlayer(editingPlayer, p);
+				// TODO: delete()
+				// Player p = (Player) data
+				// .getSerializableExtra(AddPlayerActivity.PLAYER_DATA);
+				// game.replacePlayer(editingPlayer, p);
 				scoreboardAdapter.notifyDataSetChanged();
 			}
 		}
@@ -416,42 +412,16 @@ public class Scoreboard extends Activity {
 		// TODO: lock screen pref
 	}
 
-	@Override
-	protected void onDestroy() {
-		saveGameState();
-		super.onDestroy();
-	}
-
-	private void reloadGameState() {
-		try {
-			ObjectInputStream inputStream = new ObjectInputStream(
-					openFileInput(GAME_FILE));
-			game = (Game) inputStream.readObject();
-			inProgressScore = inputStream.readInt();
-			notPlayingAdapter.clear();
-			notPlayingAdapter.addAll(game.getInactivePlayers());
-			scoreboardAdapter.clear();
-			scoreboardAdapter.addAll(game.getActivePlayers());
-			updateTotalScoreDisplay();
-			inputStream.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	private void updateAllDisplay() {
+		notPlayingAdapter.clear();
+		notPlayingAdapter.addAll(game.getInactiveParticipants());
+		scoreboardAdapter.clear();
+		scoreboardAdapter.addAll(game.getActiveParticipants());
+		updateTotalScoreDisplay();
 		findViewById(R.id.notPlayingPanel).setVisibility(
-				game.getInactivePlayers().isEmpty() ? View.GONE : View.VISIBLE);
+				game.getInactiveParticipants().isEmpty() ? View.GONE
+						: View.VISIBLE);
 
-	}
-
-	private void saveGameState() {
-		try {
-			ObjectOutputStream outputStream = new ObjectOutputStream(
-					openFileOutput(GAME_FILE, Context.MODE_PRIVATE));
-			outputStream.writeObject(game);
-			outputStream.writeInt(inProgressScore);
-			outputStream.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Override
@@ -487,13 +457,16 @@ public class Scoreboard extends Activity {
 				.toString(game.totalScore()));
 	}
 
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onResume()
-	 */
 	@Override
 	protected void onResume() {
 		super.onResume();
 		// TODO: use a listener
 		reapplyPreferences();
+	}
+
+	@Override
+	protected void onPause() {
+		((GlobalState) getApplication()).flush();
+		super.onPause();
 	}
 }
