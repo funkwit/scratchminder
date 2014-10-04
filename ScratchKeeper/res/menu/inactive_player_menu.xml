@@ -16,5 +16,13 @@
         android:enabled="true"
         android:title="@string/rejoin_game_play_last">
     </item>
+    <item
+        android:id="@+id/removeFromGameInactive"
+        android:title="@string/remove_from_game">
+    </item>
+    <item
+        android:id="@+id/editInactive"
+        android:title="@string/edit">
+    </item>
 
 </menu>

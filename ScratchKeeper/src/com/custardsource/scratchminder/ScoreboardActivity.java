@@ -321,7 +321,10 @@ public class ScoreboardActivity extends Activity {
 			leave(info.id);
 			return true;
 		case R.id.removeFromGame:
-			remove(info.id);
+			remove((int) info.id);
+			return true;
+		case R.id.removeFromGameInactive:
+			removeInactive((int) info.id);
 			return true;
 		case R.id.rejoin:
 			rejoin(info.id);
@@ -334,6 +337,9 @@ public class ScoreboardActivity extends Activity {
 			return true;
 			// TODO: show who's next down the bottom
 		case R.id.edit:
+			edit((int) info.id);
+			return true;
+		case R.id.editInactive:
 			edit((int) info.id);
 			return true;
 		default:
@@ -349,6 +355,13 @@ public class ScoreboardActivity extends Activity {
 
 		// TODO Rematch in action bar
 
+	}
+
+	private void editInactive(int position) {
+		Intent intent = new Intent(this, AddPlayerActivity.class);
+		intent.putExtra(AddPlayerActivity.PLAYER_ID,
+				notPlayingAdapter.getItem(position).playerId());
+		startActivityForResult(intent, ACTION_EDIT);
 	}
 
 	private void rejoinLast(long id) {
@@ -383,11 +396,19 @@ public class ScoreboardActivity extends Activity {
 		findViewById(R.id.notPlayingPanel).setVisibility(View.VISIBLE);
 	}
 
-	private void remove(long id) {
-		Participant participant = game.partipantInActivePosition((int) id);
+	private void remove(int position) {
+		Participant participant = game.partipantInActivePosition((int) position);
 		game.remove(participant);
 		scoreboardAdapter.remove(participant);
-		notPlayingAdapter.add(participant);
+	}
+	
+	private void removeInactive(int position) {
+		Participant participant = notPlayingAdapter.getItem((int)position);
+		game.remove(participant);
+		notPlayingAdapter.remove(participant);
+		if (notPlayingAdapter.isEmpty()) {
+			findViewById(R.id.notPlayingPanel).setVisibility(View.GONE);
+		}
 	}
 
 	@Override

@@ -23,5 +23,6 @@
     <string name="game_name_entry">Game Name (optional)</string>
     <string name="leave_table">Leave table temporarily</string>
     <string name="remove_from_game">Remove from game</string>
+    <string name="edit">Edit</string>
 
 </resources>
