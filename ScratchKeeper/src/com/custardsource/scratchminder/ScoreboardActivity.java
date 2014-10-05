@@ -479,11 +479,16 @@ public class ScoreboardActivity extends Activity {
 			startActivityForResult(intent, ACTION_ADD);
 			return true;
 		} else if (id == R.id.reset_scores) {
-			// TODO: add confirmation dialog
-			game.resetScores();
-			scoreboardAdapter.notifyDataSetChanged();
-			notPlayingAdapter.notifyDataSetChanged();
-			updateTotalScoreDisplay();
+			DialogUtils.confirmDialog(this, new Runnable() {
+				@Override
+				public void run() {
+					game.resetScores();
+					scoreboardAdapter.notifyDataSetChanged();
+					notPlayingAdapter.notifyDataSetChanged();
+					updateTotalScoreDisplay();
+				}
+			}, R.string.confirm_reset_game_title,
+					R.string.confirm_reset_game_text);
 			return true;
 		} else if (id == R.id.settings) {
 			Intent intent = new Intent(this, SettingsActivity.class);

@@ -28,5 +28,7 @@
     <string name="confirm_remove_text">Are you sure you want to PERMANENTLY remove the selected player?</string>
     <string name="confirm_remove_game_text">Are you sure you want to PERMANENTLY delete the selected game?</string>
     <string name="remove_game">Remove game</string>
+    <string name="confirm_reset_game_title">Confirm reset</string>
+    <string name="confirm_reset_game_text">Are you sure you want to reset all scores?</string>
     
 </resources>
