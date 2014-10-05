@@ -20,13 +20,15 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppBaseTheme" >
+            android:theme="@style/AppBaseTheme"
+            android:parentActivityName=".LobbyActivity" >
         </activity>
         <activity
             android:name=".AddPlayerActivity"
             android:label="@string/title_activity_add_player"
             android:screenOrientation="portrait"
-            android:theme="@style/AppBaseTheme" >
+            android:theme="@style/AppBaseTheme"
+            android:parentActivityName=".PlayerChooserActivity" >
         </activity>
         <activity
             android:name=".SettingsActivity"
@@ -48,14 +50,16 @@
         </activity>
         <activity
             android:name=".PlayerChooserActivity"
-            android:label="@string/title_activity_player_chooser" >
+            android:label="@string/title_activity_player_chooser"
+            android:parentActivityName=".ScoreboardActivity" >
         </activity>
         <activity
             android:name=".NewGameActivity"
-            android:label="@string/title_activity_new_game"
-            android:theme="@android:style/Theme.Dialog"
             android:excludeFromRecents="true"
-            android:noHistory="true" >
+            android:label="@string/title_activity_new_game"
+            android:noHistory="true"
+            android:theme="@android:style/Theme.Dialog"
+            android:parentActivityName=".LobbyActivity" >
         </activity>
     </application>
 
