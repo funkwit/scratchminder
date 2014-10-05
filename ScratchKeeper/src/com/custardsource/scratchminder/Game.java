@@ -43,6 +43,7 @@ public class Game implements Serializable {
 			activePlayerIndex = (activePlayerIndex + 1) % participants.size();
 
 		}
+		lastPlayed = System.currentTimeMillis();
 	}
 
 	public boolean isCurrentParticipant(Participant participant) {
@@ -118,6 +119,7 @@ public class Game implements Serializable {
 
 	public void switchPlayTo(Participant participant) {
 		activePlayerIndex = participants.indexOf(participant);
+		lastPlayed = System.currentTimeMillis();
 	}
 
 	
@@ -196,4 +198,7 @@ public class Game implements Serializable {
 		return lastPlayed;
 	}
 
+	public void resumePlay() {
+		lastPlayed = System.currentTimeMillis();
+	}
 }

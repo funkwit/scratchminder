@@ -1,8 +1,8 @@
 package com.custardsource.scratchminder;
 
-import java.util.Date;
-
-import com.custardsource.scratchminder.util.DialogUtils;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,15 +10,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.text.format.DateFormat;
+import android.text.format.DateUtils;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -26,11 +26,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.custardsource.scratchminder.util.DialogUtils;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
+
 public class LobbyActivity extends Activity {
 
 	private SharedPreferences sharedPref;
 	private ArrayAdapter<Game> gamesAdapter;
 	private Lobby lobby;
+	private List<Game> sortedGames;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +48,9 @@ public class LobbyActivity extends Activity {
 
 
 		final ListView gamesList = (ListView) findViewById(R.id.lobbyGames);
+		sortedGames = new ArrayList<Game>();
 		gamesAdapter = new ArrayAdapter<Game>(this,
-				android.R.layout.simple_list_item_2, lobby.allGames()) {
+				android.R.layout.simple_list_item_2, sortedGames) {
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
 				Game game = getItem(position);
@@ -68,11 +74,12 @@ public class LobbyActivity extends Activity {
 					nameView.setText(description);
 					descriptionView.setText(names);
 				}
-				dateView.setText(DateFormat.getDateFormat(LobbyActivity.this)
-						.format(new Date(game.lastPlayed())));
+				dateView.setText(DateUtils.getRelativeTimeSpanString(game
+						.lastPlayed()));
 				return rowView;
 			}
 		};
+		updateGamesList();
 		gamesList.setAdapter(gamesAdapter);
 		gamesList.setOnItemClickListener(new OnItemClickListener() {
 
@@ -80,12 +87,24 @@ public class LobbyActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Game g = gamesAdapter.getItem(position);
+				g.resumePlay();
 				Intent intent = new Intent(LobbyActivity.this, ScoreboardActivity.class);
 				intent.putExtra(ScoreboardActivity.GAME_ID, g.id());
 				startActivity(intent);
 			}
 		});
 		registerForContextMenu(gamesList);
+	}
+
+	private void updateGamesList() {
+		this.sortedGames.clear();
+		this.sortedGames.addAll(lobby.allGames());
+		Collections.sort(sortedGames, new Ordering<Game>() {
+			public int compare(Game g1, Game g2) {
+				return Long.signum(g2.lastPlayed() - g1.lastPlayed());
+			}
+		});
+		this.gamesAdapter.notifyDataSetChanged();
 	}
 
 	@Override
@@ -101,7 +120,7 @@ public class LobbyActivity extends Activity {
 	}
 
 	private void updateAllDisplay() {
-		gamesAdapter.notifyDataSetChanged();
+		updateGamesList();
 	}
 
 	@Override
