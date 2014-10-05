@@ -24,4 +24,22 @@
         android:text="Small Text"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
+    <TextView
+        android:id="@+id/gameDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:text="Date"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+     <TextView
+        android:id="@+id/gameDateLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/gameDate"
+        android:layout_centerVertical="true"
+        android:text="Last Played: "
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+    
 </RelativeLayout>

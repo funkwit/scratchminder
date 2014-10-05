@@ -1,5 +1,7 @@
 package com.custardsource.scratchminder;
 
+import java.util.Date;
+
 import com.custardsource.scratchminder.util.DialogUtils;
 
 import android.app.Activity;
@@ -8,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.format.DateFormat;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -53,6 +56,8 @@ public class LobbyActivity extends Activity {
 						.findViewById(R.id.newGameName);
 				TextView descriptionView = (TextView) rowView
 						.findViewById(R.id.gameDescription);
+				TextView dateView = (TextView) rowView
+						.findViewById(R.id.gameDate);
 
 				String names = game.getNameList();
 				String description = game.description();
@@ -63,6 +68,8 @@ public class LobbyActivity extends Activity {
 					nameView.setText(description);
 					descriptionView.setText(names);
 				}
+				dateView.setText(DateFormat.getDateFormat(LobbyActivity.this)
+						.format(new Date(game.lastPlayed())));
 				return rowView;
 			}
 		};

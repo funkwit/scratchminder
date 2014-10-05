@@ -16,6 +16,7 @@ public class Game implements Serializable {
 	private int activePlayerIndex = 0;
 	private long id = UUID.randomUUID().getLeastSignificantBits();
 	private int abandonedPoints = 0;
+	private long lastPlayed = System.currentTimeMillis();
 
 	public Participant addPlayer(Player player) {
 		Participant p = new Participant(player);
@@ -33,6 +34,7 @@ public class Game implements Serializable {
 
 	public void recordScoreForActivePlayer(int score) {
 		participants.get(activePlayerIndex).recordScore(score);
+		lastPlayed = System.currentTimeMillis();
 	}
 
 	public void nextPlayer() {
@@ -188,6 +190,10 @@ public class Game implements Serializable {
 
 	public int abandonedPoints() {
 		return abandonedPoints;
+	}
+	
+	public long lastPlayed() {
+		return lastPlayed;
 	}
 
 }
