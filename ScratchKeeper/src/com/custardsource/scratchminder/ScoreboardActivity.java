@@ -493,6 +493,17 @@ public class ScoreboardActivity extends Activity {
 			}, R.string.confirm_reset_game_title,
 					R.string.confirm_reset_game_text);
 			return true;
+		} else if (id == R.id.remove_game) {
+			DialogUtils
+					.confirmDialog(this, new Runnable() {
+						@Override
+						public void run() {
+							lobby.deleteGame(game);
+							finish();
+						}
+					}, R.string.confirm_remove_title,
+							R.string.confirm_remove_game_text);
+			return true;
 		} else if (id == R.id.settings) {
 			Intent intent = new Intent(this, SettingsActivity.class);
 			startActivity(intent);
