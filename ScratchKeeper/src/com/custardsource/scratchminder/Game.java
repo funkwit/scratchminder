@@ -135,10 +135,11 @@ public class Game implements Serializable {
 		for (Participant participant : participants) {
 			participant.resetScore();
 		}
+		abandonedPoints = 0;
 	}
 
-	public int totalScore() {
-		int total = 0;
+	public int totalScore(boolean includeAbandoned) {
+		int total = includeAbandoned ? abandonedPoints : 0;
 		for (Participant participant : participants) {
 			total += participant.getScore();
 		}
@@ -183,6 +184,10 @@ public class Game implements Serializable {
 		}
 		participants.remove(participant);
 		abandonedPoints += participant.getScore();
+	}
+
+	public int abandonedPoints() {
+		return abandonedPoints;
 	}
 
 }

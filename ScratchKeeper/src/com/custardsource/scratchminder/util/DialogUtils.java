@@ -1,13 +1,8 @@
 package com.custardsource.scratchminder.util;
 
-import android.R;
-import android.R.drawable;
-import android.R.string;
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 
 public class DialogUtils {
 

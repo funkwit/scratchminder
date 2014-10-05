@@ -401,6 +401,7 @@ public class ScoreboardActivity extends Activity {
 						.partipantInActivePosition((int) position);
 				game.remove(participant);
 				scoreboardAdapter.remove(participant);
+				updateTotalScoreDisplay();
 			}
 		}, R.string.confirm_remove_title, R.string.confirm_remove_text);
 	}
@@ -415,6 +416,7 @@ public class ScoreboardActivity extends Activity {
 				if (notPlayingAdapter.isEmpty()) {
 					findViewById(R.id.notPlayingPanel).setVisibility(View.GONE);
 				}
+				updateTotalScoreDisplay();
 			}
 		}, R.string.confirm_remove_title, R.string.confirm_remove_text);
 	}
@@ -448,6 +450,7 @@ public class ScoreboardActivity extends Activity {
 		} else {
 			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		}
+		updateTotalScoreDisplay();
 	}
 
 	private void updateAllDisplay() {
@@ -499,8 +502,15 @@ public class ScoreboardActivity extends Activity {
 	}
 
 	private void updateTotalScoreDisplay() {
+		boolean includeAbandoned = sharedPref.getBoolean("include_abandoned",
+				true);
+		((TextView) findViewById(R.id.abandonedScore)).setText(Integer
+				.toString(game.abandonedPoints()));
+		findViewById(R.id.abandonedScorePanel).setVisibility(
+				includeAbandoned && game.abandonedPoints() > 0 ? View.VISIBLE
+						: View.GONE);
 		((TextView) findViewById(R.id.totalScoreValue)).setText(Integer
-				.toString(game.totalScore()));
+				.toString(game.totalScore(includeAbandoned)));
 	}
 
 	@Override
