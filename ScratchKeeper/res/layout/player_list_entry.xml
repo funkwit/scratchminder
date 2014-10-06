@@ -14,15 +14,6 @@
 		android:layout_toRightOf="@+id/playerIcon"        
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <TextView
-        android:id="@+id/playerDescription"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/playerName"
-        android:layout_alignLeft="@+id/playerName"
-        android:ellipsize="end"
-        android:text="Small Text"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <ImageView
         android:id="@+id/playerIcon"
@@ -32,4 +23,23 @@
         android:layout_alignParentTop="true"
         android:src="@drawable/dino_blue" />
 
+        <TextView
+        android:id="@+id/playerDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/playerDateLabel"
+        android:layout_toRightOf="@+id/playerDateLabel"
+        android:text="Date"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="11sp" />
+
+     <TextView
+         android:id="@+id/playerDateLabel"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_below="@+id/playerName"
+         android:layout_alignLeft="@+id/playerName"
+         android:text="Last Played: "
+         android:textAppearance="?android:attr/textAppearanceSmall"
+         android:textSize="11sp" />
 </RelativeLayout>

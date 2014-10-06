@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -63,15 +64,17 @@ public class PlayerChooserActivity extends Activity {
 						parent, false);
 				TextView nameView = (TextView) rowView
 						.findViewById(R.id.playerName);
-				TextView descriptionView = (TextView) rowView
-						.findViewById(R.id.playerDescription);
 				ImageView iconView = (ImageView) rowView
 						.findViewById(R.id.playerIcon);
 
 				nameView.setText(player.getName());
-				// TODO: do something with description view
-				descriptionView.setText("");
 				iconView.setImageResource(player.getDrawable());
+
+				TextView dateView = (TextView) rowView
+						.findViewById(R.id.playerDate);
+				dateView.setText(DateUtils.getRelativeTimeSpanString(player
+						.lastPlayed()));
+				
 				return rowView;
 			}
 		};

@@ -10,6 +10,7 @@ public class Player implements Serializable {
 	private int iconDrawable;
 	private  int color;
 	private long id = UUID.randomUUID().getLeastSignificantBits();
+	private long lastPlayed = System.currentTimeMillis();
 
 	public Player(String name, int iconDrawable, int color) {
 		super();
@@ -45,5 +46,13 @@ public class Player implements Serializable {
 
 	long id() {
 		return this.id;
+	}
+
+	public long lastPlayed() {
+		return lastPlayed;
+	}
+	
+	public void recordPlay() {
+		lastPlayed = System.currentTimeMillis();
 	}
 }

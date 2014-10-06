@@ -25,6 +25,7 @@ public class Participant implements Serializable {
 	public void recordScore(int score) {
 		scores.add(score);
 		this.score += score;
+		player.recordPlay();
 	}
 
 	public boolean active() {
@@ -37,6 +38,7 @@ public class Participant implements Serializable {
 
 	public void join() {
 		active = true;
+		player.recordPlay();
 	}
 
 	public String getScoreHistoryString() {
