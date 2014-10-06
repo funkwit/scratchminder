@@ -28,6 +28,7 @@ public class NewLeagueActivity extends Activity {
 								LeagueActivity.class);
 						intent.putExtra(LeagueActivity.LEAGUE_ID, l.id());
 						startActivity(intent);
+						((GlobalState) getApplication()).flush();
 					}
 				});
 	}

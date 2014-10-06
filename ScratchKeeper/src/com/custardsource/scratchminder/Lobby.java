@@ -7,8 +7,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
-
 import android.graphics.Color;
 
 public class Lobby implements Serializable {
@@ -37,13 +35,9 @@ public class Lobby implements Serializable {
 		g1.leave(g1.partipantInActivePosition(2));
 		g2.addPlayer(p1);
 		g2.addPlayer(p4);
-		if (leaguesById == null) {
-			leaguesById = new LinkedHashMap<Long, League>();
-		} 
 	}
 
 	List<Game> allGames() {
-		leaguesById = new LinkedHashMap<Long, League>();
 		return this.allGames;
 	}
 

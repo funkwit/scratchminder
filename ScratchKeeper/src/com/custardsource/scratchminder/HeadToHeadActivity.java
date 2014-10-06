@@ -100,6 +100,7 @@ public class HeadToHeadActivity extends Activity {
 
 	private void updateAllDisplay() {
 		leagues = lobby.getLeagues();
+		leaguesAdapter.notifyDataSetChanged();
 		if (leagues.isEmpty()) {
 			findViewById(R.id.leagueList).setVisibility(View.GONE);
 			findViewById(R.id.noLeagues).setVisibility(View.VISIBLE);
