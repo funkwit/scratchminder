@@ -67,6 +67,11 @@ public class LobbyActivity extends Activity {
 				drawerList.setItemChecked(position, true);
 				// TODO: call setTitle();
 				drawerLayout.closeDrawers();
+				if (position == 1) {
+					Intent intent = new Intent(LobbyActivity.this,
+							HeadToHeadActivity.class);
+					startActivity(intent);
+				}
 			}
 		});
 		final CharSequence title = getTitle();

@@ -33,8 +33,22 @@
     <string name="departed_players">Departed players</string>
     <string name="drawer_open">drawer open</string>
     <string name="drawer_close">drawer close</string>
+
     <string-array name="drawer_items">
-        <item >Multi-player</item>
-        <item >Head-to-Head</item>
+        <item>Multi-player</item>
+        <item>Head-to-Head</item>
     </string-array>
+
+    <string name="title_activity_head_to_head">Choose a League</string>
+    <string name="_dummy_number">0</string>
+    <string name="heading_player_ranking">Player Rankings</string>
+    <string name="header_recent_games">Recent Games</string>
+    <string name="no_rankings_yet">(no rankings yet)</string>
+    <string name="no_games_yet">(no games yet)</string>
+    <string name="no_leagues">No leagues set up yet. Please choose &quot;Add League&quot; from the actions menu to set up a league.</string>
+    <string name="add_league">Add League</string>
+    <string name="league_name_entry">League Name</string>
+    <string name="title_activity_new_league">Add a new league</string>
+    <string name="title_activity_league">LeagueActivity</string>
+
 </resources>

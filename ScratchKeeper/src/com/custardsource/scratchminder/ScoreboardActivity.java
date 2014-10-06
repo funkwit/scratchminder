@@ -243,6 +243,8 @@ public class ScoreboardActivity extends Activity {
 						game.nextPlayer();
 						scoreboardAdapter.notifyDataSetChanged();
 						updateTotalScoreDisplay();
+						// TODO: shouldn't do this here, but will do for now
+						((GlobalState) getApplication()).flush();
 					}
 				});
 

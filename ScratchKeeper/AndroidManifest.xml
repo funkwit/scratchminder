@@ -19,16 +19,16 @@
             android:alwaysRetainTaskState="true"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
+            android:parentActivityName=".LobbyActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"
-            android:parentActivityName=".LobbyActivity" >
+            android:theme="@style/AppTheme" >
         </activity>
         <activity
             android:name=".AddPlayerActivity"
             android:label="@string/title_activity_add_player"
+            android:parentActivityName=".PlayerChooserActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"
-            android:parentActivityName=".PlayerChooserActivity" >
+            android:theme="@style/AppTheme" >
         </activity>
         <activity
             android:name=".SettingsActivity"
@@ -58,8 +58,28 @@
             android:excludeFromRecents="true"
             android:label="@string/title_activity_new_game"
             android:noHistory="true"
-            android:theme="@android:style/Theme.Dialog"
-            android:parentActivityName=".LobbyActivity" >
+            android:parentActivityName=".LobbyActivity"
+            android:theme="@android:style/Theme.Dialog" >
+        </activity>
+        <activity
+            android:name=".NewLeagueActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/title_activity_new_league"
+            android:noHistory="true"
+            android:parentActivityName=".HeadToHeadActivity"
+            android:theme="@android:style/Theme.Dialog" >
+        </activity>
+        <activity
+            android:name=".HeadToHeadActivity"
+            android:label="@string/title_activity_head_to_head" >
+        </activity>
+        <activity
+            android:name=".LeagueActivity"
+            android:label="@string/title_activity_league"
+            android:parentActivityName=".HeadToHeadActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.custardsource.scratchminder.HeadToHeadActivity" />
         </activity>
     </application>
 

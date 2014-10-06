@@ -3,8 +3,11 @@ package com.custardsource.scratchminder;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.Lists;
 
 import android.graphics.Color;
 
@@ -14,6 +17,8 @@ public class Lobby implements Serializable {
 	private Map<Long, Game> gamesById = new HashMap<Long, Game>();
 	private List<Player> allPlayers = new ArrayList<Player>();
 	private Map<Long, Player> playersById = new HashMap<Long, Player>();
+	private List<League> allLeagues = new ArrayList<League>();
+	private Map<Long, League> leaguesById = new LinkedHashMap<Long, League>();
 
 	public Lobby() {
 		Player p1 = addPlayer("Cow", R.drawable.remember_the_milk,
@@ -32,9 +37,13 @@ public class Lobby implements Serializable {
 		g1.leave(g1.partipantInActivePosition(2));
 		g2.addPlayer(p1);
 		g2.addPlayer(p4);
+		if (leaguesById == null) {
+			leaguesById = new LinkedHashMap<Long, League>();
+		} 
 	}
 
 	List<Game> allGames() {
+		leaguesById = new LinkedHashMap<Long, League>();
 		return this.allGames;
 	}
 
@@ -70,5 +79,20 @@ public class Lobby implements Serializable {
 	public void deleteGame(Game g) {
 		allGames.remove(g);
 		gamesById.remove(g.id());
+	}
+
+	public List<League> getLeagues() {
+		return this.allLeagues;
+	}
+
+	public League addLeague(String name) {
+		League l = new League(name);
+		allLeagues.add(l);
+		leaguesById.put(l.id(), l);
+		return l;
+	}
+
+	public League leagueById(long id) {
+		return leaguesById.get(id);
 	}
 }
