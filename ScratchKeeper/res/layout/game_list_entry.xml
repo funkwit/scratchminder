@@ -3,7 +3,11 @@
     android:id="@+id/scoringPanel"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    android:paddingBottom="5dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    android:paddingTop="3dp" >
 
     <TextView
         android:id="@+id/newGameName"
@@ -28,18 +32,19 @@
         android:id="@+id/gameDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
+        android:layout_alignTop="@+id/gameDateLabel"
+        android:layout_toRightOf="@+id/gameDateLabel"
         android:text="Date"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="11sp" />
 
      <TextView
-        android:id="@+id/gameDateLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toLeftOf="@+id/gameDate"
-        android:layout_centerVertical="true"
-        android:text="Last Played: "
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+         android:id="@+id/gameDateLabel"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_below="@+id/gameDescription"
+         android:text="Last Played: "
+         android:textAppearance="?android:attr/textAppearanceSmall"
+         android:textSize="11sp" />
     
 </RelativeLayout>
