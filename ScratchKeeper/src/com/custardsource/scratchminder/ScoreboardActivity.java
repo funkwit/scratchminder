@@ -429,6 +429,7 @@ public class ScoreboardActivity extends Activity {
 				Player p = lobby.playerById(data
 						.getLongExtra(AddPlayerActivity.PLAYER_ID, 0));
 				scoreboardAdapter.add(game.addPlayer(p));
+				p.recordPlay();
 			}
 		}
 		if (requestCode == ACTION_EDIT) {
