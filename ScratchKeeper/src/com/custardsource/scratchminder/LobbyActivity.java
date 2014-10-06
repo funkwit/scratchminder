@@ -8,8 +8,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.widget.DrawerLayout;
 import android.text.format.DateUtils;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -27,7 +30,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.custardsource.scratchminder.util.DialogUtils;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
 public class LobbyActivity extends Activity {
@@ -36,16 +38,63 @@ public class LobbyActivity extends Activity {
 	private ArrayAdapter<Game> gamesAdapter;
 	private Lobby lobby;
 	private List<Game> sortedGames;
-	
+	private ActionBarDrawerToggle drawerToggle;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_lobby);
 		lobby = ((GlobalState) getApplication()).getLobby();
-		
+
 		PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
 		sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
+		final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.lobby_drawer);
+		final ListView drawerList = (ListView) findViewById(R.id.left_drawer_navigation);
+		// Set the adapter for the list view
+		drawerList.setAdapter(new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1, getResources()
+						.getStringArray(R.array.drawer_items)));
+		// Set the list's click listener
+		drawerList.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				selectLeftDrawerItem(position);
+			}
+
+			private void selectLeftDrawerItem(int position) {
+				drawerList.setItemChecked(position, true);
+				// TODO: call setTitle();
+				drawerLayout.closeDrawers();
+			}
+		});
+		final CharSequence title = getTitle();
+		final CharSequence drawerTitle = title;
+		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
+				R.drawable.ic_drawer, R.string.drawer_open,
+				R.string.drawer_close) {
+
+			/** Called when a drawer has settled in a completely closed state. */
+			public void onDrawerClosed(View view) {
+				super.onDrawerClosed(view);
+				getActionBar().setTitle(title);
+				invalidateOptionsMenu();
+			}
+
+			/** Called when a drawer has settled in a completely open state. */
+			public void onDrawerOpened(View drawerView) {
+				super.onDrawerOpened(drawerView);
+				getActionBar().setTitle(drawerTitle);
+				invalidateOptionsMenu();
+			}
+		};
+
+		// Set the drawer toggle as the DrawerListener
+		drawerLayout.setDrawerListener(drawerToggle);
+		drawerList.setItemChecked(0, true);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setHomeButtonEnabled(true);
 
 		final ListView gamesList = (ListView) findViewById(R.id.lobbyGames);
 		sortedGames = new ArrayList<Game>();
@@ -88,7 +137,8 @@ public class LobbyActivity extends Activity {
 					int position, long id) {
 				Game g = gamesAdapter.getItem(position);
 				g.resumePlay();
-				Intent intent = new Intent(LobbyActivity.this, ScoreboardActivity.class);
+				Intent intent = new Intent(LobbyActivity.this,
+						ScoreboardActivity.class);
 				intent.putExtra(ScoreboardActivity.GAME_ID, g.id());
 				startActivity(intent);
 			}
@@ -112,7 +162,7 @@ public class LobbyActivity extends Activity {
 		((GlobalState) getApplication()).flush();
 		super.onPause();
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -131,6 +181,9 @@ public class LobbyActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		if (drawerToggle.onOptionsItemSelected(item)) {
+			return true;
+		}
 		int id = item.getItemId();
 		if (id == R.id.add_game) {
 			Intent intent = new Intent(this, NewGameActivity.class);
@@ -176,9 +229,23 @@ public class LobbyActivity extends Activity {
 			public void run() {
 				lobby.deleteGame(g);
 				gamesAdapter.remove(g);
-				
+
 			}
 		}, R.string.confirm_remove_title, R.string.confirm_remove_game_text);
-		
+
 	}
+
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		// Sync the toggle state after onRestoreInstanceState has occurred.
+		drawerToggle.syncState();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		drawerToggle.onConfigurationChanged(newConfig);
+	}
+
 }

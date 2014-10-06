@@ -31,4 +31,10 @@
     <string name="confirm_reset_game_title">Confirm reset</string>
     <string name="confirm_reset_game_text">Are you sure you want to reset all scores?</string>
     <string name="departed_players">Departed players</string>
+    <string name="drawer_open">drawer open</string>
+    <string name="drawer_close">drawer close</string>
+    <string-array name="drawer_items">
+        <item >Multi-player</item>
+        <item >Head-to-Head</item>
+    </string-array>
 </resources>
