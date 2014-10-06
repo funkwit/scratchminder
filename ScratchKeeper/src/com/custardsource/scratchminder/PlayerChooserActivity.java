@@ -1,6 +1,7 @@
 package com.custardsource.scratchminder;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -23,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.common.collect.Ordering;
 import com.google.common.primitives.Longs;
 
 public class PlayerChooserActivity extends Activity {
@@ -53,6 +55,11 @@ public class PlayerChooserActivity extends Activity {
 			    }
 			}
 		}
+		Collections.sort(players, new Ordering<Player>() {
+			public int compare(Player p1, Player p2) {
+				return Long.signum(p2.lastPlayed() - p1.lastPlayed());
+			}
+		});
 		this.playerAdapter = new ArrayAdapter<Player>(this,
 				android.R.layout.simple_list_item_2, players) {
 			@Override
