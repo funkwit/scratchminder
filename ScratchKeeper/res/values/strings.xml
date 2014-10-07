@@ -50,5 +50,6 @@
     <string name="league_name_entry">League Name</string>
     <string name="title_activity_new_league">Add a new league</string>
     <string name="title_activity_league">LeagueActivity</string>
+    <string name="record_game">Record game</string>
 
 </resources>

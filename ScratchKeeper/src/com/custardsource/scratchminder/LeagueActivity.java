@@ -1,6 +1,7 @@
 package com.custardsource.scratchminder;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,6 +11,7 @@ public class LeagueActivity extends Activity {
 	private Lobby lobby;
 	private League league;
 	protected static final String LEAGUE_ID = "LEAGUE_ID";
+	private static final int ACTIVITY_RECORD_GAME = 1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -30,13 +32,32 @@ public class LeagueActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
+		if (id == R.id.record_game) {
+			Intent intent = new Intent(this, RecordGameActivity.class);
+			startActivityForResult(intent, ACTIVITY_RECORD_GAME);
+			return true;
+		} else if (id == R.id.action_settings) {
+			Intent intent = new Intent(this, SettingsActivity.class);
+			startActivity(intent);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == ACTIVITY_RECORD_GAME) {
+			if (resultCode == RESULT_OK) {
+				Player winner = lobby.playerById(data
+						.getLongExtra(RecordGameActivity.WINNER_ID, 0));
+				Player loser = lobby.playerById(data
+						.getLongExtra(RecordGameActivity.LOSER_ID, 0));
+				league.recordResult(winner, loser);
+				winner.recordPlay();
+				loser.recordPlay();
+			}
+		}
+	}
+
 }
