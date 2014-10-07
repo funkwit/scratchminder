@@ -7,7 +7,6 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -33,8 +32,6 @@ import com.custardsource.scratchminder.util.DialogUtils;
 import com.google.common.collect.Ordering;
 
 public class LobbyActivity extends Activity {
-
-	private SharedPreferences sharedPref;
 	private ArrayAdapter<Game> gamesAdapter;
 	private Lobby lobby;
 	private List<Game> sortedGames;
@@ -47,7 +44,6 @@ public class LobbyActivity extends Activity {
 		lobby = ((GlobalState) getApplication()).getLobby();
 
 		PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
-		sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
 		final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.lobby_drawer);
 		final ListView drawerList = (ListView) findViewById(R.id.left_drawer_navigation);

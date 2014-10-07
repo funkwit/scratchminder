@@ -41,6 +41,9 @@
 
     <string name="title_activity_league_play">League Play</string>
     <string name="_dummy_number">0</string>
+    <string name="_dummy_player_name">Lagoon Catamaran</string>
+    <string name="_dummy_game_name">GameName</string>
+    <string name="_dummy_date_span">2 femtoseconds ago</string>
     <string name="heading_player_ranking">Player Rankings</string>
     <string name="header_recent_games">Recent Games</string>
     <string name="no_rankings_yet">(no rankings yet)</string>
@@ -51,5 +54,16 @@
     <string name="title_activity_new_league">Add a new league</string>
     <string name="title_activity_league">LeagueActivity</string>
     <string name="record_game">Record game</string>
+    <string name="click_to_choose_loser">Click to choose loser</string>
+    <string name="click_to_choose_winner">Click to choose winner</string>
+    <string name="loser_label">"Loser: "</string>
+    <string name="winner_label">"Winner: "</string>
+    <string name="last_played">"Last Played: "</string>
+    <string name="date">Date</string>
+    <string name="recent_games_defeated">def.</string>
+    <string name="winner">Winner</string>
+    <string name="loser">Loser</string>
+    <string name="no_games_recorded_message">No games recorded. Record a game to see rankings.</string>
+    <string name="record_button">Record</string>
 
 </resources>

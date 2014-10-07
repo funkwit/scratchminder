@@ -14,9 +14,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:text="Winner: "
+        android:text="@string/winner_label"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-
+    
     <LinearLayout
         android:id="@+id/winnerPanel"
         android:layout_width="fill_parent"
@@ -30,14 +30,15 @@
             android:id="@+id/winnerIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_person" />
+            android:src="@drawable/ic_action_person"
+            android:contentDescription="@null" />
 
         <TextView
             android:id="@+id/winnerName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="Click to choose winner"
+            android:text="@string/click_to_choose_winner"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/primary_text_dark_nodisable" />
     </LinearLayout>
@@ -48,7 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/winnerPanel"
-        android:text="Loser: "
+        android:text="@string/loser_label"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <LinearLayout
@@ -64,14 +65,15 @@
             android:id="@+id/loserIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_person_sad" />
+            android:src="@drawable/ic_action_person_sad"
+            android:contentDescription="@null" />
 
         <TextView
             android:id="@+id/loserName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="Click to choose loser"
+            android:text="@string/click_to_choose_loser"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/primary_text_dark_nodisable" />
     </LinearLayout>
@@ -84,6 +86,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="14dp"
         android:enabled="false"
-        android:text="Record" />
+        android:text="@string/record_button" />
 
 </RelativeLayout>

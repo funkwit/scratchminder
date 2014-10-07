@@ -14,7 +14,7 @@
         android:id="@+id/noRankingsLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No games recorded. Record a game to see rankings."
+        android:text="@string/no_games_recorded_message"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <LinearLayout

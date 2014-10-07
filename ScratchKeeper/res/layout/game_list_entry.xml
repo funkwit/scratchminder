@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:text="Large Text"
+        android:text="@string/_dummy_game_name"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
@@ -25,7 +25,7 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/newGameName"
         android:ellipsize="end"
-        android:text="Small Text"
+        android:text="@string/_dummy_player_name"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/gameDateLabel"
         android:layout_toRightOf="@+id/gameDateLabel"
-        android:text="Date"
+        android:text="@string/_dummy_date_span"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textSize="12sp" />
 
@@ -43,7 +43,7 @@
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
          android:layout_below="@+id/gameDescription"
-         android:text="Last Played: "
+         android:text="@string/last_played"
          android:textAppearance="?android:attr/textAppearanceSmall"
          android:textSize="12sp" />
     

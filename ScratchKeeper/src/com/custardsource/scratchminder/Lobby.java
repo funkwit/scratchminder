@@ -7,8 +7,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 
+@SuppressLint("UseSparseArrays") // Sparse Array isn't serializable.
 public class Lobby implements Serializable {
 	private static final long serialVersionUID = 4L;
 	private List<Game> allGames = new ArrayList<Game>();

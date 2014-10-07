@@ -17,7 +17,8 @@
         android:maxHeight="30dp"
         android:maxWidth="30dp"
         android:scaleType="fitXY"
-        android:src="@drawable/dino_blue" />
+        android:src="@drawable/dino_blue"
+        android:contentDescription="@null" />
 
     <TextView
         android:id="@+id/rankingEntryPosition"
@@ -27,7 +28,7 @@
         android:layout_gravity="center_vertical"
         android:layout_toRightOf="@+id/rankingEntryIcon"
         android:gravity="center_horizontal"
-        android:text="1"
+        android:text="@string/_dummy_number"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@android:color/primary_text_dark" />
 
@@ -37,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:text="1200"
+        android:text="@string/_dummy_number"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@android:color/primary_text_dark" />
 
@@ -48,7 +49,7 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="5dp"
         android:layout_toRightOf="@id/rankingEntryPosition"
-        android:text="Name"
+        android:text="@string/_dummy_player_name"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@android:color/primary_text_dark" />
 

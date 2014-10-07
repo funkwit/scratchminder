@@ -5,7 +5,6 @@ import java.io.ObjectOutputStream;
 
 import android.app.Application;
 import android.content.Context;
-import android.view.View;
 
 public class GlobalState extends Application {
 	private static final String STATE_FILE = "savedstate";

@@ -12,14 +12,15 @@
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:adjustViewBounds="true"
-            android:src="@drawable/ic_launcher" />
+            android:src="@drawable/ic_launcher"
+            android:contentDescription="@null" />
 
         <TextView
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left|center_vertical"
-            android:text="Large Text"
+            android:text="@string/_dummy_player_name"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
     </LinearLayout>
