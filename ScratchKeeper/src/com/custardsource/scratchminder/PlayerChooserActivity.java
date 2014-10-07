@@ -65,10 +65,13 @@ public class PlayerChooserActivity extends Activity {
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
 				Player player = getItem(position);
-				LayoutInflater inflater = (LayoutInflater) PlayerChooserActivity.this
-						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				View rowView = inflater.inflate(R.layout.player_list_entry,
-						parent, false);
+				View rowView = convertView;
+				if (rowView != null) {
+					LayoutInflater inflater = (LayoutInflater) PlayerChooserActivity.this
+							.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+					rowView = inflater.inflate(R.layout.player_list_entry,
+							parent, false);
+				}
 				TextView nameView = (TextView) rowView
 						.findViewById(R.id.playerName);
 				ImageView iconView = (ImageView) rowView

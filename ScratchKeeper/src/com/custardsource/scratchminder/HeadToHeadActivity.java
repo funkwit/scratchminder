@@ -37,10 +37,12 @@ public class HeadToHeadActivity extends Activity {
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
 				League league = getItem(position);
-				LayoutInflater inflater = (LayoutInflater) HeadToHeadActivity.this
-						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				View rowView = inflater.inflate(
-						android.R.layout.simple_list_item_1, parent, false);
+				View rowView = convertView;
+				if (rowView != null) {
+					LayoutInflater inflater = (LayoutInflater) HeadToHeadActivity.this
+							.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+					rowView = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+				}						
 				TextView nameView = (TextView) rowView
 						.findViewById(android.R.id.text1);
 
