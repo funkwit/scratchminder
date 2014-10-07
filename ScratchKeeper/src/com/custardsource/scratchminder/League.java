@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import com.google.common.collect.Lists;
@@ -93,5 +94,13 @@ public class League implements Serializable {
 			}
 		});
 		return sorted;
+	}
+
+	public List<LeagueGame> recentGames(int count) {
+		if (count >= games.size()) {
+			return Lists.reverse(new ArrayList<LeagueGame>(games));
+		}
+		return Lists.reverse((new ArrayList<LeagueGame>(games.subList(
+				games.size() - count, games.size()))));
 	}
 }

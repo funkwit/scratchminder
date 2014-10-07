@@ -20,4 +20,8 @@ public class LeagueGame implements Serializable {
 	public Player loser() {
 		return loser;
 	}
+
+	public long timestamp() {
+		return timestamp;
+	}
 }
