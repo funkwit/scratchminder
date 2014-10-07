@@ -438,6 +438,7 @@ public class ScoreboardActivity extends Activity {
 						.getLongExtra(AddPlayerActivity.PLAYER_ID, 0));
 				scoreboardAdapter.add(game.addPlayer(p));
 				p.recordPlay();
+				updateAllDisplay();
 			}
 		}
 		if (requestCode == ACTION_EDIT) {
