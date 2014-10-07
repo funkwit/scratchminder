@@ -66,7 +66,7 @@ public class PlayerChooserActivity extends Activity {
 			public View getView(int position, View convertView, ViewGroup parent) {
 				Player player = getItem(position);
 				View rowView = convertView;
-				if (rowView != null) {
+				if (rowView == null) {
 					LayoutInflater inflater = (LayoutInflater) PlayerChooserActivity.this
 							.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 					rowView = inflater.inflate(R.layout.player_list_entry,

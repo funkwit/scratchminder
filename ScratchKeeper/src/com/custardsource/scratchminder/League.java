@@ -2,12 +2,14 @@ package com.custardsource.scratchminder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import android.util.Log;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
 
 public class League implements Serializable {
 	private static final int DEFAULT_RANKING = 1200;
@@ -77,5 +79,19 @@ public class League implements Serializable {
 		double newRanking = rankingFor(player)
 				+ (kFactor * (sFactor - eFactor));
 		rankings.put(player, newRanking);
+	}
+
+	public boolean hasResults() {
+		return !games.isEmpty();
+	}
+
+	public List<Map.Entry<Player, Double>> playersByRank() {
+		List<Map.Entry<Player, Double>> sorted = Lists.newArrayList(rankings.entrySet());
+		Collections.sort(sorted, new Ordering<Map.Entry<Player, Double>>() {
+			public int compare(Map.Entry<Player, Double> x, Map.Entry<Player, Double> y) {
+				return Double.compare(y.getValue(), x.getValue());
+			}
+		});
+		return sorted;
 	}
 }

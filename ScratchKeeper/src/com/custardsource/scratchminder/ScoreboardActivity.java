@@ -147,7 +147,7 @@ public class ScoreboardActivity extends Activity {
 				final Participant participant = game
 						.partipantInActivePosition(position);
 				View rowView = convertView;
-				if (rowView != null) {
+				if (rowView == null) {
 					LayoutInflater inflater = (LayoutInflater) context
 							.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 					rowView = inflater.inflate(R.layout.score, parent, false);
@@ -197,7 +197,7 @@ public class ScoreboardActivity extends Activity {
 			public View getView(int position, View convertView, ViewGroup parent) {
 				Participant participant = notPlayingAdapter.getItem(position);
 				View rowView = convertView;
-				if (rowView != null) {
+				if (rowView == null) {
 					LayoutInflater inflater = (LayoutInflater) context
 							.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 					rowView = inflater.inflate(R.layout.disabled_score, parent,

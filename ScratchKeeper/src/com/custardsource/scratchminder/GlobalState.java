@@ -26,6 +26,7 @@ public class GlobalState extends Application {
 					openFileInput(STATE_FILE));
 			lobby = (Lobby) inputStream.readObject();
 			inputStream.close();
+			lobby.resetIfNecessary();
 		} catch (Exception e) {
 			e.printStackTrace();
 			lobby = new Lobby();

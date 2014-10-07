@@ -109,7 +109,7 @@ public class LobbyActivity extends Activity {
 			public View getView(int position, View convertView, ViewGroup parent) {
 				Game game = getItem(position);
 				View rowView = convertView;
-				if (rowView != null) {
+				if (rowView == null) {
 					LayoutInflater inflater = (LayoutInflater) LobbyActivity.this
 							.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 					rowView = inflater.inflate(R.layout.game_list_entry,

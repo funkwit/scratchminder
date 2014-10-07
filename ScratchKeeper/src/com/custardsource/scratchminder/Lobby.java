@@ -36,6 +36,11 @@ public class Lobby implements Serializable {
 		g2.addPlayer(p1);
 		g2.addPlayer(p4);
 	}
+	
+	public void resetIfNecessary() {
+		//allLeagues = new ArrayList<League>();
+		//leaguesById = new LinkedHashMap<Long, League>();
+	}
 
 	List<Game> allGames() {
 		return this.allGames;
