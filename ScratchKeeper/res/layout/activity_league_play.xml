@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.custardsource.scratchminder.HeadToHeadActivity" >
+    tools:context="com.custardsource.scratchminder.LeaguePlayActivity" >
     
 <ListView
         android:id="@+id/leagueList"

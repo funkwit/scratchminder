@@ -17,7 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class HeadToHeadActivity extends Activity {
+public class LeaguePlayActivity extends Activity {
 	private static final int ACTIVITY_NEW_LEAGUE = 1;
 	private Lobby lobby;
 	private List<League> leagues;
@@ -26,7 +26,7 @@ public class HeadToHeadActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_head_to_head);
+		setContentView(R.layout.activity_league_play);
 
 		this.lobby = ((GlobalState) getApplication()).getLobby();
 		this.leagues = lobby.getLeagues();
@@ -39,7 +39,7 @@ public class HeadToHeadActivity extends Activity {
 				League league = getItem(position);
 				View rowView = convertView;
 				if (rowView == null) {
-					LayoutInflater inflater = (LayoutInflater) HeadToHeadActivity.this
+					LayoutInflater inflater = (LayoutInflater) LeaguePlayActivity.this
 							.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 					rowView = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
 				}						
@@ -56,7 +56,7 @@ public class HeadToHeadActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				League l = leaguesAdapter.getItem(position);
-				Intent intent = new Intent(HeadToHeadActivity.this,
+				Intent intent = new Intent(LeaguePlayActivity.this,
 						LeagueActivity.class);
 				intent.putExtra(LeagueActivity.LEAGUE_ID, l.id());
 				startActivity(intent);
@@ -69,7 +69,7 @@ public class HeadToHeadActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.head_to_head, menu);
+		getMenuInflater().inflate(R.menu.league_play, menu);
 		return true;
 	}
 

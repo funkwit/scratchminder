@@ -69,7 +69,7 @@ public class LobbyActivity extends Activity {
 				drawerLayout.closeDrawers();
 				if (position == 1) {
 					Intent intent = new Intent(LobbyActivity.this,
-							HeadToHeadActivity.class);
+							LeaguePlayActivity.class);
 					startActivity(intent);
 				}
 			}

@@ -36,10 +36,10 @@
 
     <string-array name="drawer_items">
         <item>Multi-player</item>
-        <item>Head-to-Head</item>
+        <item>League Play</item>
     </string-array>
 
-    <string name="title_activity_head_to_head">Choose a League</string>
+    <string name="title_activity_league_play">League Play</string>
     <string name="_dummy_number">0</string>
     <string name="heading_player_ranking">Player Rankings</string>
     <string name="header_recent_games">Recent Games</string>

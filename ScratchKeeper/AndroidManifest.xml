@@ -66,17 +66,17 @@
             android:excludeFromRecents="true"
             android:label="@string/title_activity_new_league"
             android:noHistory="true"
-            android:parentActivityName=".HeadToHeadActivity"
+            android:parentActivityName=".LeaguePlayActivity"
             android:theme="@android:style/Theme.Dialog" >
         </activity>
         <activity
-            android:name=".HeadToHeadActivity"
-            android:label="@string/title_activity_head_to_head" >
+            android:name=".LeaguePlayActivity"
+            android:label="@string/title_activity_league_play" >
         </activity>
         <activity
             android:name=".LeagueActivity"
             android:label="@string/title_activity_league"
-            android:parentActivityName=".HeadToHeadActivity" >
+            android:parentActivityName=".LeaguePlayActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.custardsource.scratchminder.HeadToHeadActivity" />
