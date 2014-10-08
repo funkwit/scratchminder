@@ -7,10 +7,12 @@ import android.content.Intent;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.custardsource.scratchminder.LeaguePlayActivity;
 import com.custardsource.scratchminder.LobbyActivity;
@@ -22,7 +24,8 @@ public class DrawerUtils {
 	private static final List<Class<? extends Activity>> DESTINATIONS = ImmutableList
 			.<Class<? extends Activity>> of(LobbyActivity.class,
 					LeaguePlayActivity.class);
-
+	private static final int[] ICONS = {R.drawable.ic_fa_table, R.drawable.ic_fa_trophy};
+	
 	public static ActionBarDrawerToggle configureDrawer(final Activity activity) {
 
 		final DrawerLayout drawerLayout = (DrawerLayout) activity
@@ -32,7 +35,15 @@ public class DrawerUtils {
 		// Set the adapter for the list view
 		drawerList.setAdapter(new ArrayAdapter<String>(activity,
 				android.R.layout.simple_list_item_1, activity.getResources()
-						.getStringArray(R.array.drawer_items)));
+						.getStringArray(R.array.drawer_items)) {
+							@Override
+							public View getView(int position, View convertView,
+									ViewGroup parent) {
+								View v = super.getView(position, convertView, parent);
+								TextView text = (TextView) v.findViewById(android.R.id.text1);
+								text.setCompoundDrawablesWithIntrinsicBounds(ICONS[position], 0, 0, 0);
+								return v;
+							}});
 		// Set the list's click listener
 		drawerList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
