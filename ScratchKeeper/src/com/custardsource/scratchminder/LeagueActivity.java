@@ -3,14 +3,10 @@ package com.custardsource.scratchminder;
 import java.util.List;
 import java.util.Map.Entry;
 
-import com.custardsource.scratchminder.util.DrawerUtils;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;

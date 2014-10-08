@@ -84,11 +84,15 @@
         <activity
             android:name=".RecordGameActivity"
             android:label="@string/record_game"
-            android:parentActivityName=".LeagueActivity" 
-            >
+            android:parentActivityName=".LeagueActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.custardsource.scratchminder.LeagueActivity" />
+        </activity>
+        <activity
+            android:name=".HelpActivity"
+            android:label="@string/title_activity_help"
+            android:theme="@android:style/Theme.Dialog" >
         </activity>
     </application>
 

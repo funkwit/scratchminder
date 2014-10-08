@@ -118,7 +118,6 @@ public class AddPlayerActivity extends Activity {
 		return 0;
 	}
 
-	// TODO: recent players
 	// TODO: proper image picker
 	// TODO: delete player completely
 

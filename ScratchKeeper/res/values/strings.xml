@@ -65,5 +65,15 @@
     <string name="loser">Loser</string>
     <string name="no_games_recorded_message">No games recorded. Record a game to see rankings.</string>
     <string name="record_button">Record</string>
+    <string name="help_text">
+<![CDATA[ 
+<h3>Icon Sources</h3>
+<p><a href="http://www.large-icons.com/free-icons/boss.htm">Free Large Boss Icon Set</a> is by <a href="http://www.aha-soft.com">aha-soft</a>.</p>
+<p>Buddy icons by <a href="http://iconka.com">iconka</a>.</p>
+ ]]>
+    </string>
+    <string name="title_activity_help">Help/About</string>
+    <string name="_dummy_long_text">Lorem ipsum etc.</string>
+    <string name="help_about">Help/About</string>
 
 </resources>
