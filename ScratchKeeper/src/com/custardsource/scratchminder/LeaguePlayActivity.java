@@ -2,10 +2,14 @@ package com.custardsource.scratchminder;
 
 import java.util.List;
 
+import com.custardsource.scratchminder.util.DrawerUtils;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +26,7 @@ public class LeaguePlayActivity extends Activity {
 	private Lobby lobby;
 	private List<League> leagues;
 	private ArrayAdapter<League> leaguesAdapter;
+	private ActionBarDrawerToggle drawerToggle;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +46,9 @@ public class LeaguePlayActivity extends Activity {
 				if (rowView == null) {
 					LayoutInflater inflater = (LayoutInflater) LeaguePlayActivity.this
 							.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-					rowView = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
-				}						
+					rowView = inflater.inflate(
+							android.R.layout.simple_list_item_1, parent, false);
+				}
 				TextView nameView = (TextView) rowView
 						.findViewById(android.R.id.text1);
 
@@ -64,6 +70,8 @@ public class LeaguePlayActivity extends Activity {
 		});
 
 		updateAllDisplay();
+		drawerToggle = DrawerUtils.configureDrawer(this);
+
 	}
 
 	@Override
@@ -75,6 +83,9 @@ public class LeaguePlayActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		if (drawerToggle.onOptionsItemSelected(item)) {
+			return true;
+		}
 		int id = item.getItemId();
 		if (id == R.id.add_league) {
 			Intent intent = new Intent(this, NewLeagueActivity.class);
@@ -111,5 +122,17 @@ public class LeaguePlayActivity extends Activity {
 			findViewById(R.id.noLeagues).setVisibility(View.GONE);
 		}
 
+	}
+
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		drawerToggle.syncState();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		drawerToggle.onConfigurationChanged(newConfig);
 	}
 }

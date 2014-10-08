@@ -3,10 +3,14 @@ package com.custardsource.scratchminder;
 import java.util.List;
 import java.util.Map.Entry;
 
+import com.custardsource.scratchminder.util.DrawerUtils;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -38,6 +42,7 @@ public class LeagueActivity extends Activity {
 
 		this.league = lobby.leagueById(getIntent().getLongExtra(LEAGUE_ID, 0));
 		setTitle(league.name());
+		
 		checkVisibility();
 		rankedPlayers = league.playersByRank();
 		rankingAdapter = new ArrayAdapter<Entry<Player, Double>>(this,
@@ -173,5 +178,4 @@ public class LeagueActivity extends Activity {
 		rankingAdapter.clear();
 		rankingAdapter.addAll(league.playersByRank());
 	}
-
 }
