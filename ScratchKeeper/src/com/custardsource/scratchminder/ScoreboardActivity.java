@@ -82,8 +82,8 @@ public class ScoreboardActivity extends Activity {
 				ImageView imageView = (ImageView) rowView
 						.findViewById(R.id.icon);
 				imageView.setImageResource(participant.playerDrawable());
-				imageView.setScaleX(0.5f);
-				imageView.setScaleY(0.5f);
+				imageView.setScaleX(0.75f);
+				imageView.setScaleY(0.75f);
 				nameView.setText(participant.playerName());
 				scoreView.setText(Integer.toString(participant.getScore()));
 				scoreHistoryView.setText(participant.getScoreHistoryString());

@@ -58,4 +58,8 @@ public class Player implements Serializable {
 	public void recordPlay() {
 		lastPlayed = System.currentTimeMillis();
 	}
+
+	public Avatar getAvatar() {
+		return avatar;
+	}
 }
