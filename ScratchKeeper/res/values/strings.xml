@@ -35,7 +35,7 @@
     <string name="drawer_close">drawer close</string>
 
     <string-array name="drawer_items">
-        <item>Multi-player</item>
+        <item>Scoreboard</item>
         <item>League Play</item>
     </string-array>
 
