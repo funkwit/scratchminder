@@ -5,7 +5,7 @@
     <item
         android:id="@+id/add_league"
         android:icon="@drawable/ic_action_new"
-        android:showAsAction="ifRoom"
+        android:showAsAction="never"
         android:title="@string/add_league"/>
     <item
         android:id="@+id/action_settings"
