@@ -21,13 +21,13 @@ public class Lobby implements Serializable {
 	private Map<Long, League> leaguesById = new LinkedHashMap<Long, League>();
 
 	public Lobby() {
-		Player p1 = addPlayer("Cow", R.drawable.remember_the_milk,
+		Player p1 = addPlayer("Cow", Avatar.remember_the_milk,
 				Color.rgb(0, 0, 80));
-		Player p2 = addPlayer("Chris", R.drawable.pterodactyl,
+		Player p2 = addPlayer("Chris", Avatar.pterodactyl,
 				Color.rgb(80, 0, 0));
-		Player p3 = addPlayer("Krijesta", R.drawable.dino_orange,
+		Player p3 = addPlayer("Krijesta", Avatar.dino_orange,
 				Color.rgb(80, 0, 80));
-		Player p4 = addPlayer("Bod", R.drawable.caveman, Color.rgb(80, 80, 0));
+		Player p4 = addPlayer("Bod", Avatar.caveman, Color.rgb(80, 80, 0));
 		
 		Game g1 = addGame(null);
 		Game g2 = addGame("Awesome Game");
@@ -52,8 +52,8 @@ public class Lobby implements Serializable {
 		return gamesById.get(id);
 	}
 	
-	Player addPlayer(String name, int drawable, int color) {
-		Player p = new Player(name, drawable, color);
+	Player addPlayer(String name, Avatar avatar, int color) {
+		Player p = new Player(name, avatar, color);
 		allPlayers.add(p);
 		playersById.put(p.id(), p);
 		return p;

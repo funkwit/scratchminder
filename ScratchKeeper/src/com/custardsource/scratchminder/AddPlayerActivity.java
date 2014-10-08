@@ -70,7 +70,7 @@ public class AddPlayerActivity extends Activity {
 						} else {
 							p.setName(((EditText) findViewById(R.id.editName))
 									.getText().toString());
-							p.setDrawable(imageAdapter.getItem(g
+							p.setAvatar(imageAdapter.getItem(g
 									.getSelectedItemPosition()));
 							p.setColour(colourAdapter.getItem(colours
 									.getSelectedItemPosition()));
@@ -153,16 +153,16 @@ public class AddPlayerActivity extends Activity {
 		}
 
 		public int getCount() {
-			return mImageIds.length;
+			return Avatar.values().length;
 		}
 
 		@Override
-		public Integer getItem(int position) {
-			return mImageIds[position];
+		public Avatar getItem(int position) {
+			return Avatar.values()[position];
 		}
 
 		public long getItemId(int position) {
-			return mImageIds[position];
+			return Avatar.values()[position].ordinal();
 		}
 
 		public View getView(int position, View convertView, ViewGroup parent) {
@@ -172,69 +172,9 @@ public class AddPlayerActivity extends Activity {
 				i.setScaleType(ImageView.ScaleType.FIT_XY);
 				i.setBackgroundResource(mGalleryItemBackground);
 			}
-			i.setImageResource(mImageIds[position]);
+			i.setImageResource(Avatar.values()[position].drawable());
 			return i;
 		}
-
-		private Integer[] mImageIds = { R.drawable.caveman,
-				R.drawable.dino_blue, R.drawable.dino_green,
-				R.drawable.dino_orange, R.drawable.pterodactyl,
-				R.drawable.remember_the_milk, R.drawable.user_iconshock_afro,
-				R.drawable.user_iconshock_alien,
-				R.drawable.user_iconshock_anciano,
-				R.drawable.user_iconshock_artista,
-				R.drawable.user_iconshock_astronauta,
-				R.drawable.user_iconshock_barbaman,
-				R.drawable.user_iconshock_bombero,
-				R.drawable.user_iconshock_boxeador,
-				R.drawable.user_iconshock_bruce_lee,
-				R.drawable.user_iconshock_caradebolsa,
-				R.drawable.user_iconshock_chavo,
-				R.drawable.user_iconshock_cientifica,
-				R.drawable.user_iconshock_cientifico_loco,
-				R.drawable.user_iconshock_comisario,
-				R.drawable.user_iconshock_cupido,
-				R.drawable.user_iconshock_diabla,
-				R.drawable.user_iconshock_director,
-				R.drawable.user_iconshock_dreds,
-				R.drawable.user_iconshock_elsanto,
-				R.drawable.user_iconshock_elvis, R.drawable.user_iconshock_emo,
-				R.drawable.user_iconshock_escafandra,
-				R.drawable.user_iconshock_estilista,
-				R.drawable.user_iconshock_extraterrestre,
-				R.drawable.user_iconshock_fisicoculturista,
-				R.drawable.user_iconshock_funky,
-				R.drawable.user_iconshock_futbolista_brasilero,
-				R.drawable.user_iconshock_gay,
-				R.drawable.user_iconshock_geisha,
-				R.drawable.user_iconshock_ghostbuster,
-				R.drawable.user_iconshock_glamrock_singer,
-				R.drawable.user_iconshock_guerrero_chino,
-				R.drawable.user_iconshock_hiphopper,
-				R.drawable.user_iconshock_hombre_hippie,
-				R.drawable.user_iconshock_hotdog_man,
-				R.drawable.user_iconshock_indio,
-				R.drawable.user_iconshock_joker,
-				R.drawable.user_iconshock_karateka,
-				R.drawable.user_iconshock_mago,
-				R.drawable.user_iconshock_maori,
-				R.drawable.user_iconshock_mario_barakus,
-				R.drawable.user_iconshock_mascara_antigua,
-				R.drawable.user_iconshock_metalero,
-				R.drawable.user_iconshock_meteoro,
-				R.drawable.user_iconshock_michelin,
-				R.drawable.user_iconshock_mimo,
-				R.drawable.user_iconshock_mister,
-				R.drawable.user_iconshock_mounstrico1,
-				R.drawable.user_iconshock_mounstrico2,
-				R.drawable.user_iconshock_mounstrico3,
-				R.drawable.user_iconshock_mounstrico4,
-				R.drawable.user_iconshock_mounstruo,
-				R.drawable.user_iconshock_muerte,
-				R.drawable.user_iconshock_mujer_hippie,
-				R.drawable.user_iconshock_mujer_latina,
-				R.drawable.user_iconshock_muneco_lego,
-				R.drawable.user_iconshock_nena_afro };
 	}
 
 	public class ColourAdapter extends BaseAdapter {
