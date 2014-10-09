@@ -215,4 +215,15 @@ public class Game implements Serializable {
 	public void resumePlay() {
 		lastPlayed = System.currentTimeMillis();
 	}
+	
+	public int currentPlayerActivePosition() {
+		// relative only to active players
+		int result = 0;
+		for (int i = 0; i < activePlayerIndex; i++) {
+			if (participants.get(i).active()) {
+				result++;
+			}
+		}
+		return result;
+	}
 }

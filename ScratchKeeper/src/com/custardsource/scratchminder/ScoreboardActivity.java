@@ -49,6 +49,7 @@ public class ScoreboardActivity extends Activity {
 	private ListView notPlaying;
 	private Lobby lobby;
 	private TextView inProgressScoreView;
+	private ListView scoreboard;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +62,8 @@ public class ScoreboardActivity extends Activity {
 		this.game = lobby.gameById(getIntent().getLongExtra(GAME_ID, 0));
 
 		final Context context = getApplicationContext();
-		final ListView scoreboard = (ListView) findViewById(R.id.scoreboardListView);
+		scoreboard = (ListView) findViewById(R.id.scoreboardListView);
+		scoreboard.setSelection(game.currentPlayerActivePosition());
 		scoreboardAdapter = new ArrayAdapter<Participant>(this,
 				android.R.layout.simple_list_item_1,
 				game.getActiveParticipants()) {
@@ -459,11 +461,13 @@ public class ScoreboardActivity extends Activity {
 		case KeyEvent.KEYCODE_LEFT_BRACKET:
 			game.previousPlayer();
 			scoreboardAdapter.notifyDataSetChanged();
+			scoreboard.setSelection(game.currentPlayerActivePosition());
 			return true;
 
 		case KeyEvent.KEYCODE_RIGHT_BRACKET:
 			game.nextPlayer();
 			scoreboardAdapter.notifyDataSetChanged();
+			scoreboard.setSelection(game.currentPlayerActivePosition());
 			return true;
 
 		default:
@@ -490,6 +494,7 @@ public class ScoreboardActivity extends Activity {
 		inProgressScoreView.setText(Integer.toString(inProgressScore));
 		game.nextPlayer();
 		scoreboardAdapter.notifyDataSetChanged();
+		scoreboard.setSelection(game.currentPlayerActivePosition());
 		updateTotalScoreDisplay();
 		// TODO: shouldn't do this here, but will do for now
 		((GlobalState) getApplication()).flush();
