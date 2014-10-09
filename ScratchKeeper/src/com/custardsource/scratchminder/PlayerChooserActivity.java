@@ -10,7 +10,9 @@ import java.util.Set;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,35 +26,49 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.custardsource.scratchminder.util.DrawerUtils;
 import com.google.common.collect.Ordering;
 import com.google.common.primitives.Longs;
 
 public class PlayerChooserActivity extends Activity {
 
 	private static final int ACTION_NEW_PLAYER = 1;
+	private static final int ACTION_EDIT = 2;
 
 	public static final String EXCLUDE_PLAYERS = "EXCLUDE_PLAYERS";
 
+	public static final String ACTION = "ACTION";
+	// Main view (from drawer bar)
+	public static final String BROWSE = "BROWSE";
+
 	private Lobby lobby;
 	private ArrayAdapter<Player> playerAdapter;
+	private ActionBarDrawerToggle drawerToggle;
+	private boolean browseMode;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_player_chooser);
 		this.lobby = ((GlobalState) getApplication()).getLobby();
+		browseMode = BROWSE.equals(getIntent().getStringExtra(ACTION));
 
 		final ListView playerList = (ListView) findViewById(R.id.choosePlayer);
-		
+
+		if (browseMode) {
+			this.drawerToggle = DrawerUtils.configureDrawer(this);
+			setTitle(getString(R.string.player_roster));
+		}
+
 		List<Player> players = new ArrayList<Player>(lobby.allPlayers());
 		long[] exclude = getIntent().getLongArrayExtra(EXCLUDE_PLAYERS);
 		if (exclude != null) {
 			Set<Long> excludeSet = new HashSet<Long>(Longs.asList(exclude));
 			Iterator<Player> iter = players.iterator();
 			while (iter.hasNext()) {
-			    if (excludeSet.contains(iter.next().id())) {
-			        iter.remove();
-			    }
+				if (excludeSet.contains(iter.next().id())) {
+					iter.remove();
+				}
 			}
 		}
 		Collections.sort(players, new Ordering<Player>() {
@@ -84,23 +100,37 @@ public class PlayerChooserActivity extends Activity {
 						.findViewById(R.id.playerDate);
 				dateView.setText(DateUtils.getRelativeTimeSpanString(player
 						.lastPlayed()));
-				
+
 				return rowView;
 			}
 		};
 		playerList.setAdapter(playerAdapter);
-		playerList.setOnItemClickListener(new OnItemClickListener() {
+		if (browseMode) {
+			playerList.setOnItemClickListener(new OnItemClickListener() {
 
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				Player p = playerAdapter.getItem(position);
-				Intent result = new Intent("foo");
-				result.putExtra(AddPlayerActivity.PLAYER_ID, p.id());
-				setResult(Activity.RESULT_OK, result);
-				finish();
-			}
-		});
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+					Player p = playerAdapter.getItem(position);
+					Intent intent = new Intent(PlayerChooserActivity.this,
+							AddPlayerActivity.class);
+					intent.putExtra(AddPlayerActivity.PLAYER_ID, p.id());
+					startActivityForResult(intent, ACTION_EDIT);
+				}
+			});
+		} else {
+			playerList.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+					Player p = playerAdapter.getItem(position);
+					Intent result = new Intent("foo");
+					result.putExtra(AddPlayerActivity.PLAYER_ID, p.id());
+					setResult(Activity.RESULT_OK, result);
+					finish();
+				}
+			});
+		}
 
 	}
 
@@ -113,9 +143,9 @@ public class PlayerChooserActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
+		if (browseMode && drawerToggle.onOptionsItemSelected(item)) {
+			return true;
+		}
 		int id = item.getItemId();
 		if (id == R.id.add_player) {
 			Intent intent = new Intent(this, AddPlayerActivity.class);
@@ -140,6 +170,26 @@ public class PlayerChooserActivity extends Activity {
 				setResult(Activity.RESULT_OK, result);
 				finish();
 			}
+		} else if (requestCode == ACTION_EDIT) {
+			if (resultCode == RESULT_OK) {
+				playerAdapter.notifyDataSetChanged();
+			}
+		}
+	}
+
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		if (browseMode) {
+			drawerToggle.syncState();
+		}
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		if (browseMode) {
+			drawerToggle.onConfigurationChanged(newConfig);
 		}
 	}
 }

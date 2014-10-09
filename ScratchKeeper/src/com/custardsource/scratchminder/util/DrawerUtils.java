@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.custardsource.scratchminder.LeaguePlayActivity;
 import com.custardsource.scratchminder.LobbyActivity;
+import com.custardsource.scratchminder.PlayerChooserActivity;
 import com.custardsource.scratchminder.R;
 import com.google.common.collect.ImmutableList;
 
@@ -23,9 +24,10 @@ public class DrawerUtils {
 
 	private static final List<Class<? extends Activity>> DESTINATIONS = ImmutableList
 			.<Class<? extends Activity>> of(LobbyActivity.class,
-					LeaguePlayActivity.class);
-	private static final int[] ICONS = {R.drawable.ic_fa_table, R.drawable.ic_fa_trophy};
-	
+					LeaguePlayActivity.class, PlayerChooserActivity.class);
+	private static final int[] ICONS = { R.drawable.ic_fa_table,
+			R.drawable.ic_fa_trophy, R.drawable.ic_fa_users };
+
 	public static ActionBarDrawerToggle configureDrawer(final Activity activity) {
 
 		final DrawerLayout drawerLayout = (DrawerLayout) activity
@@ -36,14 +38,15 @@ public class DrawerUtils {
 		drawerList.setAdapter(new ArrayAdapter<String>(activity,
 				android.R.layout.simple_list_item_1, activity.getResources()
 						.getStringArray(R.array.drawer_items)) {
-							@Override
-							public View getView(int position, View convertView,
-									ViewGroup parent) {
-								View v = super.getView(position, convertView, parent);
-								TextView text = (TextView) v.findViewById(android.R.id.text1);
-								text.setCompoundDrawablesWithIntrinsicBounds(ICONS[position], 0, 0, 0);
-								return v;
-							}});
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent) {
+				View v = super.getView(position, convertView, parent);
+				TextView text = (TextView) v.findViewById(android.R.id.text1);
+				text.setCompoundDrawablesWithIntrinsicBounds(ICONS[position],
+						0, 0, 0);
+				return v;
+			}
+		});
 		// Set the list's click listener
 		drawerList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -60,6 +63,10 @@ public class DrawerUtils {
 						.get(position);
 				if (!destination.equals(activity.getClass())) {
 					Intent intent = new Intent(activity, destination);
+					if (destination.equals(PlayerChooserActivity.class)) {
+						intent.putExtra(PlayerChooserActivity.ACTION,
+								PlayerChooserActivity.BROWSE);
+					}
 					activity.startActivity(intent);
 				}
 			}

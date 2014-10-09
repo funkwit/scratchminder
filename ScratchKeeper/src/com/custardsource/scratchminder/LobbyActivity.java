@@ -45,7 +45,7 @@ public class LobbyActivity extends Activity {
 
 		PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
 
-		drawerToggle = DrawerUtils.configureDrawer(this);
+		this.drawerToggle = DrawerUtils.configureDrawer(this);
 
 		final ListView gamesList = (ListView) findViewById(R.id.lobbyGames);
 		sortedGames = new ArrayList<Game>();
