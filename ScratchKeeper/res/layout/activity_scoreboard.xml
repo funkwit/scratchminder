@@ -93,7 +93,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="@string/total_score"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/totalScoreValue"
@@ -103,7 +104,8 @@
                 android:layout_marginRight="5dp"
                 android:gravity="center_horizontal"
                 android:text="@string/_dummy_number"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="20sp" />
 
         </LinearLayout>
 
@@ -114,7 +116,7 @@
 
             <TextView
                 android:id="@+id/inprogressScore"
-                android:layout_width="50dp"
+                android:layout_width="70sp"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_gravity="center_vertical"
@@ -122,6 +124,7 @@
                 android:gravity="center_horizontal"
                 android:text="@string/_dummy_number"
                 android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="60sp"
                 android:textStyle="bold" />
 
             <Button
@@ -129,25 +132,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:layout_gravity="right"
-                android:text="@android:string/ok" />
+                android:layout_centerVertical="true"
+                android:layout_gravity="center_vertical"
+                android:text="@android:string/ok"
+                android:textSize="30sp" />
 
             <Button
                 android:id="@+id/plusone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center_vertical"
                 android:layout_toRightOf="@id/inprogressScore"
-                android:text="@string/plusone" />
+                android:text="@string/plusone"
+                android:textSize="30sp" />
 
             <Button
                 android:id="@+id/minusone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:text="@string/minusone" />
+                android:layout_centerVertical="true"
+                android:layout_gravity="center_vertical"
+                android:text="@string/minusone"
+                android:textSize="30sp" />
+
         </RelativeLayout>
 
     </LinearLayout>
