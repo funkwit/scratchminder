@@ -9,8 +9,8 @@
 
         <ImageView
             android:id="@+id/icon"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="@dimen/scoreboard_inactive_icon_size"
+            android:layout_height="@dimen/scoreboard_inactive_icon_size"
             android:adjustViewBounds="true"
             android:src="@drawable/ic_launcher"
             android:contentDescription="@null" />
@@ -21,7 +21,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="left|center_vertical"
             android:text="@string/_dummy_player_name"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium" 
+            android:textSize="@dimen/scoreboard_inactive_text_size" />
 
     </LinearLayout>
 
@@ -32,6 +33,7 @@
         android:layout_gravity="right|center_vertical"
         android:text="@string/_dummy_number"
         android:layout_marginRight="5dp"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="@dimen/scoreboard_inactive_text_size" />
 
 </FrameLayout>

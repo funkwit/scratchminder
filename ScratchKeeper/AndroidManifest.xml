@@ -20,14 +20,12 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:parentActivityName=".LobbyActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" >
         </activity>
         <activity
             android:name=".AddPlayerActivity"
             android:label="@string/title_activity_add_player"
             android:parentActivityName=".PlayerChooserActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" >
         </activity>
         <activity

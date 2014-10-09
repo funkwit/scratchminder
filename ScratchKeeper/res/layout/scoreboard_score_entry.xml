@@ -19,7 +19,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="left|center_vertical"
             android:text="Large Text"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="@dimen/scoreboard_active_text_size" />
 
     </LinearLayout>
 
@@ -34,7 +35,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right|center_vertical"
             android:text="Small Text"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textSize="@dimen/scoreboard_active_history_text_size" />
 
         <TextView
             android:id="@+id/score"
@@ -44,7 +46,8 @@
             android:paddingLeft="@dimen/score_padding"
             android:paddingRight="@dimen/score_padding"
             android:text="0"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="@dimen/scoreboard_active_text_size" />
 
     </LinearLayout>
 

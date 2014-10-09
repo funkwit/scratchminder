@@ -124,7 +124,7 @@
                 android:gravity="center_horizontal"
                 android:text="@string/_dummy_number"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textSize="60sp"
+                android:textSize="@dimen/scoreboard_score_text_size"
                 android:textStyle="bold" />
 
             <Button
@@ -135,7 +135,7 @@
                 android:layout_centerVertical="true"
                 android:layout_gravity="center_vertical"
                 android:text="@android:string/ok"
-                android:textSize="30sp" />
+                android:textSize="@dimen/scoreboard_button_text_size" />
 
             <Button
                 android:id="@+id/plusone"
@@ -145,7 +145,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_toRightOf="@id/inprogressScore"
                 android:text="@string/plusone"
-                android:textSize="30sp" />
+                android:textSize="@dimen/scoreboard_button_text_size" />
 
             <Button
                 android:id="@+id/minusone"
@@ -155,7 +155,7 @@
                 android:layout_centerVertical="true"
                 android:layout_gravity="center_vertical"
                 android:text="@string/minusone"
-                android:textSize="30sp" />
+                android:textSize="@dimen/scoreboard_button_text_size" />
 
         </RelativeLayout>
 
