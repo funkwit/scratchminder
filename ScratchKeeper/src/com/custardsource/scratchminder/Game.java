@@ -46,6 +46,20 @@ public class Game implements Serializable {
 		lastPlayed = System.currentTimeMillis();
 	}
 
+	public void previousPlayer() {
+		activePlayerIndex = activePlayerIndex - 1;
+		if (activePlayerIndex < 0) {
+			activePlayerIndex = participants.size() - 1;
+		}
+		while (!participants.get(activePlayerIndex).active()) {
+			activePlayerIndex = activePlayerIndex - 1;
+			if (activePlayerIndex < 0) {
+				activePlayerIndex = participants.size() - 1;
+			}
+		}
+		lastPlayed = System.currentTimeMillis();
+	}
+
 	public boolean isCurrentParticipant(Participant participant) {
 		return participants.get(activePlayerIndex) == participant;
 	}

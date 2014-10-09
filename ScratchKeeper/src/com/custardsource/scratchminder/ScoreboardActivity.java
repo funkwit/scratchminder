@@ -12,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,7 +32,6 @@ import android.widget.TextView;
 
 import com.custardsource.scratchminder.util.DialogUtils;
 
-
 public class ScoreboardActivity extends Activity {
 	private static final int ACTION_ADD = 1;
 	private static final int ACTION_EDIT = 2;
@@ -48,7 +48,8 @@ public class ScoreboardActivity extends Activity {
 	private SharedPreferences sharedPref;
 	private ListView notPlaying;
 	private Lobby lobby;
-	
+	private TextView inProgressScoreView;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -141,38 +142,26 @@ public class ScoreboardActivity extends Activity {
 		};
 		notPlaying.setAdapter(notPlayingAdapter);
 
-		final TextView inProgressScoreView = (TextView) findViewById(R.id.inprogressScore);
+		inProgressScoreView = (TextView) findViewById(R.id.inprogressScore);
 		((Button) findViewById(R.id.plusone))
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						inProgressScore += 1;
-						inProgressScoreView.setText(Integer
-								.toString(inProgressScore));
+						clickPlus();
 					}
 				});
 		((Button) findViewById(R.id.minusone))
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						inProgressScore -= 1;
-						inProgressScoreView.setText(Integer
-								.toString(inProgressScore));
+						clickMinus();
 					}
 				});
 		((Button) findViewById(R.id.commitScore))
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						game.recordScoreForActivePlayer(inProgressScore);
-						inProgressScore = 0;
-						inProgressScoreView.setText(Integer
-								.toString(inProgressScore));
-						game.nextPlayer();
-						scoreboardAdapter.notifyDataSetChanged();
-						updateTotalScoreDisplay();
-						// TODO: shouldn't do this here, but will do for now
-						((GlobalState) getApplication()).flush();
+						clickOk();
 					}
 				});
 
@@ -324,8 +313,8 @@ public class ScoreboardActivity extends Activity {
 		if (requestCode == ACTION_ADD) {
 			// Make sure the request was successful
 			if (resultCode == RESULT_OK) {
-				Player p = lobby.playerById(data
-						.getLongExtra(AddPlayerActivity.PLAYER_ID, 0));
+				Player p = lobby.playerById(data.getLongExtra(
+						AddPlayerActivity.PLAYER_ID, 0));
 				scoreboardAdapter.add(game.addPlayer(p));
 				p.recordPlay();
 				updateAllDisplay();
@@ -347,9 +336,11 @@ public class ScoreboardActivity extends Activity {
 				sharedPref.getBoolean("show_total", true) ? View.VISIBLE
 						: View.GONE);
 		if (sharedPref.getBoolean("lock_screen", false)) {
-			getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+			getWindow()
+					.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		} else {
-			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+			getWindow().clearFlags(
+					WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		}
 		updateTotalScoreDisplay();
 	}
@@ -378,8 +369,8 @@ public class ScoreboardActivity extends Activity {
 		int id = item.getItemId();
 		if (id == R.id.add_player) {
 			Intent intent = new Intent(this, PlayerChooserActivity.class);
-			intent.putExtra(PlayerChooserActivity.EXCLUDE_PLAYERS, game
-					.playerIdsAsArray());
+			intent.putExtra(PlayerChooserActivity.EXCLUDE_PLAYERS,
+					game.playerIdsAsArray());
 			startActivityForResult(intent, ACTION_ADD);
 			return true;
 		} else if (id == R.id.reset_scores) {
@@ -436,5 +427,71 @@ public class ScoreboardActivity extends Activity {
 	protected void onPause() {
 		((GlobalState) getApplication()).flush();
 		super.onPause();
+	}
+
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		if (game.getParticipants().isEmpty()) {
+			return super.onKeyUp(keyCode, event);
+		}
+		switch (keyCode) {
+		case KeyEvent.KEYCODE_PLUS:
+		case KeyEvent.KEYCODE_NUMPAD_ADD:
+		case KeyEvent.KEYCODE_EQUALS:
+			clickPlus();
+			return true;
+
+		case KeyEvent.KEYCODE_MINUS:
+		case KeyEvent.KEYCODE_NUMPAD_SUBTRACT:
+			clickMinus();
+			return true;
+
+		case KeyEvent.KEYCODE_ENTER:
+		case KeyEvent.KEYCODE_NUMPAD_ENTER:
+		case KeyEvent.KEYCODE_SPACE:
+			clickOk();
+			return true;
+
+		case KeyEvent.KEYCODE_DPAD_DOWN:
+			clickMinus();
+			return true;
+
+		case KeyEvent.KEYCODE_LEFT_BRACKET:
+			game.previousPlayer();
+			scoreboardAdapter.notifyDataSetChanged();
+			return true;
+
+		case KeyEvent.KEYCODE_RIGHT_BRACKET:
+			game.nextPlayer();
+			scoreboardAdapter.notifyDataSetChanged();
+			return true;
+
+		default:
+			Log.d("ScratchMinder", "Received unhandled keyup: " + keyCode + " "
+					+ KeyEvent.keyCodeToString(keyCode));
+
+			return super.onKeyUp(keyCode, event);
+		}
+	}
+
+	private void clickPlus() {
+		inProgressScore += 1;
+		inProgressScoreView.setText(Integer.toString(inProgressScore));
+	}
+
+	private void clickMinus() {
+		inProgressScore -= 1;
+		inProgressScoreView.setText(Integer.toString(inProgressScore));
+	}
+
+	private void clickOk() {
+		game.recordScoreForActivePlayer(inProgressScore);
+		inProgressScore = 0;
+		inProgressScoreView.setText(Integer.toString(inProgressScore));
+		game.nextPlayer();
+		scoreboardAdapter.notifyDataSetChanged();
+		updateTotalScoreDisplay();
+		// TODO: shouldn't do this here, but will do for now
+		((GlobalState) getApplication()).flush();
 	}
 }
