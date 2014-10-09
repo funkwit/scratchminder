@@ -1,6 +1,7 @@
 package com.custardsource.scratchminder;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -9,6 +10,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,30 +19,47 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.Checkable;
 import android.widget.EditText;
-import android.widget.Gallery;
+import android.widget.GridView;
 import android.widget.ImageView;
 
-@SuppressWarnings("deprecation")
 public class AddPlayerActivity extends Activity {
-
 	static final String PLAYER_ID = "PlayerID";
 
 	private Player editingPlayer;
 	private GlobalState state;
 
+	private int itemBackground;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO: replace gallery.
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add_player);
 		state = (GlobalState) getApplication();
-		final Gallery g = (Gallery) findViewById(R.id.galleryPicture);
+
+		TypedArray a = obtainStyledAttributes(R.styleable.GalleryTheme);
+		itemBackground = a.getResourceId(
+				R.styleable.GalleryTheme_android_galleryItemBackground, 0);
+		a.recycle();
+
+		
 		final ImageAdapter imageAdapter = new ImageAdapter();
-		g.setAdapter(imageAdapter);
-		final Gallery colours = (Gallery) findViewById(R.id.galleryColour);
+		final GridView gridView = (GridView) findViewById(R.id.gridPicture);
+		gridView.setAdapter(imageAdapter);
+		gridView.setSelector(itemBackground);
+		gridView.setChoiceMode(GridView.CHOICE_MODE_SINGLE);
+		gridView.setSelection(0);
+		gridView.setItemChecked(0, true);
+
+		final GridView colours = (GridView) findViewById(R.id.gridColour);
 		final ColourAdapter colourAdapter = new ColourAdapter();
 		colours.setAdapter(colourAdapter);
+		colours.setSelector(itemBackground);
+		colours.setChoiceMode(GridView.CHOICE_MODE_SINGLE);
+		colours.setSelection(0);
+		colours.setItemChecked(0, true);
+
 		((Button) findViewById(R.id.cancel))
 				.setOnClickListener(new OnClickListener() {
 					@Override
@@ -55,25 +75,23 @@ public class AddPlayerActivity extends Activity {
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						// TODO - string?
 						Intent result = new Intent("foo");
 						Player p = editingPlayer;
 						if (p == null) {
 							p = state.getLobby().addPlayer(
 									((EditText) findViewById(R.id.editName))
 											.getText().toString(),
-
-									imageAdapter.getItem(g
-											.getSelectedItemPosition()),
+									imageAdapter.getItem(gridView
+											.getCheckedItemPosition()),
 									colourAdapter.getItem(colours
-											.getSelectedItemPosition()));
+											.getCheckedItemPosition()));
 						} else {
 							p.setName(((EditText) findViewById(R.id.editName))
 									.getText().toString());
-							p.setAvatar(imageAdapter.getItem(g
-									.getSelectedItemPosition()));
+							p.setAvatar(imageAdapter.getItem(gridView
+									.getCheckedItemPosition()));
 							p.setColour(colourAdapter.getItem(colours
-									.getSelectedItemPosition()));
+									.getCheckedItemPosition()));
 
 						}
 						result.putExtra(PLAYER_ID, p.id());
@@ -104,9 +122,14 @@ public class AddPlayerActivity extends Activity {
 			// It's an edit
 			Player p = state.getLobby().playerById(getIntent().getLongExtra(PLAYER_ID, 0));
 			((EditText) findViewById(R.id.editName)).setText(p.getName());
-			g.setSelection(getIndexFromAdapter(imageAdapter, p.getAvatar()));
-			colours.setSelection(getIndexFromAdapter(colourAdapter,
-					p.getColor()));
+			int index = getIndexFromAdapter(imageAdapter, p.getAvatar());
+			gridView.setSelection(index);
+			gridView.setItemChecked(index, true);
+			
+			index = getIndexFromAdapter(colourAdapter,
+					p.getColor());
+			colours.setSelection(index);
+			colours.setItemChecked(index, true);
 			editingPlayer = p;
 		}
 	}
@@ -118,7 +141,6 @@ public class AddPlayerActivity extends Activity {
 		return 0;
 	}
 
-	// TODO: proper image picker
 	// TODO: delete player completely
 
 	@Override
@@ -141,16 +163,6 @@ public class AddPlayerActivity extends Activity {
 	}
 
 	public class ImageAdapter extends BaseAdapter {
-		private int mGalleryItemBackground;
-
-		public ImageAdapter() {
-			TypedArray a = obtainStyledAttributes(R.styleable.GalleryTheme);
-			mGalleryItemBackground = a.getResourceId(
-					R.styleable.GalleryTheme_android_galleryItemBackground, 0);
-			a.recycle();
-
-		}
-
 		public int getCount() {
 			return Avatar.values().length;
 		}
@@ -167,9 +179,8 @@ public class AddPlayerActivity extends Activity {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ImageView i = (ImageView) convertView;
 			if (convertView == null) {
-				i = new ImageView(AddPlayerActivity.this);
-				i.setScaleType(ImageView.ScaleType.FIT_XY);
-				i.setBackgroundResource(mGalleryItemBackground);
+				i = new CheckableImageView(AddPlayerActivity.this);
+				i.setAdjustViewBounds(true);
 			}
 			i.setImageResource(Avatar.values()[position].drawable());
 			return i;
@@ -177,19 +188,9 @@ public class AddPlayerActivity extends Activity {
 	}
 
 	public class ColourAdapter extends BaseAdapter {
-		private int mGalleryItemBackground;
-
 		// TODO- refactor with above
 		// TODO - consistent spelling of colour
 		// tODO - consistent terminology with players enabled/disabled
-		public ColourAdapter() {
-			TypedArray a = obtainStyledAttributes(R.styleable.GalleryTheme);
-			mGalleryItemBackground = a.getResourceId(
-					R.styleable.GalleryTheme_android_galleryItemBackground, 0);
-			a.recycle();
-
-		}
-
 		public int getCount() {
 			return mColours.length;
 		}
@@ -204,12 +205,17 @@ public class AddPlayerActivity extends Activity {
 		}
 
 		public View getView(int position, View convertView, ViewGroup parent) {
-			ImageView i = new ImageView(AddPlayerActivity.this);
+			ImageView i = (ImageView) convertView;
+			if (convertView == null) {
+				i = new CheckableImageView(AddPlayerActivity.this);
+				float size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
+				int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, getResources().getDisplayMetrics());
+
+				i.setLayoutParams(new GridView.LayoutParams((int) size, (int) size));
+				i.setPadding(padding, padding, padding, padding);
+			}
 			Drawable color = new ColorDrawable(mColours[position]);
 			i.setImageDrawable(color);
-			i.setBackgroundResource(mGalleryItemBackground);
-
-			i.setLayoutParams(new Gallery.LayoutParams(136, 136));
 			return i;
 		}
 
@@ -223,4 +229,44 @@ public class AddPlayerActivity extends Activity {
 				Color.rgb(127, 0, 64) };
 
 	}
-}
+	
+	public class CheckableImageView extends ImageView implements Checkable {
+		private boolean checked = false;
+
+		public CheckableImageView(Context context, AttributeSet attrs,
+				int defStyle) {
+			super(context, attrs, defStyle);
+		}
+
+		public CheckableImageView(Context context, AttributeSet attrs) {
+			super(context, attrs);
+		}
+
+		public CheckableImageView(Context context) {
+			super(context);
+		}
+
+		@Override
+		public boolean isChecked() {
+			return this.checked;
+		}
+
+		@Override
+		public void setChecked(boolean checked) {
+			if (this.checked == checked)
+	            return;
+	        this.checked = checked;
+	        if (this.checked) {
+	        	setBackgroundResource(android.R.color.darker_gray);
+	        } else {
+	        	setBackgroundResource(0);
+	        }
+	        refreshDrawableState();
+		}
+
+		@Override
+		public void toggle() {
+			setChecked(!checked);
+		}
+
+	}}
