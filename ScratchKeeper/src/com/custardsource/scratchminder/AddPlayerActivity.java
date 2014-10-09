@@ -136,7 +136,7 @@ public class AddPlayerActivity extends Activity {
 
 	private <T> int getIndexFromAdapter(BaseAdapter adapter, T object) {
 		for (int position = 0; position < adapter.getCount(); position++)
-			if (adapter.getItem(position) == object)
+			if (adapter.getItem(position).equals(object))
 				return position;
 		return 0;
 	}
