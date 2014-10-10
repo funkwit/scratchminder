@@ -1,5 +1,7 @@
 package com.custardsource.scratchminder;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,6 +23,7 @@ public class League implements Serializable {
 	private static final double DEFAULT_POW_BASE = 10;
 	private static final double DEFAULT_DIVISOR = 400;
 	private static final int DEFAULT_K_FACTOR = 32;
+	private int drawable = 0;
 
 	public League(String name) {
 		this.name = name;
@@ -86,9 +89,11 @@ public class League implements Serializable {
 	}
 
 	public List<Map.Entry<Player, Double>> playersByRank() {
-		List<Map.Entry<Player, Double>> sorted = Lists.newArrayList(rankings.entrySet());
+		List<Map.Entry<Player, Double>> sorted = Lists.newArrayList(rankings
+				.entrySet());
 		Collections.sort(sorted, new Ordering<Map.Entry<Player, Double>>() {
-			public int compare(Map.Entry<Player, Double> x, Map.Entry<Player, Double> y) {
+			public int compare(Map.Entry<Player, Double> x,
+					Map.Entry<Player, Double> y) {
 				return Double.compare(y.getValue(), x.getValue());
 			}
 		});
@@ -101,5 +106,36 @@ public class League implements Serializable {
 		}
 		return Lists.reverse((new ArrayList<LeagueGame>(games.subList(
 				games.size() - count, games.size()))));
+	}
+
+	public Long lastPlayed() {
+		if (games.isEmpty()) {
+			return null;
+		}
+		return games.get(games.size() - 1).timestamp();
+	}
+
+	public int getDrawable() {
+		return this.drawable;
+	}
+
+	private void readObject(ObjectInputStream in) throws IOException,
+			ClassNotFoundException {
+		in.defaultReadObject(); // Temporary migration hack
+		if (this.drawable == 0) {
+			if (this.name.startsWith("8")) {
+				this.drawable = R.drawable.ic_poolballs_barkerbaggies_08;
+			} else if (this.name.startsWith("9")) {
+				this.drawable = R.drawable.ic_poolballs_barkerbaggies_09;
+			} else if (this.name.startsWith("10")) {
+				this.drawable = R.drawable.ic_poolballs_barkerbaggies_10;
+			} else if (this.name.startsWith("One")) {
+				this.drawable = R.drawable.ic_poolballs_barkerbaggies_01;
+			} else if (this.name.startsWith("Mind")) {
+				this.drawable = R.drawable.ic_poolballs_barkerbaggies_cue;
+			} else {
+				this.drawable = R.drawable.ic_poolballs_barkerbaggies_15;
+			}
+		}
 	}
 }

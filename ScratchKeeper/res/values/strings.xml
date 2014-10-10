@@ -84,5 +84,8 @@
     <string name="player_colour_label">Colour</string>
     <string name="player_icon_label">Icon</string>
     <string name="player_roster">Player Roster</string>
+    <string name="_dummy_league_name">8-ball</string>
+    <string name="last_game">Last game played: </string>
+    <string name="never_played">never</string>
     
 </resources>

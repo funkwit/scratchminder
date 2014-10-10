@@ -8,8 +8,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -47,12 +51,29 @@ public class LeaguePlayActivity extends Activity {
 					LayoutInflater inflater = (LayoutInflater) LeaguePlayActivity.this
 							.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 					rowView = inflater.inflate(
-							android.R.layout.simple_list_item_1, parent, false);
+							R.layout.league_list_entry, parent, false);
 				}
 				TextView nameView = (TextView) rowView
-						.findViewById(android.R.id.text1);
+						.findViewById(R.id.leagueName);
+				ImageView iconView = (ImageView) rowView
+						.findViewById(R.id.leagueIcon);
+				TextView dateView = (TextView) rowView
+						.findViewById(R.id.leagueDate);
 
 				nameView.setText(league.name());
+				int resource = league.getDrawable();
+				if (resource == 0) {
+					iconView.setImageDrawable(new ColorDrawable(
+						Color.TRANSPARENT));
+				} else {
+					iconView.setImageResource(resource);
+				}
+				Long date = league.lastPlayed();
+				if (date == null) {
+					dateView.setText(getString(R.string.never_played));
+				} else {
+					dateView.setText(DateUtils.getRelativeTimeSpanString(date));
+				}
 				return rowView;
 			}
 		};
