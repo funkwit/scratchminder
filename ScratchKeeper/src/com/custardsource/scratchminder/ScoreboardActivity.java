@@ -29,6 +29,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.custardsource.scratchminder.util.DialogUtils;
 
@@ -471,8 +472,12 @@ public class ScoreboardActivity extends Activity {
 			return true;
 
 		default:
-			Log.d("ScratchMinder", "Received unhandled keyup: " + keyCode + " "
-					+ KeyEvent.keyCodeToString(keyCode));
+			String message = "Received unhandled keyup: " + keyCode + " "
+					+ KeyEvent.keyCodeToString(keyCode);
+			Log.d("ScratchMinder", message);
+			if (sharedPref.getBoolean("debug_scoreboard_keys", false)) {
+				Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+			}
 
 			return super.onKeyUp(keyCode, event);
 		}

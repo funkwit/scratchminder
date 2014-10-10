@@ -9,6 +9,8 @@
     <string name="pref_description_show_total">Show the total score across all players</string>
     <string name="pref_title_include_abandoned">Track abandoned points</string>
     <string name="pref_description_include_abandoned">Track and show points for players who have left the game</string>
+    <string name="pref_title_debug_scoreboard_keys">Debug scoreboard keys?</string>
+    <string name="pref_description_debug_scoreboard_keys">Show a popup on scoreboard when key pressed, for debugging</string>
     
     <!-- Example General settings -->
     <string name="pref_title_display_name">Display name</string>
