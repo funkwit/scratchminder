@@ -125,8 +125,25 @@ public enum Avatar {
 	user_iconka_persons_monroe(R.drawable.user_iconka_persons_monroe),
 	user_iconka_persons_potter(R.drawable.user_iconka_persons_potter),
 	user_iconka_persons_serduchka(R.drawable.user_iconka_persons_serduchka),
-	user_iconka_persons_terminator(R.drawable.user_iconka_persons_terminator);
-
+	user_iconka_persons_terminator(R.drawable.user_iconka_persons_terminator),
+	
+	user_iconka_dress_it_assassin_avatar(R.drawable.user_iconka_dress_it_assassin_avatar),
+	user_iconka_dress_it_attendant_avatar(R.drawable.user_iconka_dress_it_attendant_avatar),
+	user_iconka_dress_it_commissar_avatar(R.drawable.user_iconka_dress_it_commissar_avatar),
+	user_iconka_dress_it_dad_avatar(R.drawable.user_iconka_dress_it_dad_avatar),
+	user_iconka_dress_it_designer_avatar(R.drawable.user_iconka_dress_it_designer_avatar),
+	user_iconka_dress_it_diver_avatar(R.drawable.user_iconka_dress_it_diver_avatar),
+	user_iconka_dress_it_engineer_avatar(R.drawable.user_iconka_dress_it_engineer_avatar),
+	user_iconka_dress_it_fireman_avatar(R.drawable.user_iconka_dress_it_fireman_avatar),
+	user_iconka_dress_it_gradfemale_avatar(R.drawable.user_iconka_dress_it_gradfemale_avatar),
+	user_iconka_dress_it_gradmale_avatar(R.drawable.user_iconka_dress_it_gradmale_avatar),
+	user_iconka_dress_it_mom_avatar(R.drawable.user_iconka_dress_it_mom_avatar),
+	user_iconka_dress_it_nurse_avatar(R.drawable.user_iconka_dress_it_nurse_avatar),
+	user_iconka_dress_it_sexy_avatar(R.drawable.user_iconka_dress_it_sexy_avatar),
+	user_iconka_dress_it_soldier_avatar(R.drawable.user_iconka_dress_it_soldier_avatar),
+	user_iconka_dress_it_v_avatar(R.drawable.user_iconka_dress_it_v_avatar),
+	user_iconka_dress_it_witch_avatar(R.drawable.user_iconka_dress_it_witch_avatar);
+	
 	
 	@SuppressLint("UseSparseArrays")
 	private static final Map<Integer, Avatar> BY_DRAWABLE_IDS = new HashMap<Integer, Avatar>();
