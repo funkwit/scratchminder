@@ -118,7 +118,15 @@ public enum Avatar {
 	user_animal_berube_tiger(R.drawable.user_animal_berube_tiger),
 	user_animal_berube_turkey(R.drawable.user_animal_berube_turkey),
 	user_animal_berube_turtle(R.drawable.user_animal_berube_turtle),
-	user_animal_berube_wolf(R.drawable.user_animal_berube_wolf);
+	user_animal_berube_wolf(R.drawable.user_animal_berube_wolf),
+	
+	user_iconka_persons_elvis(R.drawable.user_iconka_persons_elvis),
+	user_iconka_persons_holmes(R.drawable.user_iconka_persons_holmes),
+	user_iconka_persons_monroe(R.drawable.user_iconka_persons_monroe),
+	user_iconka_persons_potter(R.drawable.user_iconka_persons_potter),
+	user_iconka_persons_serduchka(R.drawable.user_iconka_persons_serduchka),
+	user_iconka_persons_terminator(R.drawable.user_iconka_persons_terminator);
+
 	
 	@SuppressLint("UseSparseArrays")
 	private static final Map<Integer, Avatar> BY_DRAWABLE_IDS = new HashMap<Integer, Avatar>();
