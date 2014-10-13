@@ -50,7 +50,8 @@ public class GlobalState extends Application {
 			ByteStreams.copy(inputStream, outputStream);
 			inputStream.close();
 			outputStream.close();
-
+		} catch (FileNotFoundException e) {
+			// OK; new install, no data.
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

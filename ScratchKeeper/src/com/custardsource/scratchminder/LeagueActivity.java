@@ -29,12 +29,14 @@ public class LeagueActivity extends Activity {
 	private ArrayAdapter<Entry<Player, Double>> rankingAdapter;
 	private List<LeagueGame> recentGames;
 	private ArrayAdapter<LeagueGame> recentGamesAdapter;
+	private GlobalState globalState;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_league);
-		lobby = ((GlobalState) getApplication()).getLobby();
+		this.globalState = (GlobalState) getApplication(); 
+		this.lobby = globalState.getLobby();
 
 		this.league = lobby.leagueById(getIntent().getLongExtra(LEAGUE_ID, 0));
 		setTitle(league.name());
@@ -166,6 +168,7 @@ public class LeagueActivity extends Activity {
 				recentGames = league.recentGames(RECENT_GAME_COUNT);
 				recentGamesAdapter.clear();
 				recentGamesAdapter.addAll(recentGames);
+				globalState.flush();
 			}
 		}
 	}
