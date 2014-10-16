@@ -121,12 +121,6 @@ public class LeaguePlayActivity extends Activity {
 	}
 
 	@Override
-	protected void onPause() {
-		((GlobalState) getApplication()).flush();
-		super.onPause();
-	}
-
-	@Override
 	protected void onResume() {
 		super.onResume();
 		updateAllDisplay();

@@ -5,19 +5,29 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-
-import com.google.common.io.ByteStreams;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
+
+import com.google.common.io.ByteStreams;
 
 public class GlobalState extends Application {
 	private static final String STATE_FILE = "savedstate";
+	private static final String TAG = "GlobalState";
 
 	private Lobby lobby;
 
+	private Timer timer;
+
+	private static final long SAVE_PERIODICITY = TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES);
+	
 	public GlobalState() {
 		super();
+		this.timer = new Timer();
 	}
 
 	Lobby getLobby() {
@@ -57,8 +67,9 @@ public class GlobalState extends Application {
 		}
 	}
 
-	void flush() {
+	private void flush() {
 		saveGameState();
+		Log.d(TAG, "Flushed game data to disk");
 	}
 
 	private void saveGameState() {
@@ -76,6 +87,12 @@ public class GlobalState extends Application {
 	public void onCreate() {
 		super.onCreate();
 		restoreGameState();
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				flush();
+			}
+		}, SAVE_PERIODICITY, SAVE_PERIODICITY);
 	}
 
 	@Override

@@ -427,12 +427,6 @@ public class ScoreboardActivity extends Activity {
 	}
 
 	@Override
-	protected void onPause() {
-		((GlobalState) getApplication()).flush();
-		super.onPause();
-	}
-
-	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (game.getParticipants().isEmpty()) {
 			return super.onKeyUp(keyCode, event);
@@ -501,7 +495,5 @@ public class ScoreboardActivity extends Activity {
 		scoreboardAdapter.notifyDataSetChanged();
 		scoreboard.setSelection(game.currentPlayerActivePosition());
 		updateTotalScoreDisplay();
-		// TODO: shouldn't do this here, but will do for now
-		((GlobalState) getApplication()).flush();
 	}
 }

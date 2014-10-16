@@ -113,7 +113,6 @@ public class LobbyActivity extends Activity {
 
 	@Override
 	protected void onPause() {
-		((GlobalState) getApplication()).flush();
 		super.onPause();
 	}
 
