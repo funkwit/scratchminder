@@ -10,14 +10,14 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import android.app.Application;
+import android.app.backup.BackupManager;
 import android.content.Context;
 import android.util.Log;
 
 import com.google.common.io.ByteStreams;
 
 public class GlobalState extends Application {
-	private static final String STATE_FILE = "savedstate";
-	private static final String TAG = "GlobalState";
+	static final String STATE_FILE = "savedstate";
 
 	private Lobby lobby;
 
@@ -28,13 +28,15 @@ public class GlobalState extends Application {
 	public GlobalState() {
 		super();
 		this.timer = new Timer();
+		Log.d(Constants.TAG, "constructor of GlobalState");
+
 	}
 
 	Lobby getLobby() {
 		return this.lobby;
 	}
 
-	private void restoreGameState() {
+	void restoreGameState() {
 		doBackup();
 		try {
 			ObjectInputStream inputStream = new ObjectInputStream(
@@ -49,6 +51,7 @@ public class GlobalState extends Application {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+		Log.d(Constants.TAG, "restoreGameState of GlobalState");
 	}
 
 	private void doBackup() {
@@ -69,7 +72,7 @@ public class GlobalState extends Application {
 
 	private void flush() {
 		saveGameState();
-		Log.d(TAG, "Flushed game data to disk");
+		Log.d(Constants.TAG, "Flushed game data to disk");
 	}
 
 	private void saveGameState() {
@@ -85,14 +88,17 @@ public class GlobalState extends Application {
 
 	@Override
 	public void onCreate() {
+		Log.d(Constants.TAG, "onCreate() of GlobalState");
 		super.onCreate();
 		restoreGameState();
+
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
 				flush();
 			}
 		}, SAVE_PERIODICITY, SAVE_PERIODICITY);
+		new BackupManager(this).dataChanged();
 	}
 
 	@Override

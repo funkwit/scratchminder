@@ -278,7 +278,7 @@ public class ScoreboardActivity extends Activity {
 	private void leave(long id) {
 		Participant participant = game.partipantInActivePosition((int) id);
 		game.leave(participant);
-		Log.e("SK", "Removing player" + participant);
+		Log.d(Constants.TAG, "Removing player" + participant);
 		scoreboardAdapter.remove(participant);
 		notPlayingAdapter.add(participant);
 		findViewById(R.id.notPlayingPanel).setVisibility(View.VISIBLE);
