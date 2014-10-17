@@ -34,13 +34,28 @@
             android:layout_below="@+id/newLeagueName"
             android:stretchMode="none" >
         </GridView>
-            
-    <Button
-        android:id="@+id/ok"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/gridPicture"
-        android:text="@android:string/ok" />
+        
+     <LinearLayout
+        style="@style/ButtonBar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" 
+        android:layout_below="@+id/gridPicture">
+
+        <Button
+            android:id="@+id/cancel"
+            style="@style/ButtonBarButton"
+            android:layout_width="99dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@android:string/cancel" />
+
+        <Button
+            android:id="@+id/ok"
+            style="@style/ButtonBarButton"
+            android:layout_width="99dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@android:string/ok" />
+    </LinearLayout>
 
 </RelativeLayout>

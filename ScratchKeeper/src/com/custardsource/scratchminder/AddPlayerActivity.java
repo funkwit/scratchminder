@@ -100,11 +100,9 @@ public class AddPlayerActivity extends Activity {
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						// TODO - string?
 						Intent result = new Intent("foo");
 						setResult(Activity.RESULT_CANCELED, result);
 						finish();
-
 					}
 				});
 		((Button) findViewById(R.id.ok))

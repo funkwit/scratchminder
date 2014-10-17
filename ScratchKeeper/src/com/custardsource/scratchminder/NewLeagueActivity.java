@@ -62,6 +62,16 @@ public class NewLeagueActivity extends Activity {
 		gridView.setSelection(0);
 		gridView.setItemChecked(0, true);
 
+		((Button) findViewById(R.id.cancel))
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						Intent result = new Intent("foo");
+						setResult(Activity.RESULT_CANCELED, result);
+						finish();
+					}
+				});
+
 		((Button) findViewById(R.id.ok))
 				.setOnClickListener(new OnClickListener() {
 					@Override
