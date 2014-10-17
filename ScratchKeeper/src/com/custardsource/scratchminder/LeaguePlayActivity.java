@@ -13,12 +13,16 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.text.format.DateUtils;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -27,6 +31,7 @@ import android.widget.TextView;
 
 public class LeaguePlayActivity extends Activity {
 	private static final int ACTIVITY_NEW_LEAGUE = 1;
+	private static final int ACTIVITY_EDIT = 2;
 	private Lobby lobby;
 	private List<League> leagues;
 	private ArrayAdapter<League> leaguesAdapter;
@@ -102,6 +107,7 @@ public class LeaguePlayActivity extends Activity {
 				startActivity(intent);
 			}
 		});
+		registerForContextMenu(leagueList);
 
 		updateAllDisplay();
 		drawerToggle = DrawerUtils.configureDrawer(this);
@@ -134,6 +140,36 @@ public class LeaguePlayActivity extends Activity {
 	}
 
 	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		MenuInflater inflater = getMenuInflater();
+		if (v.getId() == R.id.leagueList) {
+			inflater.inflate(R.menu.league_entry, menu);
+		}
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+				.getMenuInfo();
+		switch (item.getItemId()) {
+		case R.id.edit:
+			edit((int) info.id);
+			return true;
+		default:
+			return super.onContextItemSelected(item);
+		}
+	}
+	
+	private void edit(int position) {
+		Intent intent = new Intent(this, NewLeagueActivity.class);
+		intent.putExtra(NewLeagueActivity.LEAGUE_ID, leaguesAdapter.getItem(position).id());
+		startActivityForResult(intent, ACTIVITY_EDIT);
+	}
+
+
+	@Override
 	protected void onResume() {
 		super.onResume();
 		updateAllDisplay();
@@ -162,5 +198,15 @@ public class LeaguePlayActivity extends Activity {
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		drawerToggle.onConfigurationChanged(newConfig);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == ACTIVITY_EDIT) {
+			if (resultCode == RESULT_OK) {
+				leaguesAdapter.notifyDataSetChanged();
+			}
+		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 }

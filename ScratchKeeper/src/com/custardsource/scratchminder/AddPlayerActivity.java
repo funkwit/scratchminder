@@ -160,22 +160,14 @@ public class AddPlayerActivity extends Activity {
 		if (editingPlayer != null) {
 			((EditText) findViewById(R.id.editName)).setText(editingPlayer.getName());
 			((EditText) findViewById(R.id.editTtsName)).setText(editingPlayer.getTtsName());
-			int index = getIndexFromAdapter(imageAdapter, editingPlayer.getAvatar());
+			int index = imageAdapter.indexOf(editingPlayer.getAvatar());
 			gridView.setSelection(index);
 			gridView.setItemChecked(index, true);
 			
-			index = getIndexFromAdapter(colourAdapter,
-					editingPlayer.getColor());
+			index = colourAdapter.indexOf(editingPlayer.getColor());
 			colours.setSelection(index);
 			colours.setItemChecked(index, true);
 		}
-	}
-
-	private <T> int getIndexFromAdapter(BaseAdapter adapter, T object) {
-		for (int position = 0; position < adapter.getCount(); position++)
-			if (adapter.getItem(position).equals(object))
-				return position;
-		return 0;
 	}
 
 	// TODO: delete player completely
@@ -239,6 +231,11 @@ public class AddPlayerActivity extends Activity {
 			return v;
 		}
 
+		public int indexOf(T item) {
+			return validChoices.indexOf(item);
+		}
+
+		
 		protected abstract void populateView(View v, T current);
 	}
 

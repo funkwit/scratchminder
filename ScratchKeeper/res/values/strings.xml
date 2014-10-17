@@ -51,6 +51,7 @@
     <string name="no_games_yet">(no games yet)</string>
     <string name="no_leagues">No leagues set up yet. Please choose &quot;Add League&quot; from the actions menu to set up a league.</string>
     <string name="add_league">Add League</string>
+    <string name="edit_league">Edit League</string>
     <string name="league_name_entry">League Name</string>
     <string name="title_activity_new_league">Add a new league</string>
     <string name="title_activity_league">LeagueActivity</string>
