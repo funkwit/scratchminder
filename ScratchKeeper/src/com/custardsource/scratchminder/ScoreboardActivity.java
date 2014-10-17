@@ -509,11 +509,11 @@ public class ScoreboardActivity extends Activity {
 		if (shouldSpeak("speak_scoreboard_names")) {
 			String toSpeak = getResources().getQuantityString(
 					R.plurals.commit_score_speech_text, inProgressScore, game
-							.getActiveParticipant().playerName(),
+							.getActiveParticipant().playerNameForTts(),
 					inProgressScore, game.getActiveParticipant().getScore());
 			if (inProgressScore == 0) {
 				toSpeak = getString(R.string.commit_score_zero_speech_text,
-						game.getActiveParticipant().playerName(),
+						game.getActiveParticipant().playerNameForTts(),
 						inProgressScore, game.getActiveParticipant().getScore());
 			}
 			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
