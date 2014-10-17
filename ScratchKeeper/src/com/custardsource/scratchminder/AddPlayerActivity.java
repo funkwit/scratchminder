@@ -1,5 +1,9 @@
 package com.custardsource.scratchminder;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +30,7 @@ import android.widget.ImageView;
 
 public class AddPlayerActivity extends Activity {
 	static final String PLAYER_ID = "PlayerID";
+	private static final int[] COLOUR_COMPONENTS = {0x00, 0x2A, 0x54, 0x7F, 0xAA};
 
 	private Player editingPlayer;
 	private GlobalState state;
@@ -195,17 +200,33 @@ public class AddPlayerActivity extends Activity {
 		// TODO- refactor with above
 		// TODO - consistent spelling of colour
 		// tODO - consistent terminology with players enabled/disabled
+		
+		private final List<Integer> mColours = Lists.newArrayList();
+
+		public ColourAdapter() {
+			for (int red : COLOUR_COMPONENTS) {
+				for (int green : COLOUR_COMPONENTS) {
+					for (int blue : COLOUR_COMPONENTS) {
+						if (red != green || red != blue || green != blue) {
+							// don't want grey
+							mColours.add(Color.rgb(red, green, blue));
+						}
+					}
+				}
+			}
+		}
+
 		public int getCount() {
-			return mColours.length;
+			return mColours.size();
 		}
 
 		@Override
 		public Integer getItem(int position) {
-			return mColours[position];
+			return mColours.get(position);
 		}
 
 		public long getItemId(int position) {
-			return mColours[position];
+			return mColours.get(position);
 		}
 
 		public View getView(int position, View convertView, ViewGroup parent) {
@@ -218,19 +239,10 @@ public class AddPlayerActivity extends Activity {
 				i.setLayoutParams(new GridView.LayoutParams((int) size, (int) size));
 				i.setPadding(padding, padding, padding, padding);
 			}
-			Drawable color = new ColorDrawable(mColours[position]);
+			Drawable color = new ColorDrawable(mColours.get(position));
 			i.setImageDrawable(color);
 			return i;
 		}
-
-		// TODO: add recent
-		private Integer[] mColours = { Color.rgb(127, 0, 0),
-				Color.rgb(0, 127, 0), Color.rgb(0, 0, 127),
-				Color.rgb(127, 127, 0), Color.rgb(0, 127, 127),
-				Color.rgb(127, 0, 127), Color.rgb(64, 127, 0),
-				Color.rgb(127, 64, 0), Color.rgb(0, 127, 64),
-				Color.rgb(0, 64, 127), Color.rgb(64, 0, 127),
-				Color.rgb(127, 0, 64) };
 
 	}
 	

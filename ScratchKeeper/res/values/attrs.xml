@@ -13,4 +13,8 @@
     <declare-styleable name="GalleryTheme">
         <attr name="android:galleryItemBackground" />
     </declare-styleable>
+    
+   <declare-styleable name="FlexibleGridView">
+       <attr name="android:maxHeight" />
+   </declare-styleable>
 </resources>

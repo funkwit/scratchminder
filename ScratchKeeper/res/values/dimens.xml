@@ -16,4 +16,5 @@
 
     <dimen name="standard_icon_size">64dp</dimen>
     <dimen name="league_leader_icon_size">24dp</dimen>
+    <dimen name="max_colour_chooser_height">80dp</dimen>
 </resources>

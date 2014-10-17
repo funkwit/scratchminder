@@ -88,6 +88,7 @@ public class PlayerChooserActivity extends Activity {
 					rowView = inflater.inflate(R.layout.player_list_entry,
 							parent, false);
 				}
+				rowView.setBackgroundColor(player.getColor());
 				TextView nameView = (TextView) rowView
 						.findViewById(R.id.playerName);
 				ImageView iconView = (ImageView) rowView
