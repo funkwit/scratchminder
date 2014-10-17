@@ -84,6 +84,7 @@ public class GlobalState extends Application {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		new BackupManager(this).dataChanged();
 	}
 
 	@Override
@@ -98,7 +99,6 @@ public class GlobalState extends Application {
 				flush();
 			}
 		}, SAVE_PERIODICITY, SAVE_PERIODICITY);
-		new BackupManager(this).dataChanged();
 	}
 
 	@Override
