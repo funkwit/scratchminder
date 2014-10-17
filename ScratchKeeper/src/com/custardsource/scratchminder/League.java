@@ -1,7 +1,5 @@
 package com.custardsource.scratchminder;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +21,10 @@ public class League implements Serializable {
 	private static final double DEFAULT_POW_BASE = 10;
 	private static final double DEFAULT_DIVISOR = 400;
 	private static final int DEFAULT_K_FACTOR = 32;
+	@SuppressWarnings("unused")  // throw away for deserialization purposes
 	private int drawable = 0;
+	private Avatar avatar = Avatar.caveman;
+
 
 	public League(String name) {
 		this.name = name;
@@ -118,28 +119,23 @@ public class League implements Serializable {
 		}
 		return games.get(games.size() - 1).timestamp();
 	}
-
+	
 	public int getDrawable() {
-		return this.drawable;
+		if (this.avatar == null) {
+			this.avatar = Avatar.caveman;
+		}
+		return this.avatar.drawable();
 	}
 
-	private void readObject(ObjectInputStream in) throws IOException,
-			ClassNotFoundException {
-		in.defaultReadObject(); // Temporary migration hack
-		if (this.drawable == 0) {
-			if (this.name.startsWith("8")) {
-				this.drawable = R.drawable.ic_poolballs_barkerbaggies_08;
-			} else if (this.name.startsWith("9")) {
-				this.drawable = R.drawable.ic_poolballs_barkerbaggies_09;
-			} else if (this.name.startsWith("10")) {
-				this.drawable = R.drawable.ic_poolballs_barkerbaggies_10;
-			} else if (this.name.startsWith("One")) {
-				this.drawable = R.drawable.ic_poolballs_barkerbaggies_01;
-			} else if (this.name.startsWith("Mind")) {
-				this.drawable = R.drawable.ic_poolballs_barkerbaggies_cue;
-			} else {
-				this.drawable = R.drawable.ic_poolballs_barkerbaggies_15;
-			}
-		}
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setAvatar(Avatar avatar) {
+		this.avatar = avatar;
+	}
+
+	public Avatar getAvatar() {
+		return this.avatar;
 	}
 }

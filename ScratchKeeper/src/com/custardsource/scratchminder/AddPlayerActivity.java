@@ -1,5 +1,6 @@
 package com.custardsource.scratchminder;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,20 @@ import com.google.common.collect.Lists;
 public class AddPlayerActivity extends Activity {
 	static final String PLAYER_ID = "PlayerID";
 	private static final int[] COLOUR_COMPONENTS = {0x00, 0x2A, 0x54, 0x7F, 0xAA};
+	private static final List<Integer> VALID_COLOURS = Lists.newArrayList();
+	static {
+		for (int red : COLOUR_COMPONENTS) {
+			for (int green : COLOUR_COMPONENTS) {
+				for (int blue : COLOUR_COMPONENTS) {
+					if (red != green || red != blue || green != blue) {
+						// don't want grey
+						VALID_COLOURS.add(Color.rgb(red, green, blue));
+					}
+				}
+			}
+		}
+	}
+
 
 	private Player editingPlayer;
 	private GlobalState state;
@@ -183,90 +198,95 @@ public class AddPlayerActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
-	public class ImageAdapter extends BaseAdapter {
-		public int getCount() {
-			return Avatar.values().length;
+	
+	public abstract static class CheckableImageListAdapter<T> extends BaseAdapter {
+		private final List<T> validChoices;
+		private Context context;
+		
+		protected CheckableImageListAdapter(Context context, List<T> validChoices) {
+			this.validChoices = validChoices;
+			this.context = context;
 		}
 
 		@Override
-		public Avatar getItem(int position) {
-			return Avatar.values()[position];
+		public int getCount() {
+			return validChoices.size();
 		}
 
+		@Override
+		public T getItem(int position) {
+			return validChoices.get(position);
+		}
+
+		@Override
 		public long getItemId(int position) {
-			return Avatar.values()[position].ordinal();
+			return getIdForItem(getItem(position));
 		}
 
+		protected abstract long getIdForItem(T item);
+
+		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View v = convertView;
 			if (convertView == null) {
 				LayoutInflater inflater = (LayoutInflater) 
-						getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+						context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = inflater.inflate(R.layout.image_with_count,
 						parent, false);
 			}
-			
+			T current = getItem(position);
+			populateView(v, current);
+			return v;
+		}
+
+		protected abstract void populateView(View v, T current);
+	}
+
+	public class ImageAdapter extends CheckableImageListAdapter<Avatar> {
+		
+		protected ImageAdapter() {
+			super(AddPlayerActivity.this, Arrays.asList(Avatar.values()));
+		}
+
+
+		@Override
+		protected long getIdForItem(Avatar item) {
+			return item.ordinal();
+		}
+
+		@Override
+		protected void populateView(View v, Avatar current) {
 			ImageView i = (ImageView) v.findViewById(R.id.image);
 			i.setAdjustViewBounds(true);
 			TextView t = (TextView) v.findViewById(R.id.counter);
 			
-			i.setImageResource(Avatar.values()[position].drawable());
-
+			i.setImageResource(current.drawable());
 			
-			Integer popularity = avatarPopularity.get(Avatar.values()[position]);
+			Integer popularity = avatarPopularity.get(current);
 			if (popularity == null) {
 				t.setVisibility(View.INVISIBLE);
 			} else {
 				t.setVisibility(View.VISIBLE);
 				t.setText(Integer.toString(popularity));
 			}
-			return v;
 		}
 	}
 
-	public class ColourAdapter extends BaseAdapter {
-		// TODO- refactor with above
+	public class ColourAdapter extends CheckableImageListAdapter<Integer> {
 		// TODO - consistent spelling of colour
 		// tODO - consistent terminology with players enabled/disabled
-		
-		private final List<Integer> mColours = Lists.newArrayList();
 
-		public ColourAdapter() {
-			for (int red : COLOUR_COMPONENTS) {
-				for (int green : COLOUR_COMPONENTS) {
-					for (int blue : COLOUR_COMPONENTS) {
-						if (red != green || red != blue || green != blue) {
-							// don't want grey
-							mColours.add(Color.rgb(red, green, blue));
-						}
-					}
-				}
-			}
-		}
-
-		public int getCount() {
-			return mColours.size();
+		protected ColourAdapter() {
+			super(AddPlayerActivity.this, VALID_COLOURS);
 		}
 
 		@Override
-		public Integer getItem(int position) {
-			return mColours.get(position);
+		protected long getIdForItem(Integer item) {
+			return item;
 		}
 
-		public long getItemId(int position) {
-			return mColours.get(position);
-		}
-
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View v = convertView;
-			if (convertView == null) {
-				LayoutInflater inflater = (LayoutInflater) 
-						getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				v = inflater.inflate(R.layout.image_with_count,
-						parent, false);
-			}
-			
+		@Override
+		protected void populateView(View v, Integer current) {
 			ImageView i = (ImageView) v.findViewById(R.id.image);
 			TextView t = (TextView) v.findViewById(R.id.counter);
 			float size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
@@ -275,21 +295,19 @@ public class AddPlayerActivity extends Activity {
 					TypedValue.COMPLEX_UNIT_DIP, 5, getResources()
 							.getDisplayMetrics());
 
-			i.setLayoutParams(new RelativeLayout.LayoutParams((int) size, (int) size));
+			i.setLayoutParams(new RelativeLayout.LayoutParams((int) size,
+					(int) size));
 			i.setPadding(padding, padding, padding, padding);
-			Drawable color = new ColorDrawable(mColours.get(position));
+			Drawable color = new ColorDrawable(current);
 			i.setImageDrawable(color);
-			
-			Integer popularity = colourPopularity.get(mColours.get(position));
+
+			Integer popularity = colourPopularity.get(current);
 			if (popularity == null) {
 				t.setVisibility(View.INVISIBLE);
 			} else {
 				t.setVisibility(View.VISIBLE);
 				t.setText(Integer.toString(popularity));
 			}
-			return v;
+		}
 	}
-
-	}
-
 }
