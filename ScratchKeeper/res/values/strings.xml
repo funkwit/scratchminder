@@ -92,5 +92,6 @@
     <string name="last_game">Last game played: </string>
     <string name="never_played">never</string>
     <string name="next_player_speech_text">Next is %1$s, on %2$d.</string>
+    <string name="commit_score_speech_text">%2$d points for %1$s.</string>
     
 </resources>

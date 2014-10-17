@@ -476,7 +476,6 @@ public class ScoreboardActivity extends Activity {
 			game.nextPlayer();
 			scoreboardAdapter.notifyDataSetChanged();
 			scoreboard.setSelection(game.currentPlayerActivePosition());
-			speakNextPlayerIfNecessary();
 			return true;
 
 		default:
@@ -491,12 +490,20 @@ public class ScoreboardActivity extends Activity {
 		}
 	}
 
+	private void speakCurrentScoreIfNecessary() {
+		if (sharedPref.getBoolean("speak_scoreboard_names", false) && this.speechEnabled) {
+			String toSpeak = getString(R.string.commit_score_speech_text, game
+					.getActiveParticipant().playerName(), inProgressScore);
+			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
+		}
+	}
+
 	private void speakNextPlayerIfNecessary() {
 		if (sharedPref.getBoolean("speak_scoreboard_names", false) && this.speechEnabled) {
 			String toSpeak = getString(R.string.next_player_speech_text, game
 					.getActiveParticipant().playerName(), game
 					.getActiveParticipant().getScore());
-			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
 		}
 	}
 
@@ -511,6 +518,7 @@ public class ScoreboardActivity extends Activity {
 	}
 
 	private void clickOk() {
+		speakCurrentScoreIfNecessary();
 		game.recordScoreForActivePlayer(inProgressScore);
 		inProgressScore = 0;
 		inProgressScoreView.setText(Integer.toString(inProgressScore));
