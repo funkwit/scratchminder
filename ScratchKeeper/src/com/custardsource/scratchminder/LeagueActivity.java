@@ -69,7 +69,8 @@ public class LeagueActivity extends FragmentActivity implements
 		    public void onPageScrollStateChanged(int arg0) {
 		    }
 		});
-		actionBar.setHomeButtonEnabled(false);
+		actionBar.setHomeButtonEnabled(true);
+		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
 		// Adding Tabs
