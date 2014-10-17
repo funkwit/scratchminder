@@ -1,8 +1,9 @@
 package com.custardsource.scratchminder;
 
+import java.util.Collections;
 import java.util.List;
-
-import com.google.common.collect.Lists;
+import java.util.Map;
+import java.util.Set;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,8 +15,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,10 +24,13 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.Checkable;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.google.common.collect.Lists;
 
 public class AddPlayerActivity extends Activity {
 	static final String PLAYER_ID = "PlayerID";
@@ -36,6 +40,8 @@ public class AddPlayerActivity extends Activity {
 	private GlobalState state;
 
 	private int itemBackground;
+	private Map<Integer, Integer> colourPopularity;
+	private Map<Avatar, Integer> avatarPopularity;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +54,15 @@ public class AddPlayerActivity extends Activity {
 				R.styleable.GalleryTheme_android_galleryItemBackground, 0);
 		a.recycle();
 
+		if (getIntent().hasExtra(PLAYER_ID)) {
+			editingPlayer = state.getLobby().playerById(getIntent().getLongExtra(PLAYER_ID, 0));
+		}
+		Set<Player> toExclude = Collections.emptySet();
+		if (editingPlayer != null) {
+			toExclude = Collections.singleton(editingPlayer);
+		}
+		colourPopularity = state.getLobby().colourPopularityMap(toExclude);
+		avatarPopularity = state.getLobby().avatarPopularityMap(toExclude);
 		
 		final ImageAdapter imageAdapter = new ImageAdapter();
 		final GridView gridView = (GridView) findViewById(R.id.gridPicture);
@@ -64,6 +79,7 @@ public class AddPlayerActivity extends Activity {
 		colours.setChoiceMode(GridView.CHOICE_MODE_SINGLE);
 		colours.setSelection(0);
 		colours.setItemChecked(0, true);
+		
 
 		((Button) findViewById(R.id.cancel))
 				.setOnClickListener(new OnClickListener() {
@@ -126,20 +142,17 @@ public class AddPlayerActivity extends Activity {
 
 					}
 				});
-		if (getIntent().hasExtra(PLAYER_ID)) {
-			// It's an edit
-			Player p = state.getLobby().playerById(getIntent().getLongExtra(PLAYER_ID, 0));
-			((EditText) findViewById(R.id.editName)).setText(p.getName());
-			((EditText) findViewById(R.id.editTtsName)).setText(p.getTtsName());
-			int index = getIndexFromAdapter(imageAdapter, p.getAvatar());
+		if (editingPlayer != null) {
+			((EditText) findViewById(R.id.editName)).setText(editingPlayer.getName());
+			((EditText) findViewById(R.id.editTtsName)).setText(editingPlayer.getTtsName());
+			int index = getIndexFromAdapter(imageAdapter, editingPlayer.getAvatar());
 			gridView.setSelection(index);
 			gridView.setItemChecked(index, true);
 			
 			index = getIndexFromAdapter(colourAdapter,
-					p.getColor());
+					editingPlayer.getColor());
 			colours.setSelection(index);
 			colours.setItemChecked(index, true);
-			editingPlayer = p;
 		}
 	}
 
@@ -186,13 +199,29 @@ public class AddPlayerActivity extends Activity {
 		}
 
 		public View getView(int position, View convertView, ViewGroup parent) {
-			ImageView i = (ImageView) convertView;
+			View v = convertView;
 			if (convertView == null) {
-				i = new CheckableImageView(AddPlayerActivity.this);
-				i.setAdjustViewBounds(true);
+				LayoutInflater inflater = (LayoutInflater) 
+						getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				v = inflater.inflate(R.layout.image_with_count,
+						parent, false);
 			}
+			
+			ImageView i = (ImageView) v.findViewById(R.id.image);
+			i.setAdjustViewBounds(true);
+			TextView t = (TextView) v.findViewById(R.id.counter);
+			
 			i.setImageResource(Avatar.values()[position].drawable());
-			return i;
+
+			
+			Integer popularity = avatarPopularity.get(Avatar.values()[position]);
+			if (popularity == null) {
+				t.setVisibility(View.INVISIBLE);
+			} else {
+				t.setVisibility(View.VISIBLE);
+				t.setText(Integer.toString(popularity));
+			}
+			return v;
 		}
 	}
 
@@ -230,59 +259,37 @@ public class AddPlayerActivity extends Activity {
 		}
 
 		public View getView(int position, View convertView, ViewGroup parent) {
-			ImageView i = (ImageView) convertView;
+			View v = convertView;
 			if (convertView == null) {
-				i = new CheckableImageView(AddPlayerActivity.this);
-				float size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
-				int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, getResources().getDisplayMetrics());
-
-				i.setLayoutParams(new GridView.LayoutParams((int) size, (int) size));
-				i.setPadding(padding, padding, padding, padding);
+				LayoutInflater inflater = (LayoutInflater) 
+						getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				v = inflater.inflate(R.layout.image_with_count,
+						parent, false);
 			}
+			
+			ImageView i = (ImageView) v.findViewById(R.id.image);
+			TextView t = (TextView) v.findViewById(R.id.counter);
+			float size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+					40, getResources().getDisplayMetrics());
+			int padding = (int) TypedValue.applyDimension(
+					TypedValue.COMPLEX_UNIT_DIP, 5, getResources()
+							.getDisplayMetrics());
+
+			i.setLayoutParams(new RelativeLayout.LayoutParams((int) size, (int) size));
+			i.setPadding(padding, padding, padding, padding);
 			Drawable color = new ColorDrawable(mColours.get(position));
 			i.setImageDrawable(color);
-			return i;
-		}
+			
+			Integer popularity = colourPopularity.get(mColours.get(position));
+			if (popularity == null) {
+				t.setVisibility(View.INVISIBLE);
+			} else {
+				t.setVisibility(View.VISIBLE);
+				t.setText(Integer.toString(popularity));
+			}
+			return v;
+	}
 
 	}
-	
-	public class CheckableImageView extends ImageView implements Checkable {
-		private boolean checked = false;
 
-		public CheckableImageView(Context context, AttributeSet attrs,
-				int defStyle) {
-			super(context, attrs, defStyle);
-		}
-
-		public CheckableImageView(Context context, AttributeSet attrs) {
-			super(context, attrs);
-		}
-
-		public CheckableImageView(Context context) {
-			super(context);
-		}
-
-		@Override
-		public boolean isChecked() {
-			return this.checked;
-		}
-
-		@Override
-		public void setChecked(boolean checked) {
-			if (this.checked == checked)
-	            return;
-	        this.checked = checked;
-	        if (this.checked) {
-	        	setBackgroundResource(android.R.color.darker_gray);
-	        } else {
-	        	setBackgroundResource(0);
-	        }
-	        refreshDrawableState();
-		}
-
-		@Override
-		public void toggle() {
-			setChecked(!checked);
-		}
-
-	}}
+}

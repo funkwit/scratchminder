@@ -6,9 +6,12 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
+
+import com.google.common.collect.Maps;
 
 @SuppressLint("UseSparseArrays") // Sparse Array isn't serializable.
 public class Lobby implements Serializable {
@@ -95,5 +98,35 @@ public class Lobby implements Serializable {
 
 	public League leagueById(long id) {
 		return leaguesById.get(id);
+	}
+	
+	public Map<Integer, Integer> colourPopularityMap(Set<Player> playersToExclude) {
+		Map<Integer, Integer> results = Maps.newHashMap();
+		for (Player player : allPlayers) {
+			if (!playersToExclude.contains(player)) {
+				Integer colour = player.getColor();
+				if (results.containsKey(colour)) {
+					results.put(colour, results.get(colour) + 1);
+				} else {
+					results.put(colour, 1);
+				}
+			}
+		}
+		return results;
+	}
+	
+	public Map<Avatar, Integer> avatarPopularityMap(Set<Player> playersToExclude) {
+		Map<Avatar, Integer> results = Maps.newHashMap();
+		for (Player player : allPlayers) {
+			if (!playersToExclude.contains(player)) {
+				Avatar avatar = player.getAvatar();
+				if (results.containsKey(avatar)) {
+					results.put(avatar, results.get(avatar) + 1);
+				} else {
+					results.put(avatar, 1);
+				}
+			}
+		}
+		return results;
 	}
 }
