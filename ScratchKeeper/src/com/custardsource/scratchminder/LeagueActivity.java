@@ -19,8 +19,10 @@ public class LeagueActivity extends FragmentActivity implements
 	private League league;
 	protected static final String LEAGUE_ID = "LEAGUE_ID";
 	private static final int ACTIVITY_RECORD_GAME = 1;
+	private static final int ACTIVITY_EDIT_LEAGUE = 2;
 	static final int RECENT_GAME_COUNT = 3;
 	private ViewPager viewPager;
+	private ActionBar actionBar;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -30,11 +32,10 @@ public class LeagueActivity extends FragmentActivity implements
 
 		this.league = lobby.leagueById(getIntent().getLongExtra(
 				LeagueActivity.LEAGUE_ID, 0));
-		setTitle(league.name());
 
 		viewPager = (ViewPager) findViewById(R.id.leaguePager);
-		final ActionBar actionBar = getActionBar();
-		actionBar.setIcon(league.getDrawable());
+		actionBar = getActionBar();
+		updateLeagueDetails();
 		viewPager.setAdapter(new FragmentPagerAdapter(
 				getSupportFragmentManager()) {
 			@Override
@@ -97,6 +98,10 @@ public class LeagueActivity extends FragmentActivity implements
 			Intent intent = new Intent(this, SettingsActivity.class);
 			startActivity(intent);
 			return true;
+		} else if (id == R.id.edit_league) {
+			Intent intent = new Intent(this, NewLeagueActivity.class);
+			intent.putExtra(NewLeagueActivity.LEAGUE_ID, league.id());
+			startActivityForResult(intent, ACTIVITY_EDIT_LEAGUE);
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -113,7 +118,16 @@ public class LeagueActivity extends FragmentActivity implements
 				winner.recordPlay();
 				loser.recordPlay();
 			}
+		} else if (requestCode == ACTIVITY_EDIT_LEAGUE) {
+			if (resultCode == RESULT_OK) {
+				updateLeagueDetails();
+			}
 		}
+	}
+
+	private void updateLeagueDetails() {
+		setTitle(league.name());
+		actionBar.setIcon(league.getDrawable());
 	}
 
 	@Override
