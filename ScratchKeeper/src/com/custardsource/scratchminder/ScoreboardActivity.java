@@ -492,8 +492,15 @@ public class ScoreboardActivity extends Activity {
 
 	private void speakCurrentScoreIfNecessary() {
 		if (sharedPref.getBoolean("speak_scoreboard_names", false) && this.speechEnabled) {
-			String toSpeak = getString(R.string.commit_score_speech_text, game
-					.getActiveParticipant().playerName(), inProgressScore);
+			String toSpeak = getResources().getQuantityString(
+					R.plurals.commit_score_speech_text, inProgressScore, game
+							.getActiveParticipant().playerName(),
+					inProgressScore, game.getActiveParticipant().getScore());
+			if (inProgressScore == 0) {
+				toSpeak = getString(R.string.commit_score_zero_speech_text,
+						game.getActiveParticipant().playerName(),
+						inProgressScore, game.getActiveParticipant().getScore());
+			}
 			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
 		}
 	}
@@ -507,19 +514,29 @@ public class ScoreboardActivity extends Activity {
 		}
 	}
 
+	private void speakInProgressScoreIfNecessary() {
+		if (sharedPref.getBoolean("speak_scoreboard_names", false) && this.speechEnabled) {
+			String toSpeak = getString(R.string.change_score_speech_text, game
+					.getActiveParticipant().playerName(), inProgressScore);
+			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
+		}
+	}
+
 	private void clickPlus() {
 		inProgressScore += 1;
+		speakInProgressScoreIfNecessary();
 		inProgressScoreView.setText(Integer.toString(inProgressScore));
 	}
 
 	private void clickMinus() {
 		inProgressScore -= 1;
+		speakInProgressScoreIfNecessary();
 		inProgressScoreView.setText(Integer.toString(inProgressScore));
 	}
 
 	private void clickOk() {
-		speakCurrentScoreIfNecessary();
 		game.recordScoreForActivePlayer(inProgressScore);
+		speakCurrentScoreIfNecessary();
 		inProgressScore = 0;
 		inProgressScoreView.setText(Integer.toString(inProgressScore));
 		game.nextPlayer();

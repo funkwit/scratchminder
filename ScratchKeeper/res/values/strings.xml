@@ -92,6 +92,12 @@
     <string name="last_game">Last game played: </string>
     <string name="never_played">never</string>
     <string name="next_player_speech_text">Next is %1$s, on %2$d.</string>
-    <string name="commit_score_speech_text">%2$d points for %1$s.</string>
+
+    <plurals name="commit_score_speech_text">
+        <item quantity="one">%2$d point; %1$s moves to %3$s.</item>
+        <item quantity="other">%2$d points; %1$s is now on %3$s.</item>
+    </plurals>
+    <string name="commit_score_zero_speech_text">No score; %1$s remains on %3$s.</string>
+    <string name="change_score_speech_text">%2$d.</string>
     
 </resources>
