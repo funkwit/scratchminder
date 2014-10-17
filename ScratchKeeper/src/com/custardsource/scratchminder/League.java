@@ -122,7 +122,7 @@ public class League implements Serializable {
 	
 	public int getDrawable() {
 		if (this.avatar == null) {
-			this.avatar = Avatar.caveman;
+			this.avatar = Avatar.ic_poolballs_barkerbaggies_13;
 		}
 		return this.avatar.drawable();
 	}

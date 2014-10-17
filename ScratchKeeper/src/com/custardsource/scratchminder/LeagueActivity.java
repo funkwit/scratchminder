@@ -34,6 +34,7 @@ public class LeagueActivity extends FragmentActivity implements
 
 		viewPager = (ViewPager) findViewById(R.id.leaguePager);
 		final ActionBar actionBar = getActionBar();
+		actionBar.setIcon(league.getDrawable());
 		viewPager.setAdapter(new FragmentPagerAdapter(
 				getSupportFragmentManager()) {
 			@Override
