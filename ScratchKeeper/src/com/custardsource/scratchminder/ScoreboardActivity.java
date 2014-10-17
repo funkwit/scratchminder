@@ -287,7 +287,9 @@ public class ScoreboardActivity extends Activity {
 		if (notPlayingAdapter.isEmpty()) {
 			findViewById(R.id.notPlayingPanel).setVisibility(View.GONE);
 		}
+		speakRejoinIfNecessary(participant);
 	}
+
 
 	private void leave(long id) {
 		Participant participant = game.partipantInActivePosition((int) id);
@@ -296,7 +298,9 @@ public class ScoreboardActivity extends Activity {
 		scoreboardAdapter.remove(participant);
 		notPlayingAdapter.add(participant);
 		findViewById(R.id.notPlayingPanel).setVisibility(View.VISIBLE);
+		speakLeaveIfNecessary(participant);
 	}
+
 
 	private void confirmRemove(final int position) {
 		DialogUtils.confirmDialog(this, new Runnable() {
@@ -306,6 +310,7 @@ public class ScoreboardActivity extends Activity {
 				game.remove(participant);
 				scoreboardAdapter.remove(participant);
 				updateTotalScoreDisplay();
+				speakRemoveIfNecessary(participant);
 			}
 		}, R.string.confirm_remove_title, R.string.confirm_remove_text);
 	}
@@ -321,7 +326,9 @@ public class ScoreboardActivity extends Activity {
 					findViewById(R.id.notPlayingPanel).setVisibility(View.GONE);
 				}
 				updateTotalScoreDisplay();
+				speakRemoveIfNecessary(participant);
 			}
+
 		}, R.string.confirm_remove_title, R.string.confirm_remove_text);
 	}
 
@@ -335,6 +342,7 @@ public class ScoreboardActivity extends Activity {
 				scoreboardAdapter.add(game.addPlayer(p));
 				p.recordPlay();
 				updateAllDisplay();
+				speakJoinIfNecessary(p);
 			}
 		}
 		if (requestCode == ACTION_EDIT) {
@@ -538,6 +546,37 @@ public class ScoreboardActivity extends Activity {
 			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
 		}
 	}
+	
+	private void speakJoinIfNecessary(Player p) {
+		if (shouldSpeak("speak_player_changes")) {
+			String toSpeak = getString(R.string.player_join_speak_text,
+					p.getName());
+			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
+		}		
+	}
+	private void speakRejoinIfNecessary(Participant participant) {
+		if (shouldSpeak("speak_player_changes")) {
+			String toSpeak = getString(R.string.player_rejoin_speak_text,
+					participant.playerName(), participant.getScore());
+			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
+		}		
+	}
+	private void speakLeaveIfNecessary(Participant participant) {
+		if (shouldSpeak("speak_player_changes")) {
+			String toSpeak = getString(R.string.player_leave_speak_text,
+					participant.playerName(), participant.getScore());
+			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
+		}
+	}
+
+	private void speakRemoveIfNecessary(Participant participant) {
+		if (shouldSpeak("speak_player_changes")) {
+			String toSpeak = getString(R.string.player_remove_speak_text,
+					participant.playerName(), participant.getScore());
+			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
+		}
+	}
+
 
 	private void clickPlus() {
 		inProgressScore += 1;

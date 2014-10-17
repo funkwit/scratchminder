@@ -17,6 +17,8 @@
     <string name="pref_description_speak_scoreboard_names">Speak the names and scores of each incoming and outgoing player in scoreboard mode.</string>
     <string name="pref_title_speak_in_progress_scores">Speak scores?</string>
     <string name="pref_description_speak_in_progress_scores">Speak progress as scores are incremented.</string>
+    <string name="pref_title_speak_player_changes">Speak player changes?</string>
+    <string name="pref_description_speak_player_changes">Announce as players join or leave the game.</string>
     <string name="scoreboard_preference_category">Scoreboard Play</string>
     <string name="speech_preference_category">Speech</string>
     <string name="debug_preference_category">Debug</string>
