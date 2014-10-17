@@ -91,5 +91,6 @@
     <string name="_dummy_league_name">8-ball</string>
     <string name="last_game">Last game played: </string>
     <string name="never_played">never</string>
+    <string name="next_player_speech_text">Next is %1$s, on %2$d.</string>
     
 </resources>

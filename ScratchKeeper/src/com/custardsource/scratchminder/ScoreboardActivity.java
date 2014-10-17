@@ -1,7 +1,6 @@
 package com.custardsource.scratchminder;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Context;
@@ -494,7 +493,9 @@ public class ScoreboardActivity extends Activity {
 
 	private void speakNextPlayerIfNecessary() {
 		if (sharedPref.getBoolean("speak_scoreboard_names", false) && this.speechEnabled) {
-			String toSpeak = game.getActiveParticipant().playerName();
+			String toSpeak = getString(R.string.next_player_speech_text, game
+					.getActiveParticipant().playerName(), game
+					.getActiveParticipant().getScore());
 			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
 		}
 	}
