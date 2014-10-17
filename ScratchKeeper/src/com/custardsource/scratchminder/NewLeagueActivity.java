@@ -59,8 +59,9 @@ public class NewLeagueActivity extends Activity {
 		gridView.setAdapter(imageAdapter);
 		gridView.setSelector(itemBackground);
 		gridView.setChoiceMode(GridView.CHOICE_MODE_SINGLE);
-		gridView.setSelection(0);
-		gridView.setItemChecked(0, true);
+		int defaultIndex= imageAdapter.indexOf(Avatar.ic_poolballs_barkerbaggies_13);
+		gridView.setSelection(defaultIndex);
+		gridView.setItemChecked(defaultIndex, true);
 
 		((Button) findViewById(R.id.cancel))
 				.setOnClickListener(new OnClickListener() {

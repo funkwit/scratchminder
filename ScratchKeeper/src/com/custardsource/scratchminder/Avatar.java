@@ -474,6 +474,22 @@ public enum Avatar {
 	user_aha_boss_uncle_sam(R.drawable.user_aha_boss_uncle_sam),
 	user_aha_boss_wizard(R.drawable.user_aha_boss_wizard),
 	
+	ic_poolballs_barkerbaggies_01(R.drawable.ic_poolballs_barkerbaggies_01),
+	ic_poolballs_barkerbaggies_02(R.drawable.ic_poolballs_barkerbaggies_02),
+	ic_poolballs_barkerbaggies_03(R.drawable.ic_poolballs_barkerbaggies_03),
+	ic_poolballs_barkerbaggies_04(R.drawable.ic_poolballs_barkerbaggies_04),
+	ic_poolballs_barkerbaggies_05(R.drawable.ic_poolballs_barkerbaggies_05),
+	ic_poolballs_barkerbaggies_06(R.drawable.ic_poolballs_barkerbaggies_06),
+	ic_poolballs_barkerbaggies_07(R.drawable.ic_poolballs_barkerbaggies_07),
+	ic_poolballs_barkerbaggies_08(R.drawable.ic_poolballs_barkerbaggies_08),
+	ic_poolballs_barkerbaggies_09(R.drawable.ic_poolballs_barkerbaggies_09),
+	ic_poolballs_barkerbaggies_10(R.drawable.ic_poolballs_barkerbaggies_10),
+	ic_poolballs_barkerbaggies_11(R.drawable.ic_poolballs_barkerbaggies_11),
+	ic_poolballs_barkerbaggies_12(R.drawable.ic_poolballs_barkerbaggies_12),
+	ic_poolballs_barkerbaggies_13(R.drawable.ic_poolballs_barkerbaggies_13),
+	ic_poolballs_barkerbaggies_14(R.drawable.ic_poolballs_barkerbaggies_14),
+	ic_poolballs_barkerbaggies_15(R.drawable.ic_poolballs_barkerbaggies_15),
+	ic_poolballs_barkerbaggies_cue(R.drawable.ic_poolballs_barkerbaggies_cue),
 	
 	;
 	
