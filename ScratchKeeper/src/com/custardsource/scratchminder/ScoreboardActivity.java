@@ -1,6 +1,7 @@
 package com.custardsource.scratchminder;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,6 +10,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -51,7 +53,9 @@ public class ScoreboardActivity extends Activity {
 	private Lobby lobby;
 	private TextView inProgressScoreView;
 	private ListView scoreboard;
-
+	private TextToSpeech textToSpeech;
+	private boolean speechEnabled;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -172,6 +176,16 @@ public class ScoreboardActivity extends Activity {
 		registerForContextMenu(notPlaying);
 		reapplyPreferences();
 		updateAllDisplay();
+		
+		this.textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+			@Override
+			public void onInit(int status) {
+				if (status == TextToSpeech.SUCCESS) {
+					speechEnabled = true;
+				}
+				
+			}
+		});
 	}
 
 	@Override
@@ -463,6 +477,7 @@ public class ScoreboardActivity extends Activity {
 			game.nextPlayer();
 			scoreboardAdapter.notifyDataSetChanged();
 			scoreboard.setSelection(game.currentPlayerActivePosition());
+			speakNextPlayerIfNecessary();
 			return true;
 
 		default:
@@ -474,6 +489,13 @@ public class ScoreboardActivity extends Activity {
 			}
 
 			return super.onKeyUp(keyCode, event);
+		}
+	}
+
+	private void speakNextPlayerIfNecessary() {
+		if (sharedPref.getBoolean("speak_scoreboard_names", false) && this.speechEnabled) {
+			String toSpeak = game.getActiveParticipant().playerName();
+			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
 		}
 	}
 
@@ -492,6 +514,7 @@ public class ScoreboardActivity extends Activity {
 		inProgressScore = 0;
 		inProgressScoreView.setText(Integer.toString(inProgressScore));
 		game.nextPlayer();
+		speakNextPlayerIfNecessary();
 		scoreboardAdapter.notifyDataSetChanged();
 		scoreboard.setSelection(game.currentPlayerActivePosition());
 		updateTotalScoreDisplay();

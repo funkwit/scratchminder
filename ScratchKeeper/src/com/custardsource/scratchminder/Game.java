@@ -226,4 +226,8 @@ public class Game implements Serializable {
 		}
 		return result;
 	}
+	
+	public Participant getActiveParticipant() {
+		return participants.get(activePlayerIndex);
+	}
 }

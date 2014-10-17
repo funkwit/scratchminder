@@ -17,6 +17,11 @@
         android:title="@string/pref_title_include_abandoned" />
     <CheckBoxPreference
         android:defaultValue="false"
+        android:key="speak_scoreboard_names"
+        android:summary="@string/pref_description_speak_scoreboard_names"
+        android:title="@string/pref_title_speak_scoreboard_names" />
+    <CheckBoxPreference
+        android:defaultValue="false"
         android:key="debug_scoreboard_keys"
         android:summary="@string/pref_description_debug_scoreboard_keys"
         android:title="@string/pref_title_debug_scoreboard_keys" />
