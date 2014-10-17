@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 public class Participant implements Serializable {
@@ -83,5 +84,9 @@ public class Participant implements Serializable {
 
 	public int playerColor() {
 		return player.getColor();
+	}
+	
+	public String playerNameForTts() {
+		return player.getNameForTts();
 	}
 }

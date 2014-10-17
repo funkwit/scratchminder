@@ -85,6 +85,7 @@
     <string name="_dummy_long_text">Lorem ipsum etc.</string>
     <string name="help_about">Help/About</string>
     <string name="player_name_label">Name</string>
+    <string name="player_tts_name_label">TTS name (if required)</string>
     <string name="player_colour_label">Colour</string>
     <string name="player_icon_label">Icon</string>
     <string name="player_roster">Player Roster</string>

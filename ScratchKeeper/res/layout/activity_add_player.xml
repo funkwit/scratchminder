@@ -20,7 +20,7 @@
         >
 
         <TextView
-            android:id="@+id/totalScoreText"
+            android:id="@+id/editNameText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/player_name_label" />
@@ -70,6 +70,21 @@
             android:numColumns="auto_fit"
             android:stretchMode="none" >
         </GridView>
+        
+        <TextView
+            android:id="@+id/ttsNameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/player_tts_name_label" />
+
+        <EditText
+            android:id="@+id/editTtsName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName" >
+        </EditText>
+        
         
     </LinearLayout>
 

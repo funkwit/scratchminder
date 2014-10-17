@@ -92,8 +92,11 @@ public class AddPlayerActivity extends Activity {
 									.getCheckedItemPosition()));
 							p.setColour(colourAdapter.getItem(colours
 									.getCheckedItemPosition()));
-
 						}
+						String ttsName = ((EditText) findViewById(R.id.editTtsName))
+								.getText().toString();
+						p.setTtsName(ttsName);
+
 						result.putExtra(PLAYER_ID, p.id());
 						setResult(Activity.RESULT_OK, result);
 						finish();
@@ -122,6 +125,7 @@ public class AddPlayerActivity extends Activity {
 			// It's an edit
 			Player p = state.getLobby().playerById(getIntent().getLongExtra(PLAYER_ID, 0));
 			((EditText) findViewById(R.id.editName)).setText(p.getName());
+			((EditText) findViewById(R.id.editTtsName)).setText(p.getTtsName());
 			int index = getIndexFromAdapter(imageAdapter, p.getAvatar());
 			gridView.setSelection(index);
 			gridView.setItemChecked(index, true);

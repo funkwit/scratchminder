@@ -3,6 +3,8 @@ package com.custardsource.scratchminder;
 import java.io.Serializable;
 import java.util.UUID;
 
+import com.google.common.base.Strings;
+
 public class Player implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String name;
@@ -12,6 +14,7 @@ public class Player implements Serializable {
 	private int color;
 	private long id = UUID.randomUUID().getLeastSignificantBits();
 	private long lastPlayed = System.currentTimeMillis();
+	private String ttsName;
 
 	public Player(String name, Avatar avatar, int color) {
 		super();
@@ -61,5 +64,20 @@ public class Player implements Serializable {
 
 	public Avatar getAvatar() {
 		return avatar;
+	}
+
+	public String getTtsName() {
+		return ttsName;
+	}
+	
+	public void setTtsName(String name) {
+		this.ttsName = name;
+	}
+
+	public String getNameForTts() {
+		if (Strings.isNullOrEmpty(ttsName)) {
+			return name;
+		}
+		return ttsName;
 	}
 }

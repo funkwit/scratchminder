@@ -524,7 +524,7 @@ public class ScoreboardActivity extends Activity {
 	private void speakNextPlayerIfNecessary() {
 		if (shouldSpeak("speak_scoreboard_names")) {
 			String toSpeak = getString(R.string.next_player_speech_text, game
-					.getActiveParticipant().playerName(), game
+					.getActiveParticipant().playerNameForTts(), game
 					.getActiveParticipant().getScore());
 			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
 		}
@@ -533,7 +533,7 @@ public class ScoreboardActivity extends Activity {
 	private void speakPlayerChangeIfNecessary() {
 		if (shouldSpeak("speak_scoreboard_names")) {
 			String toSpeak = getString(R.string.player_change_speak_text, game
-					.getActiveParticipant().playerName(), game
+					.getActiveParticipant().playerNameForTts(), game
 					.getActiveParticipant().getScore());
 			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
 		}
@@ -542,7 +542,7 @@ public class ScoreboardActivity extends Activity {
 	private void speakInProgressScoreIfNecessary() {
 		if (shouldSpeak("speak_in_progress_scores")) {
 			String toSpeak = getString(R.string.change_score_speech_text, game
-					.getActiveParticipant().playerName(), inProgressScore);
+					.getActiveParticipant().playerNameForTts(), inProgressScore);
 			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
 		}
 	}
@@ -550,21 +550,21 @@ public class ScoreboardActivity extends Activity {
 	private void speakJoinIfNecessary(Player p) {
 		if (shouldSpeak("speak_player_changes")) {
 			String toSpeak = getString(R.string.player_join_speak_text,
-					p.getName());
+					p.getNameForTts());
 			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
 		}		
 	}
 	private void speakRejoinIfNecessary(Participant participant) {
 		if (shouldSpeak("speak_player_changes")) {
 			String toSpeak = getString(R.string.player_rejoin_speak_text,
-					participant.playerName(), participant.getScore());
+					participant.playerNameForTts(), participant.getScore());
 			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
 		}		
 	}
 	private void speakLeaveIfNecessary(Participant participant) {
 		if (shouldSpeak("speak_player_changes")) {
 			String toSpeak = getString(R.string.player_leave_speak_text,
-					participant.playerName(), participant.getScore());
+					participant.playerNameForTts(), participant.getScore());
 			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
 		}
 	}
@@ -572,7 +572,7 @@ public class ScoreboardActivity extends Activity {
 	private void speakRemoveIfNecessary(Participant participant) {
 		if (shouldSpeak("speak_player_changes")) {
 			String toSpeak = getString(R.string.player_remove_speak_text,
-					participant.playerName(), participant.getScore());
+					participant.playerNameForTts(), participant.getScore());
 			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
 		}
 	}
