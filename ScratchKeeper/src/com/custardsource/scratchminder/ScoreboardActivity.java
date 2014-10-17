@@ -40,6 +40,8 @@ public class ScoreboardActivity extends Activity {
 	private static final int ACTION_SETTINGS = 3;
 
 	protected static final String GAME_ID = "GAME_ID";
+	protected static final String EARCON_BELL = "[bell]";
+	protected static final String EARCON_BUZZER = "[buzzer]";
 
 	private int inProgressScore = 0;
 
@@ -182,6 +184,8 @@ public class ScoreboardActivity extends Activity {
 			public void onInit(int status) {
 				if (status == TextToSpeech.SUCCESS) {
 					speechEnabled = true;
+					textToSpeech.addEarcon(EARCON_BELL, getApplication().getPackageName(), R.raw.bell);
+					textToSpeech.addEarcon(EARCON_BUZZER, getApplication().getPackageName(), R.raw.buzzer);
 				}
 				
 			}
@@ -520,6 +524,11 @@ public class ScoreboardActivity extends Activity {
 		return sharedPref.getBoolean("text_to_speech_enabled", false)
 				&& sharedPref.getBoolean(pref, false) && this.speechEnabled;
 	}
+	
+	private boolean shouldPlaySfx() {
+		return sharedPref.getBoolean("in_progress_sound_effects", false)
+				&& this.speechEnabled;
+	}
 
 	private void speakNextPlayerIfNecessary() {
 		if (shouldSpeak("speak_scoreboard_names")) {
@@ -579,12 +588,18 @@ public class ScoreboardActivity extends Activity {
 
 
 	private void clickPlus() {
+		if (shouldPlaySfx()) {
+			this.textToSpeech.playEarcon(EARCON_BELL, TextToSpeech.QUEUE_ADD, null);
+		}
 		inProgressScore += 1;
 		speakInProgressScoreIfNecessary();
 		inProgressScoreView.setText(Integer.toString(inProgressScore));
 	}
 
 	private void clickMinus() {
+		if (shouldPlaySfx()) {
+			this.textToSpeech.playEarcon(EARCON_BUZZER, TextToSpeech.QUEUE_ADD, null);
+		}
 		inProgressScore -= 1;
 		speakInProgressScoreIfNecessary();
 		inProgressScoreView.setText(Integer.toString(inProgressScore));

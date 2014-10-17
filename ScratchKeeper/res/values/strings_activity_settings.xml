@@ -19,8 +19,11 @@
     <string name="pref_description_speak_in_progress_scores">Speak progress as scores are incremented.</string>
     <string name="pref_title_speak_player_changes">Speak player changes?</string>
     <string name="pref_description_speak_player_changes">Announce as players join or leave the game.</string>
+    <string name="pref_title_in_progress_sound_effects">Sound effects?</string>
+    <string name="pref_description_in_progress_sound_effects">Play sound effects on score increment/decrement.</string>
+    
     <string name="scoreboard_preference_category">Scoreboard Play</string>
-    <string name="speech_preference_category">Speech</string>
+    <string name="audio_preference_category">Audio</string>
     <string name="debug_preference_category">Debug</string>
     
     <!-- Example General settings -->

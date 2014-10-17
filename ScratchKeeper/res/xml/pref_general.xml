@@ -20,7 +20,7 @@
     </PreferenceCategory>
     
      <PreferenceCategory
-            android:title="@string/speech_preference_category">
+            android:title="@string/audio_preference_category">
           <CheckBoxPreference
             android:defaultValue="false"
             android:key="text_to_speech_enabled"
@@ -47,6 +47,12 @@
             android:summary="@string/pref_description_speak_player_changes"
             android:title="@string/pref_title_speak_player_changes"
             android:dependency="text_to_speech_enabled" />
+          <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="in_progress_sound_effects"
+            android:summary="@string/pref_description_in_progress_sound_effects"
+            android:title="@string/pref_title_in_progress_sound_effects" />
+          
           
     </PreferenceCategory>
     <PreferenceCategory
