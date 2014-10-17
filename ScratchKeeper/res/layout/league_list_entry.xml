@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingStart="?android:attr/listPreferredItemPaddingStart"
     android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-    android:gravity="center_vertical" >
-
+    android:paddingStart="?android:attr/listPreferredItemPaddingStart" >
 
     <TextView
         android:id="@+id/leagueName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/_dummy_league_name"
         android:layout_alignTop="@+id/leagueIcon"
-		android:layout_toRightOf="@+id/leagueIcon"        
+        android:layout_toRightOf="@+id/leagueIcon"
+        android:text="@string/_dummy_league_name"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <ImageView
@@ -23,27 +22,72 @@
         android:layout_height="@dimen/standard_icon_size"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:src="@drawable/dino_blue"
-        android:contentDescription="@null" />
+        android:contentDescription="@null"
+        android:src="@drawable/dino_blue" />
 
-        <TextView
+    <TextView
         android:id="@+id/leagueDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/leagueDateLabel"
         android:layout_toRightOf="@+id/leagueDateLabel"
+        android:paddingRight="3sp"
         android:text="@string/date"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:paddingRight="3sp"
         android:textSize="12sp" />
 
-     <TextView
-         android:id="@+id/leagueDateLabel"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_below="@+id/leagueName"
-         android:layout_alignLeft="@+id/leagueName"
-         android:text="@string/last_game"
-         android:textAppearance="?android:attr/textAppearanceSmall"
-         android:textSize="12sp" />
+    <TextView
+        android:id="@+id/leagueDateLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/leagueName"
+        android:layout_below="@+id/leagueName"
+        android:text="@string/last_game"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="12sp" />
+
+    <LinearLayout
+        android:id="@+id/leagueLeaderLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+                 android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+         >
+
+        <TextView
+            android:id="@+id/leagueLeaderLabel"
+            android:layout_width="80sp"
+            android:layout_height="wrap_content"
+            android:padding="2sp"
+            android:text="@string/current_leader"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textSize="12sp"
+            android:gravity="center_horizontal"
+             />
+        
+        <ImageView
+            android:id="@+id/leagueLeaderIcon"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/league_leader_icon_size"
+            android:contentDescription="@null"
+            android:background="#308080"
+            android:scaleType="centerInside"
+            android:src="@drawable/caveman"
+            android:layout_gravity="center_horizontal|top" />
+
+        <TextView
+            android:id="@+id/leagueLeader"
+            android:layout_width="fill_parent"
+            android:background="#308080"
+            android:layout_height="wrap_content"
+            
+            android:padding="2sp"
+            android:text="@string/_dummy_player_name"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:gravity="center_horizontal" />
+    </LinearLayout>
+
 </RelativeLayout>

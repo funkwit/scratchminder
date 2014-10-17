@@ -74,6 +74,19 @@ public class LeaguePlayActivity extends Activity {
 				} else {
 					dateView.setText(DateUtils.getRelativeTimeSpanString(date));
 				}
+				
+				if (league.hasResults()) {
+					rowView.findViewById(R.id.leagueLeaderLayout).setVisibility(View.VISIBLE);
+					Player p = league.playersByRank().get(0).getKey();
+					TextView leaderName = (TextView) rowView.findViewById(R.id.leagueLeader);
+					ImageView leaderIcon = (ImageView) rowView.findViewById(R.id.leagueLeaderIcon);
+					leaderName.setText(p.getName());
+					leaderName.setBackgroundColor(p.getColor());
+					leaderIcon.setImageResource(p.getDrawable());
+					leaderIcon.setBackgroundColor(p.getColor());
+				} else {
+					rowView.findViewById(R.id.leagueLeaderLayout).setVisibility(View.GONE);
+				}
 				return rowView;
 			}
 		};
