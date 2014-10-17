@@ -1,5 +1,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-
+    <PreferenceCategory
+        android:title="@string/scoreboard_preference_category">
+    
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="lock_screen"
@@ -15,16 +17,41 @@
         android:key="include_abandoned"
         android:summary="@string/pref_description_include_abandoned"
         android:title="@string/pref_title_include_abandoned" />
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="speak_scoreboard_names"
-        android:summary="@string/pref_description_speak_scoreboard_names"
-        android:title="@string/pref_title_speak_scoreboard_names" />
+    </PreferenceCategory>
+    
+     <PreferenceCategory
+            android:title="@string/speech_preference_category">
+          <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="text_to_speech_enabled"
+            android:summary="@string/pref_description_text_to_speech"
+            android:title="@string/pref_title_text_to_speech" />
+          <CheckBoxPreference
+            android:layout="?android:attr/preferenceLayoutChild"
+            android:defaultValue="false"
+            android:key="speak_scoreboard_names"
+            android:summary="@string/pref_description_speak_scoreboard_names"
+            android:title="@string/pref_title_speak_scoreboard_names"
+            android:dependency="text_to_speech_enabled" />
+          <CheckBoxPreference
+            android:layout="?android:attr/preferenceLayoutChild"
+            android:defaultValue="false"
+            android:key="speak_in_progress_scores"
+            android:summary="@string/pref_description_speak_in_progress_scores"
+            android:title="@string/pref_title_speak_in_progress_scores"
+            android:dependency="text_to_speech_enabled" />
+          
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/debug_preference_category">
+     
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="debug_scoreboard_keys"
         android:summary="@string/pref_description_debug_scoreboard_keys"
         android:title="@string/pref_title_debug_scoreboard_keys" />
+    
+    </PreferenceCategory>
     
     
     <!-- NOTE: EditTextPreference accepts EditText attributes. -->

@@ -111,6 +111,7 @@ public class ScoreboardActivity extends Activity {
 
 			private void setPlaying(Participant player) {
 				game.switchPlayTo(player);
+				speakPlayerChangeIfNecessary();
 				scoreboardAdapter.notifyDataSetChanged();
 			}
 		});
@@ -468,12 +469,14 @@ public class ScoreboardActivity extends Activity {
 
 		case KeyEvent.KEYCODE_LEFT_BRACKET:
 			game.previousPlayer();
+			speakPlayerChangeIfNecessary();
 			scoreboardAdapter.notifyDataSetChanged();
 			scoreboard.setSelection(game.currentPlayerActivePosition());
 			return true;
 
 		case KeyEvent.KEYCODE_RIGHT_BRACKET:
 			game.nextPlayer();
+			speakPlayerChangeIfNecessary();
 			scoreboardAdapter.notifyDataSetChanged();
 			scoreboard.setSelection(game.currentPlayerActivePosition());
 			return true;
@@ -491,7 +494,7 @@ public class ScoreboardActivity extends Activity {
 	}
 
 	private void speakCurrentScoreIfNecessary() {
-		if (sharedPref.getBoolean("speak_scoreboard_names", false) && this.speechEnabled) {
+		if (shouldSpeak("speak_scoreboard_names")) {
 			String toSpeak = getResources().getQuantityString(
 					R.plurals.commit_score_speech_text, inProgressScore, game
 							.getActiveParticipant().playerName(),
@@ -505,9 +508,23 @@ public class ScoreboardActivity extends Activity {
 		}
 	}
 
+	private boolean shouldSpeak(String pref) {
+		return sharedPref.getBoolean("text_to_speech_enabled", false)
+				&& sharedPref.getBoolean(pref, false) && this.speechEnabled;
+	}
+
 	private void speakNextPlayerIfNecessary() {
-		if (sharedPref.getBoolean("speak_scoreboard_names", false) && this.speechEnabled) {
+		if (shouldSpeak("speak_scoreboard_names")) {
 			String toSpeak = getString(R.string.next_player_speech_text, game
+					.getActiveParticipant().playerName(), game
+					.getActiveParticipant().getScore());
+			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
+		}
+	}
+	
+	private void speakPlayerChangeIfNecessary() {
+		if (shouldSpeak("speak_scoreboard_names")) {
+			String toSpeak = getString(R.string.player_change_speak_text, game
 					.getActiveParticipant().playerName(), game
 					.getActiveParticipant().getScore());
 			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
@@ -515,7 +532,7 @@ public class ScoreboardActivity extends Activity {
 	}
 
 	private void speakInProgressScoreIfNecessary() {
-		if (sharedPref.getBoolean("speak_scoreboard_names", false) && this.speechEnabled) {
+		if (shouldSpeak("speak_in_progress_scores")) {
 			String toSpeak = getString(R.string.change_score_speech_text, game
 					.getActiveParticipant().playerName(), inProgressScore);
 			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);

@@ -11,14 +11,17 @@
     <string name="pref_description_include_abandoned">Track and show points for players who have left the game</string>
     <string name="pref_title_debug_scoreboard_keys">Debug scoreboard keys?</string>
     <string name="pref_description_debug_scoreboard_keys">Show a popup on scoreboard when key pressed, for debugging</string>
-    <string name="pref_title_speak_scoreboard_names">Speak names?</string>
-    <string name="pref_description_speak_scoreboard_names">Speak the names of each incoming player in scoreboard mode.</string>
+    <string name="pref_title_text_to_speech">Text-to-speech</string>
+    <string name="pref_description_text_to_speech">Enable text-to-speech for scoreboard play.</string>
+    <string name="pref_title_speak_scoreboard_names">Speak incoming/outgoing?</string>
+    <string name="pref_description_speak_scoreboard_names">Speak the names and scores of each incoming and outgoing player in scoreboard mode.</string>
+    <string name="pref_title_speak_in_progress_scores">Speak scores?</string>
+    <string name="pref_description_speak_in_progress_scores">Speak progress as scores are incremented.</string>
+    <string name="scoreboard_preference_category">Scoreboard Play</string>
+    <string name="speech_preference_category">Speech</string>
+    <string name="debug_preference_category">Debug</string>
     
     <!-- Example General settings -->
-    <string name="pref_title_display_name">Display name</string>
-    <string name="pref_default_display_name">John Smith</string>
-    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
-
     <string-array name="pref_example_list_titles">
         <item>Always</item>
         <item>When possible</item>
