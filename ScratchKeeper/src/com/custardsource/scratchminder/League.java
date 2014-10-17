@@ -108,6 +108,10 @@ public class League implements Serializable {
 				games.size() - count, games.size()))));
 	}
 
+	public List<LeagueGame> allGames() {
+		return recentGames(Integer.MAX_VALUE);
+	}
+
 	public Long lastPlayed() {
 		if (games.isEmpty()) {
 			return null;
