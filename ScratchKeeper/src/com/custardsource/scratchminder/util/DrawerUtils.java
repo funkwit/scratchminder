@@ -67,6 +67,7 @@ public class DrawerUtils {
 						intent.putExtra(PlayerChooserActivity.ACTION,
 								PlayerChooserActivity.BROWSE);
 					}
+					intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					activity.startActivity(intent);
 				}
 			}
