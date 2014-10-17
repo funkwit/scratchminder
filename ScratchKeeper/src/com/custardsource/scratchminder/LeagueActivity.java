@@ -103,6 +103,7 @@ public class LeagueActivity extends FragmentActivity implements
 			Intent intent = new Intent(this, NewLeagueActivity.class);
 			intent.putExtra(NewLeagueActivity.LEAGUE_ID, league.id());
 			startActivityForResult(intent, ACTIVITY_EDIT_LEAGUE);
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
