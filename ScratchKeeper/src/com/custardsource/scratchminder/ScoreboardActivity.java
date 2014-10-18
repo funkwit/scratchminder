@@ -56,7 +56,9 @@ public class ScoreboardActivity extends Activity {
 	private ListView scoreboard;
 	private TextToSpeech textToSpeech;
 	private boolean speechEnabled;
-	
+	private boolean swipeInProgress;
+	private StringBuilder code;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -81,7 +83,8 @@ public class ScoreboardActivity extends Activity {
 				if (rowView == null) {
 					LayoutInflater inflater = (LayoutInflater) context
 							.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-					rowView = inflater.inflate(R.layout.scoreboard_score_entry, parent, false);
+					rowView = inflater.inflate(R.layout.scoreboard_score_entry,
+							parent, false);
 				}
 				TextView nameView = (TextView) rowView.findViewById(R.id.name);
 				TextView scoreView = (TextView) rowView
@@ -132,7 +135,8 @@ public class ScoreboardActivity extends Activity {
 				if (rowView == null) {
 					LayoutInflater inflater = (LayoutInflater) context
 							.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-					rowView = inflater.inflate(R.layout.scoreboard_score_entry_inactive, parent,
+					rowView = inflater.inflate(
+							R.layout.scoreboard_score_entry_inactive, parent,
 							false);
 				}
 				TextView nameView = (TextView) rowView.findViewById(R.id.name);
@@ -178,18 +182,23 @@ public class ScoreboardActivity extends Activity {
 		registerForContextMenu(notPlaying);
 		reapplyPreferences();
 		updateAllDisplay();
-		
-		this.textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-			@Override
-			public void onInit(int status) {
-				if (status == TextToSpeech.SUCCESS) {
-					speechEnabled = true;
-					textToSpeech.addEarcon(EARCON_BELL, getApplication().getPackageName(), R.raw.bell);
-					textToSpeech.addEarcon(EARCON_BUZZER, getApplication().getPackageName(), R.raw.buzzer);
-				}
-				
-			}
-		});
+
+		this.textToSpeech = new TextToSpeech(getApplicationContext(),
+				new TextToSpeech.OnInitListener() {
+					@Override
+					public void onInit(int status) {
+						if (status == TextToSpeech.SUCCESS) {
+							speechEnabled = true;
+							textToSpeech.addEarcon(EARCON_BELL,
+									getApplication().getPackageName(),
+									R.raw.bell);
+							textToSpeech.addEarcon(EARCON_BUZZER,
+									getApplication().getPackageName(),
+									R.raw.buzzer);
+						}
+
+					}
+				});
 	}
 
 	@Override
@@ -284,6 +293,10 @@ public class ScoreboardActivity extends Activity {
 
 	private void rejoin(long id) {
 		Participant participant = notPlayingAdapter.getItem((int) id);
+		resumeParticipant(participant);
+	}
+
+	private void resumeParticipant(Participant participant) {
 		game.rejoin(participant);
 		scoreboardAdapter.insert(participant,
 				game.playingPositionOf(participant));
@@ -294,9 +307,12 @@ public class ScoreboardActivity extends Activity {
 		speakRejoinIfNecessary(participant);
 	}
 
-
 	private void leave(long id) {
 		Participant participant = game.partipantInActivePosition((int) id);
+		suspendParticipant(participant);
+	}
+
+	private void suspendParticipant(Participant participant) {
 		game.leave(participant);
 		Log.d(Constants.TAG, "Removing player" + participant);
 		scoreboardAdapter.remove(participant);
@@ -304,7 +320,6 @@ public class ScoreboardActivity extends Activity {
 		findViewById(R.id.notPlayingPanel).setVisibility(View.VISIBLE);
 		speakLeaveIfNecessary(participant);
 	}
-
 
 	private void confirmRemove(final int position) {
 		DialogUtils.confirmDialog(this, new Runnable() {
@@ -343,10 +358,7 @@ public class ScoreboardActivity extends Activity {
 			if (resultCode == RESULT_OK) {
 				Player p = lobby.playerById(data.getLongExtra(
 						AddPlayerActivity.PLAYER_ID, 0));
-				scoreboardAdapter.add(game.addPlayer(p));
-				p.recordPlay();
-				updateAllDisplay();
-				speakJoinIfNecessary(p);
+				addPlayerToGame(p);
 			}
 		}
 		if (requestCode == ACTION_EDIT) {
@@ -358,6 +370,13 @@ public class ScoreboardActivity extends Activity {
 		if (requestCode == ACTION_SETTINGS) {
 			reapplyPreferences();
 		}
+	}
+
+	private void addPlayerToGame(Player p) {
+		scoreboardAdapter.add(game.addPlayer(p));
+		p.recordPlay();
+		updateAllDisplay();
+		speakJoinIfNecessary(p);
 	}
 
 	private void reapplyPreferences() {
@@ -454,9 +473,41 @@ public class ScoreboardActivity extends Activity {
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		if (game.getParticipants().isEmpty()) {
+		int pressed = event.getUnicodeChar();
+		if (pressed == Constants.BADGE_START) {
+			swipeInProgress = true;
+			code = new StringBuilder();
+			return true;
+		} else if (swipeInProgress) {
+			if (pressed == Constants.BADGE_END) {
+				swipeInProgress = false;
+				if (code.length() != 0) {
+					String badge = code.toString();
+					Player p = lobby.playerByBadgeCode(badge);
+					if (p == null) {
+						// TODO: handle add
+					} else {
+						Participant participant = game.getParticipantFor(p);
+						if (participant == null) {
+							addPlayerToGame(p);
+						} else if (participant.active()) {
+							suspendParticipant(participant);
+						} else {
+							resumeParticipant(participant);
+						}
+					}
+				}
+				return true;
+			} else if (pressed != 0) {
+				code.appendCodePoint(pressed);
+				return true;
+			}
+			return super.onKeyUp(keyCode, event);
+		} else if (game.getParticipants().isEmpty()) {
 			return super.onKeyUp(keyCode, event);
 		}
+		swipeInProgress = false;
+
 		switch (keyCode) {
 		case KeyEvent.KEYCODE_PLUS:
 		case KeyEvent.KEYCODE_NUMPAD_ADD:
@@ -508,8 +559,8 @@ public class ScoreboardActivity extends Activity {
 	private void speakCurrentScoreIfNecessary() {
 		if (shouldSpeak("speak_scoreboard_names")) {
 			String toSpeak = getResources().getQuantityString(
-					R.plurals.commit_score_speech_text, inProgressScore, game
-							.getActiveParticipant().playerNameForTts(),
+					R.plurals.commit_score_speech_text, inProgressScore,
+					game.getActiveParticipant().playerNameForTts(),
 					inProgressScore, game.getActiveParticipant().getScore());
 			if (inProgressScore == 0) {
 				toSpeak = getString(R.string.commit_score_zero_speech_text,
@@ -524,7 +575,7 @@ public class ScoreboardActivity extends Activity {
 		return sharedPref.getBoolean("text_to_speech_enabled", false)
 				&& sharedPref.getBoolean(pref, false) && this.speechEnabled;
 	}
-	
+
 	private boolean shouldPlaySfx() {
 		return sharedPref.getBoolean("in_progress_sound_effects", false)
 				&& this.speechEnabled;
@@ -538,7 +589,7 @@ public class ScoreboardActivity extends Activity {
 			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
 		}
 	}
-	
+
 	private void speakPlayerChangeIfNecessary() {
 		if (shouldSpeak("speak_scoreboard_names")) {
 			String toSpeak = getString(R.string.player_change_speak_text, game
@@ -555,21 +606,23 @@ public class ScoreboardActivity extends Activity {
 			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
 		}
 	}
-	
+
 	private void speakJoinIfNecessary(Player p) {
 		if (shouldSpeak("speak_player_changes")) {
 			String toSpeak = getString(R.string.player_join_speak_text,
 					p.getNameForTts());
 			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
-		}		
+		}
 	}
+
 	private void speakRejoinIfNecessary(Participant participant) {
 		if (shouldSpeak("speak_player_changes")) {
 			String toSpeak = getString(R.string.player_rejoin_speak_text,
 					participant.playerNameForTts(), participant.getScore());
 			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
-		}		
+		}
 	}
+
 	private void speakLeaveIfNecessary(Participant participant) {
 		if (shouldSpeak("speak_player_changes")) {
 			String toSpeak = getString(R.string.player_leave_speak_text,
@@ -586,10 +639,10 @@ public class ScoreboardActivity extends Activity {
 		}
 	}
 
-
 	private void clickPlus() {
 		if (shouldPlaySfx()) {
-			this.textToSpeech.playEarcon(EARCON_BELL, TextToSpeech.QUEUE_ADD, null);
+			this.textToSpeech.playEarcon(EARCON_BELL, TextToSpeech.QUEUE_ADD,
+					null);
 		}
 		inProgressScore += 1;
 		speakInProgressScoreIfNecessary();
@@ -598,7 +651,8 @@ public class ScoreboardActivity extends Activity {
 
 	private void clickMinus() {
 		if (shouldPlaySfx()) {
-			this.textToSpeech.playEarcon(EARCON_BUZZER, TextToSpeech.QUEUE_ADD, null);
+			this.textToSpeech.playEarcon(EARCON_BUZZER, TextToSpeech.QUEUE_ADD,
+					null);
 		}
 		inProgressScore -= 1;
 		speakInProgressScoreIfNecessary();

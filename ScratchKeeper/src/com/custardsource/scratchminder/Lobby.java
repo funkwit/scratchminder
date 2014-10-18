@@ -154,4 +154,8 @@ public class Lobby implements Serializable {
 		}
 		playersByBadgeCode.put(badgeCode, p);
 	}
+
+	public Player playerByBadgeCode(String badge) {
+		return playersByBadgeCode.get(badge);
+	}
 }

@@ -230,4 +230,13 @@ public class Game implements Serializable {
 	public Participant getActiveParticipant() {
 		return participants.get(activePlayerIndex);
 	}
+
+	public Participant getParticipantFor(Player p) {
+		for (Participant participant : participants) {
+			if (participant.playerId() == p.id()) {
+				return participant;
+			}
+		}
+		return null;
+	}
 }
