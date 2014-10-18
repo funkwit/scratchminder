@@ -43,7 +43,7 @@
             android:textColor="@android:color/primary_text_dark_nodisable" />
     </LinearLayout>
 
-            <ImageView
+            <ImageButton
             android:id="@+id/swapButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
