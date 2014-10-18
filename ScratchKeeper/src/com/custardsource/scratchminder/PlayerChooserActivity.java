@@ -36,6 +36,7 @@ public class PlayerChooserActivity extends Activity {
 	private static final int ACTION_EDIT = 2;
 
 	public static final String EXCLUDE_PLAYERS = "EXCLUDE_PLAYERS";
+	protected static final String FOR_BADGE_ASSOCIATION = "FOR_BADGE_ASSOCIATION";
 
 	public static final String ACTION = "ACTION";
 	// Main view (from drawer bar)

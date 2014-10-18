@@ -38,6 +38,7 @@ public class ScoreboardActivity extends Activity {
 	private static final int ACTION_ADD = 1;
 	private static final int ACTION_EDIT = 2;
 	private static final int ACTION_SETTINGS = 3;
+	private static final int ACTION_ASSOCIATE_BADGE = 4;
 
 	protected static final String GAME_ID = "GAME_ID";
 	protected static final String EARCON_BELL = "[bell]";
@@ -360,15 +361,20 @@ public class ScoreboardActivity extends Activity {
 						AddPlayerActivity.PLAYER_ID, 0));
 				addPlayerToGame(p);
 			}
-		}
-		if (requestCode == ACTION_EDIT) {
+		} else if (requestCode == ACTION_EDIT) {
 			if (resultCode == RESULT_OK) {
 				scoreboardAdapter.notifyDataSetChanged();
 				notPlayingAdapter.notifyDataSetChanged();
 			}
-		}
-		if (requestCode == ACTION_SETTINGS) {
+		} else if (requestCode == ACTION_SETTINGS) {
 			reapplyPreferences();
+		} else if (requestCode == ACTION_ASSOCIATE_BADGE
+				&& resultCode == RESULT_OK) {
+			Player p = lobby.playerById(data.getLongExtra(
+					AddPlayerActivity.PLAYER_ID, 0));
+			lobby.registerBadgeCode(code.toString(), p);
+			handleBadgeIn(p);
+
 		}
 	}
 
@@ -485,16 +491,24 @@ public class ScoreboardActivity extends Activity {
 					String badge = code.toString();
 					Player p = lobby.playerByBadgeCode(badge);
 					if (p == null) {
-						// TODO: handle add
+						DialogUtils.confirmDialog(
+								this,
+								new Runnable() {
+									@Override
+									public void run() {
+										Intent intent = new Intent(
+												ScoreboardActivity.this,
+												PlayerChooserActivity.class);
+										intent.putExtra(
+												PlayerChooserActivity.FOR_BADGE_ASSOCIATION,
+												true);
+										startActivityForResult(intent,
+												ACTION_ASSOCIATE_BADGE);
+									}
+								}, R.string.unrecognized_badge_title,
+								R.string.unrecognized_badge_message);
 					} else {
-						Participant participant = game.getParticipantFor(p);
-						if (participant == null) {
-							addPlayerToGame(p);
-						} else if (participant.active()) {
-							suspendParticipant(participant);
-						} else {
-							resumeParticipant(participant);
-						}
+						handleBadgeIn(p);
 					}
 				}
 				return true;
@@ -553,6 +567,17 @@ public class ScoreboardActivity extends Activity {
 			}
 
 			return super.onKeyUp(keyCode, event);
+		}
+	}
+
+	private void handleBadgeIn(Player player) {
+		Participant participant = game.getParticipantFor(player);
+		if (participant == null) {
+			addPlayerToGame(player);
+		} else if (participant.active()) {
+			suspendParticipant(participant);
+		} else {
+			resumeParticipant(participant);
 		}
 	}
 
