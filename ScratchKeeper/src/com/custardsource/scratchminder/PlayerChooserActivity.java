@@ -46,6 +46,7 @@ public class PlayerChooserActivity extends Activity {
 	private ArrayAdapter<Player> playerAdapter;
 	private ActionBarDrawerToggle drawerToggle;
 	private boolean browseMode;
+	private boolean hideBadges;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,7 @@ public class PlayerChooserActivity extends Activity {
 		setContentView(R.layout.activity_player_chooser);
 		this.lobby = ((GlobalState) getApplication()).getLobby();
 		browseMode = BROWSE.equals(getIntent().getStringExtra(ACTION));
+		hideBadges = getIntent().getBooleanExtra(FOR_BADGE_ASSOCIATION, false);
 
 		final ListView playerList = (ListView) findViewById(R.id.choosePlayer);
 
@@ -151,6 +153,7 @@ public class PlayerChooserActivity extends Activity {
 		int id = item.getItemId();
 		if (id == R.id.add_player) {
 			Intent intent = new Intent(this, AddPlayerActivity.class);
+			intent.putExtra(AddPlayerActivity.HIDE_BADGE, hideBadges);
 			startActivityForResult(intent, ACTION_NEW_PLAYER);
 			return true;
 		} else if (id == R.id.action_settings) {

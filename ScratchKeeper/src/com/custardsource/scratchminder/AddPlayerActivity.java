@@ -43,6 +43,7 @@ public class AddPlayerActivity extends Activity {
 	private static final List<Integer> VALID_COLOURS = Lists.newArrayList();
 	protected static final int ACTIVITY_REGISTER_BADGE = 1;
 	private static final int BADGE_SELECTED_COLOR = Color.rgb(120, 200, 120);
+	public static final String HIDE_BADGE = "HIDE_BADGE";
 	static {
 		for (int red : COLOUR_COMPONENTS) {
 			for (int green : COLOUR_COMPONENTS) {
@@ -79,6 +80,9 @@ public class AddPlayerActivity extends Activity {
 		if (getIntent().hasExtra(PLAYER_ID)) {
 			editingPlayer = state.getLobby().playerById(
 					getIntent().getLongExtra(PLAYER_ID, 0));
+		}
+		if (getIntent().getBooleanExtra(HIDE_BADGE, false)) {
+			findViewById(R.id.registerBadgeButton).setVisibility(View.GONE);
 		}
 		Set<Player> toExclude = Collections.emptySet();
 		if (editingPlayer != null) {
@@ -185,7 +189,7 @@ public class AddPlayerActivity extends Activity {
 			index = colourAdapter.indexOf(editingPlayer.getColor());
 			colours.setSelection(index);
 			colours.setItemChecked(index, true);
-			if(!Strings.isNullOrEmpty(editingPlayer.getBadgeCode())) {
+			if (!Strings.isNullOrEmpty(editingPlayer.getBadgeCode())) {
 				registerButton.setBackgroundColor(BADGE_SELECTED_COLOR);
 			}
 		}
@@ -337,7 +341,7 @@ public class AddPlayerActivity extends Activity {
 			badgeCode = data
 					.getStringExtra(RegisterPlayerBadgeActivity.BADGE_CODE);
 			registerButton.setBackgroundColor(BADGE_SELECTED_COLOR);
-			
+
 			Toast.makeText(this, R.string.registered_badge, Toast.LENGTH_SHORT)
 					.show();
 		}
