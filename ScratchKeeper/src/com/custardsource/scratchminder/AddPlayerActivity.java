@@ -27,16 +27,22 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 public class AddPlayerActivity extends Activity {
 	static final String PLAYER_ID = "PlayerID";
-	private static final int[] COLOUR_COMPONENTS = {0x00, 0x2A, 0x54, 0x7F, 0xAA};
+	private static final int[] COLOUR_COMPONENTS = { 0x00, 0x2A, 0x54, 0x7F,
+			0xAA };
 	private static final List<Integer> VALID_COLOURS = Lists.newArrayList();
+	protected static final int ACTIVITY_REGISTER_BADGE = 1;
+	private static final int BADGE_SELECTED_COLOR = Color.rgb(120, 200, 120);
 	static {
 		for (int red : COLOUR_COMPONENTS) {
 			for (int green : COLOUR_COMPONENTS) {
@@ -50,13 +56,14 @@ public class AddPlayerActivity extends Activity {
 		}
 	}
 
-
 	private Player editingPlayer;
 	private GlobalState state;
 
 	private int itemBackground;
 	private Map<Integer, Integer> colourPopularity;
 	private Map<Avatar, Integer> avatarPopularity;
+	private String badgeCode;
+	private ImageButton registerButton;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -70,15 +77,17 @@ public class AddPlayerActivity extends Activity {
 		a.recycle();
 
 		if (getIntent().hasExtra(PLAYER_ID)) {
-			editingPlayer = state.getLobby().playerById(getIntent().getLongExtra(PLAYER_ID, 0));
+			editingPlayer = state.getLobby().playerById(
+					getIntent().getLongExtra(PLAYER_ID, 0));
 		}
 		Set<Player> toExclude = Collections.emptySet();
 		if (editingPlayer != null) {
 			toExclude = Collections.singleton(editingPlayer);
+			badgeCode = editingPlayer.getBadgeCode();
 		}
 		colourPopularity = state.getLobby().colourPopularityMap(toExclude);
 		avatarPopularity = state.getLobby().avatarPopularityMap(toExclude);
-		
+
 		final ImageAdapter imageAdapter = new ImageAdapter();
 		final GridView gridView = (GridView) findViewById(R.id.gridPicture);
 		gridView.setAdapter(imageAdapter);
@@ -94,7 +103,6 @@ public class AddPlayerActivity extends Activity {
 		colours.setChoiceMode(GridView.CHOICE_MODE_SINGLE);
 		colours.setSelection(0);
 		colours.setItemChecked(0, true);
-		
 
 		((Button) findViewById(R.id.cancel))
 				.setOnClickListener(new OnClickListener() {
@@ -130,6 +138,7 @@ public class AddPlayerActivity extends Activity {
 						String ttsName = ((EditText) findViewById(R.id.editTtsName))
 								.getText().toString();
 						p.setTtsName(ttsName);
+						state.getLobby().registerBadgeCode(badgeCode, p);
 
 						result.putExtra(PLAYER_ID, p.id());
 						setResult(Activity.RESULT_OK, result);
@@ -155,16 +164,30 @@ public class AddPlayerActivity extends Activity {
 
 					}
 				});
+		registerButton = (ImageButton) findViewById(R.id.registerBadgeButton);
+		registerButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(AddPlayerActivity.this,
+						RegisterPlayerBadgeActivity.class);
+				startActivityForResult(intent, ACTIVITY_REGISTER_BADGE);
+			}
+		});
 		if (editingPlayer != null) {
-			((EditText) findViewById(R.id.editName)).setText(editingPlayer.getName());
-			((EditText) findViewById(R.id.editTtsName)).setText(editingPlayer.getTtsName());
+			((EditText) findViewById(R.id.editName)).setText(editingPlayer
+					.getName());
+			((EditText) findViewById(R.id.editTtsName)).setText(editingPlayer
+					.getTtsName());
 			int index = imageAdapter.indexOf(editingPlayer.getAvatar());
 			gridView.setSelection(index);
 			gridView.setItemChecked(index, true);
-			
+
 			index = colourAdapter.indexOf(editingPlayer.getColor());
 			colours.setSelection(index);
 			colours.setItemChecked(index, true);
+			if(!Strings.isNullOrEmpty(editingPlayer.getBadgeCode())) {
+				registerButton.setBackgroundColor(BADGE_SELECTED_COLOR);
+			}
 		}
 	}
 
@@ -191,12 +214,14 @@ public class AddPlayerActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-	public abstract static class CheckableImageListAdapter<T> extends BaseAdapter {
+
+	public abstract static class CheckableImageListAdapter<T> extends
+			BaseAdapter {
 		private final List<T> validChoices;
 		private Context context;
-		
-		protected CheckableImageListAdapter(Context context, List<T> validChoices) {
+
+		protected CheckableImageListAdapter(Context context,
+				List<T> validChoices) {
 			this.validChoices = validChoices;
 			this.context = context;
 		}
@@ -222,10 +247,9 @@ public class AddPlayerActivity extends Activity {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View v = convertView;
 			if (convertView == null) {
-				LayoutInflater inflater = (LayoutInflater) 
-						context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				v = inflater.inflate(R.layout.image_with_count,
-						parent, false);
+				LayoutInflater inflater = (LayoutInflater) context
+						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				v = inflater.inflate(R.layout.image_with_count, parent, false);
 			}
 			T current = getItem(position);
 			populateView(v, current);
@@ -236,16 +260,14 @@ public class AddPlayerActivity extends Activity {
 			return validChoices.indexOf(item);
 		}
 
-		
 		protected abstract void populateView(View v, T current);
 	}
 
 	public class ImageAdapter extends CheckableImageListAdapter<Avatar> {
-		
+
 		protected ImageAdapter() {
 			super(AddPlayerActivity.this, Arrays.asList(Avatar.values()));
 		}
-
 
 		@Override
 		protected long getIdForItem(Avatar item) {
@@ -257,9 +279,9 @@ public class AddPlayerActivity extends Activity {
 			ImageView i = (ImageView) v.findViewById(R.id.image);
 			i.setAdjustViewBounds(true);
 			TextView t = (TextView) v.findViewById(R.id.counter);
-			
+
 			i.setImageResource(current.drawable());
-			
+
 			Integer popularity = avatarPopularity.get(current);
 			if (popularity == null) {
 				t.setVisibility(View.INVISIBLE);
@@ -307,5 +329,18 @@ public class AddPlayerActivity extends Activity {
 				t.setText(Integer.toString(popularity));
 			}
 		}
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == ACTIVITY_REGISTER_BADGE && resultCode == RESULT_OK) {
+			badgeCode = data
+					.getStringExtra(RegisterPlayerBadgeActivity.BADGE_CODE);
+			registerButton.setBackgroundColor(BADGE_SELECTED_COLOR);
+			
+			Toast.makeText(this, R.string.registered_badge, Toast.LENGTH_SHORT)
+					.show();
+		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 }

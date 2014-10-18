@@ -118,5 +118,12 @@
         <item>Game History</item>
     </string-array>
         <string name="swap">Swap</string>
-
+        <string name="register_badge_button">Register badge</string>
+        <string name="title_activity_register_badge">Register badge</string>
+        <string name="swipe_badge_to_register">Swipe your badge or card now to register.</string>
+        <string name="status_waiting">Status: waiting for swipe</string>
+        <string name="status_in_progress">Status: swipe in progress</string>
+                <string name="status_error">Status: error swiping</string>
+                <string name="registered_badge">Successfully registered badge for user</string>
+                
 </resources>

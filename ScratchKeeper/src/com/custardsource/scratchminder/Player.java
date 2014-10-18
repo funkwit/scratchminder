@@ -15,6 +15,7 @@ public class Player implements Serializable {
 	private long id = UUID.randomUUID().getLeastSignificantBits();
 	private long lastPlayed = System.currentTimeMillis();
 	private String ttsName;
+	private String badgeCode;
 
 	public Player(String name, Avatar avatar, int color) {
 		super();
@@ -79,5 +80,13 @@ public class Player implements Serializable {
 			return name;
 		}
 		return ttsName;
+	}
+
+	public String getBadgeCode() {
+		return badgeCode;
+	}
+
+	public void setBadgeCode(String badgeCode) {
+		this.badgeCode = badgeCode;
 	}
 }

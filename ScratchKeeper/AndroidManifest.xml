@@ -6,7 +6,7 @@
     android:installLocation="auto" >
 
     <uses-sdk
-        android:minSdkVersion="15"
+        android:minSdkVersion="16"
         android:targetSdkVersion="20" />
 
     <application
@@ -94,6 +94,15 @@
             android:label="@string/title_activity_help"
             android:theme="@android:style/Theme.Dialog" >
         </activity>
+        <activity
+            android:name=".RegisterPlayerBadgeActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/title_activity_register_badge"
+            android:noHistory="true"
+            android:parentActivityName=".AddPlayerActivity"
+            android:theme="@android:style/Theme.Dialog" >
+        </activity>
+        
     </application>
 
 </manifest>

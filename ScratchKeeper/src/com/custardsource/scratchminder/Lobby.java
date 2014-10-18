@@ -1,5 +1,7 @@
 package com.custardsource.scratchminder;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,9 +13,11 @@ import java.util.Set;
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
-@SuppressLint("UseSparseArrays") // Sparse Array isn't serializable.
+@SuppressLint("UseSparseArrays")
+// Sparse Array isn't serializable.
 public class Lobby implements Serializable {
 	private static final long serialVersionUID = 4L;
 	private List<Game> allGames = new ArrayList<Game>();
@@ -22,16 +26,16 @@ public class Lobby implements Serializable {
 	private Map<Long, Player> playersById = new HashMap<Long, Player>();
 	private List<League> allLeagues = new ArrayList<League>();
 	private Map<Long, League> leaguesById = new LinkedHashMap<Long, League>();
+	private Map<String, Player> playersByBadgeCode = Maps.newHashMap();
 
 	public Lobby() {
 		Player p1 = addPlayer("Cow", Avatar.remember_the_milk,
 				Color.rgb(0, 0, 80));
-		Player p2 = addPlayer("Chris", Avatar.pterodactyl,
-				Color.rgb(80, 0, 0));
+		Player p2 = addPlayer("Chris", Avatar.pterodactyl, Color.rgb(80, 0, 0));
 		Player p3 = addPlayer("Krijesta", Avatar.dino_orange,
 				Color.rgb(80, 0, 80));
 		Player p4 = addPlayer("Bod", Avatar.caveman, Color.rgb(80, 80, 0));
-		
+
 		Game g1 = addGame(null);
 		Game g2 = addGame("Awesome Game");
 		g1.addPlayer(p1);
@@ -41,10 +45,10 @@ public class Lobby implements Serializable {
 		g2.addPlayer(p1);
 		g2.addPlayer(p4);
 	}
-	
+
 	public void resetIfNecessary() {
-		//allLeagues = new ArrayList<League>();
-		//leaguesById = new LinkedHashMap<Long, League>();
+		// allLeagues = new ArrayList<League>();
+		// leaguesById = new LinkedHashMap<Long, League>();
 	}
 
 	List<Game> allGames() {
@@ -54,7 +58,7 @@ public class Lobby implements Serializable {
 	public Game gameById(long id) {
 		return gamesById.get(id);
 	}
-	
+
 	Player addPlayer(String name, Avatar avatar, int color) {
 		Player p = new Player(name, avatar, color);
 		allPlayers.add(p);
@@ -99,8 +103,9 @@ public class Lobby implements Serializable {
 	public League leagueById(long id) {
 		return leaguesById.get(id);
 	}
-	
-	public Map<Integer, Integer> colourPopularityMap(Set<Player> playersToExclude) {
+
+	public Map<Integer, Integer> colourPopularityMap(
+			Set<Player> playersToExclude) {
 		Map<Integer, Integer> results = Maps.newHashMap();
 		for (Player player : allPlayers) {
 			if (!playersToExclude.contains(player)) {
@@ -114,7 +119,7 @@ public class Lobby implements Serializable {
 		}
 		return results;
 	}
-	
+
 	public Map<Avatar, Integer> avatarPopularityMap(Set<Player> playersToExclude) {
 		Map<Avatar, Integer> results = Maps.newHashMap();
 		for (Player player : allPlayers) {
@@ -128,5 +133,25 @@ public class Lobby implements Serializable {
 			}
 		}
 		return results;
+	}
+
+	private void readObject(ObjectInputStream ois)
+			throws ClassNotFoundException, IOException {
+		ois.defaultReadObject();
+		if (playersByBadgeCode == null) {
+			playersByBadgeCode = Maps.newHashMap();
+		}
+
+	}
+
+	public void registerBadgeCode(String badgeCode, Player p) {
+		if (!Strings.isNullOrEmpty(p.getBadgeCode())) {
+			playersByBadgeCode.remove(p.getBadgeCode());
+		}
+		p.setBadgeCode(badgeCode);
+		if (Strings.isNullOrEmpty(badgeCode)) {
+			return;
+		}
+		playersByBadgeCode.put(badgeCode, p);
 	}
 }
