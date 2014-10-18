@@ -117,5 +117,6 @@
         <item>Rankings</item>
         <item>Game History</item>
     </string-array>
+        <string name="swap">Swap</string>
 
 </resources>
