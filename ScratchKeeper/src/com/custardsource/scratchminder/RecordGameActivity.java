@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,15 +12,21 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.custardsource.scratchminder.util.DialogUtils;
+
 public class RecordGameActivity extends Activity {
 
 	protected static final int ACTION_CHOOSE_WINNER = 1;
 	protected static final int ACTION_CHOOSE_LOSER = 2;
+	protected static final int ACTION_ASSOCIATE_BADGE = 3;
 	protected static final String WINNER_ID = "WINNER_ID";
 	protected static final String LOSER_ID = "LOSER_ID";
 	private Lobby lobby;
 	private Player winner;
 	private Player loser;
+	private boolean winnerActiveForBadgeInput = true;
+	private boolean swipeInProgress;
+	private StringBuilder code;
 
 	// TODO: calculate this programatically
 	private static final int PANEL_INITIAL_COLOUR = Color.rgb(102, 102, 102);
@@ -85,9 +92,36 @@ public class RecordGameActivity extends Activity {
 				loser = temp;
 				updateWinner();
 				updateLoser();
+				if (winner == null) {
+					winnerActiveForBadgeInput = true;
+				} else if (loser == null) {
+					winnerActiveForBadgeInput = false;
+				}
+				updateBadgeIndicators();
 			}
 		});
+		updateBadgeIndicators();
 		return true;
+	}
+
+	private void updateBadgeIndicators() {
+		((ImageView) findViewById(R.id.winnerBadgeIcon))
+				.setVisibility(winnerActiveForBadgeInput ? View.VISIBLE
+						: View.GONE);
+		if (winner == null) {
+			((TextView) findViewById(R.id.winnerName))
+					.setText(winnerActiveForBadgeInput ? R.string.click_or_badge_to_choose_winner
+							: R.string.click_to_choose_winner);
+		}
+		((ImageView) findViewById(R.id.loserBadgeIcon))
+				.setVisibility(!winnerActiveForBadgeInput ? View.VISIBLE
+						: View.GONE);
+		if (loser == null) {
+			((TextView) findViewById(R.id.loserName))
+					.setText(!winnerActiveForBadgeInput ? R.string.click_or_badge_to_choose_loser
+							: R.string.click_to_choose_loser);
+		}
+
 	}
 
 	@Override
@@ -98,15 +132,24 @@ public class RecordGameActivity extends Activity {
 						AddPlayerActivity.PLAYER_ID, 0));
 				updateWinner();
 				checkEnableButton();
+				winnerActiveForBadgeInput = false;
+				updateBadgeIndicators();
 			}
-		}
-		if (requestCode == ACTION_CHOOSE_LOSER) {
+		} else if (requestCode == ACTION_CHOOSE_LOSER) {
 			if (resultCode == RESULT_OK) {
 				loser = lobby.playerById(data.getLongExtra(
 						AddPlayerActivity.PLAYER_ID, 0));
 				updateLoser();
 				checkEnableButton();
+				winnerActiveForBadgeInput = true;
+				updateBadgeIndicators();
 			}
+		} else if (requestCode == ACTION_ASSOCIATE_BADGE
+				&& resultCode == RESULT_OK) {
+			Player p = lobby.playerById(data.getLongExtra(
+					AddPlayerActivity.PLAYER_ID, 0));
+			lobby.registerBadgeCode(code.toString(), p);
+			handleBadgeIn(p);
 		}
 	}
 
@@ -156,5 +199,65 @@ public class RecordGameActivity extends Activity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		int pressed = event.getUnicodeChar();
+		if (pressed == Constants.BADGE_START) {
+			swipeInProgress = true;
+			code = new StringBuilder();
+			return true;
+		} else if (swipeInProgress) {
+			if (pressed == Constants.BADGE_END) {
+				swipeInProgress = false;
+				if (code.length() != 0) {
+					String badge = code.toString();
+					Player p = lobby.playerByBadgeCode(badge);
+					if (p == null) {
+						DialogUtils.confirmDialog(
+								this,
+								new Runnable() {
+									@Override
+									public void run() {
+										Intent intent = new Intent(
+												RecordGameActivity.this,
+												PlayerChooserActivity.class);
+										intent.putExtra(
+												PlayerChooserActivity.FOR_BADGE_ASSOCIATION,
+												true);
+										startActivityForResult(intent,
+												ACTION_ASSOCIATE_BADGE);
+									}
+								}, R.string.unrecognized_badge_title,
+								R.string.unrecognized_badge_message);
+					} else {
+						handleBadgeIn(p);
+					}
+				}
+				return true;
+			} else if (pressed != 0) {
+				code.appendCodePoint(pressed);
+				return true;
+			}
+			return super.onKeyUp(keyCode, event);
+		}
+		swipeInProgress = false;
+
+		return super.onKeyUp(keyCode, event);
+	}
+
+	private void handleBadgeIn(Player p) {
+		if (winnerActiveForBadgeInput) {
+			winner = p;
+			updateWinner();
+			winnerActiveForBadgeInput = false;
+		} else {
+			loser = p;
+			updateLoser();
+			winnerActiveForBadgeInput = true;
+		}
+		checkEnableButton();
+		updateBadgeIndicators();
 	}
 }

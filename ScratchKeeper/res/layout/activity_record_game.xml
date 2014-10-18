@@ -35,12 +35,22 @@
 
         <TextView
             android:id="@+id/winnerName"
+            android:layout_width="0px"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/click_or_badge_to_choose_winner"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/primary_text_dark_nodisable" />
+        
+                 <ImageView
+            android:id="@+id/winnerBadgeIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="@string/click_to_choose_winner"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/primary_text_dark_nodisable" />
+            android:src="@drawable/ic_fa_credit_card_light"
+            android:contentDescription="@null" />
+        
     </LinearLayout>
 
             <ImageButton
@@ -80,13 +90,23 @@
 
         <TextView
             android:id="@+id/loserName"
-            android:layout_width="wrap_content"
+            android:layout_width="0px"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="@string/click_to_choose_loser"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/primary_text_dark_nodisable" />
-    </LinearLayout>
+
+         <ImageView
+            android:id="@+id/loserBadgeIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_fa_credit_card_light"
+            android:visibility="invisible"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@null" />
+        </LinearLayout>
 
     <Button
         android:id="@+id/recordGameButton"

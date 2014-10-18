@@ -58,6 +58,8 @@
     <string name="record_game">Record game</string>
     <string name="click_to_choose_loser">Click to choose loser</string>
     <string name="click_to_choose_winner">Click to choose winner</string>
+    <string name="click_or_badge_to_choose_loser">Click or badge in to choose loser</string>
+    <string name="click_or_badge_to_choose_winner">Click or badge in to choose winner</string>
     <string name="loser_label">"Loser: "</string>
     <string name="winner_label">"Winner: "</string>
     <string name="last_played">"Last Played: "</string>
