@@ -13,7 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class LeagueActivity extends FragmentActivity implements
-		ActionBar.TabListener, LeagueHistoryFragment.LeagueGameListener {
+		ActionBar.TabListener, LeagueGameListener {
 
 	private Lobby lobby;
 	private League league;
@@ -24,6 +24,7 @@ public class LeagueActivity extends FragmentActivity implements
 	private ViewPager viewPager;
 	private ActionBar actionBar;
 	private LeagueRankingsFragment rankingsFragment;
+	private LeagueHistoryFragment historyFragment;
 
 	
 	@Override
@@ -41,6 +42,7 @@ public class LeagueActivity extends FragmentActivity implements
 		viewPager.setAdapter(new FragmentPagerAdapter(
 				getSupportFragmentManager()) {
 
+
 			@Override
 			public int getCount() {
 				return 2;
@@ -53,7 +55,8 @@ public class LeagueActivity extends FragmentActivity implements
 					rankingsFragment = new LeagueRankingsFragment();
 					return rankingsFragment;
 				case 1:
-					return new LeagueHistoryFragment();
+					historyFragment = new LeagueHistoryFragment();
+					return historyFragment;
 				}
 
 				return null;
@@ -152,6 +155,9 @@ public class LeagueActivity extends FragmentActivity implements
 	public void onGameAdded(LeagueGame game) {
 		if (rankingsFragment != null) {
 			rankingsFragment.refreshData();
+		}
+		if (historyFragment != null) {
+			historyFragment.refreshData();
 		}
 	}
 }

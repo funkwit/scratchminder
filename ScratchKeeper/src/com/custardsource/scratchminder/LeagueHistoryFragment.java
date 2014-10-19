@@ -29,10 +29,6 @@ public class LeagueHistoryFragment extends Fragment {
 	private ArrayAdapter<LeagueGame> recentGamesAdapter;
 	private LeagueGameListener listener;
 
-	public interface LeagueGameListener {
-		public void onGameAdded(LeagueGame game);
-	}
-
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -151,6 +147,12 @@ public class LeagueHistoryFragment extends Fragment {
 		LeagueGame game = league.recordResult(winner, loser);
 		recentGamesAdapter.insert(game, 0);
 		listener.onGameAdded(game);
+	}
+
+	public void refreshData() {
+		recentGames = league.allGames();
+		recentGamesAdapter.clear();
+		recentGamesAdapter.addAll(recentGames);
 	}
 
 }
