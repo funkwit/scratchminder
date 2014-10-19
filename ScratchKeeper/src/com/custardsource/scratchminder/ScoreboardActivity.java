@@ -60,6 +60,7 @@ public class ScoreboardActivity extends Activity {
 	private ListView scoreboard;
 	private TextToSpeech textToSpeech;
 	private boolean speechEnabled;
+	private boolean audioOn = true;
 	private boolean swipeInProgress;
 	private StringBuilder code;
 
@@ -466,6 +467,9 @@ public class ScoreboardActivity extends Activity {
 			Intent intent = new Intent(this, SettingsActivity.class);
 			startActivity(intent);
 			return true;
+		} else if (id == R.id.audio_toggle) {
+			audioOn = !audioOn;
+			item.setIcon(audioOn ? R.drawable.ic_action_volume_on : R.drawable.ic_action_volume_muted);
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -609,12 +613,14 @@ public class ScoreboardActivity extends Activity {
 	}
 
 	private boolean shouldSpeak(String pref) {
-		return sharedPref.getBoolean("text_to_speech_enabled", false)
+		return this.audioOn
+				&& sharedPref.getBoolean("text_to_speech_enabled", false)
 				&& sharedPref.getBoolean(pref, false) && this.speechEnabled;
 	}
 
 	private boolean shouldPlaySfx() {
-		return sharedPref.getBoolean("in_progress_sound_effects", false)
+		return this.audioOn
+				&& sharedPref.getBoolean("in_progress_sound_effects", false)
 				&& this.speechEnabled;
 	}
 

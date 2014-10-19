@@ -136,5 +136,6 @@
     <string name="record_same_result">Record same result</string>
     <string name="record_opposite_result">Record opposite result</string>
     <string name="delete_league_game">Delete game</string>
+    <string name="toggle_audio">Toggle audio on/off</string>
     
 </resources>
