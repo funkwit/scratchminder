@@ -139,4 +139,16 @@ public class League implements Serializable {
 	public Avatar getAvatar() {
 		return this.avatar;
 	}
+
+	public void deleteGame(LeagueGame g) {
+		games.remove(g);
+		recalculateAllRankings();		
+	}
+
+	private void recalculateAllRankings() {
+		rankings.clear();
+		for (LeagueGame game : games) {
+			updateRankings(game);
+		}
+	}
 }

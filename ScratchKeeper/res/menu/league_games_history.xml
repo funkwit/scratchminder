@@ -9,5 +9,9 @@
         android:id="@+id/record_opposite_result"
         android:title="@string/record_opposite_result">
     </item>
+    <item
+        android:id="@+id/delete_league_game"
+        android:title="@string/delete_league_game">
+    </item>
     
 </menu>

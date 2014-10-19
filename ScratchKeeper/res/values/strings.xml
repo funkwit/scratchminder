@@ -135,5 +135,6 @@
     <string name="unrecognized_badge_message">The swiped badge was not recognized. Associate it with a player?</string>
     <string name="record_same_result">Record same result</string>
     <string name="record_opposite_result">Record opposite result</string>
+    <string name="delete_league_game">Delete game</string>
     
 </resources>

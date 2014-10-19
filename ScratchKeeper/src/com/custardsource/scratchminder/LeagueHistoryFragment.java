@@ -129,15 +129,19 @@ public class LeagueHistoryFragment extends Fragment {
 	public boolean onContextItemSelected(MenuItem item) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 				.getMenuInfo();
+		LeagueGame g = recentGamesAdapter.getItem(info.position);
 		switch (item.getItemId()) {
 		case R.id.record_same_result:
-			LeagueGame g = recentGamesAdapter.getItem(info.position);
 			recordResult(g.winner(), g.loser());
 			return true;
 		case R.id.record_opposite_result:
-			LeagueGame g2 = recentGamesAdapter.getItem(info.position);
-			recordResult(g2.loser(), g2.winner());
+			recordResult(g.loser(), g.winner());
 			return true;
+		case R.id.delete_league_game:
+			league.deleteGame(g);
+			listener.onGameDeleted(g);
+			return true;
+			
 		default:
 			return super.onContextItemSelected(item);
 		}

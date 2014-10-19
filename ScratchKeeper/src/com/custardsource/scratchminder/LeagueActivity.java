@@ -160,4 +160,14 @@ public class LeagueActivity extends FragmentActivity implements
 			historyFragment.refreshData();
 		}
 	}
+
+	@Override
+	public void onGameDeleted(LeagueGame g) {
+		if (rankingsFragment != null) {
+			rankingsFragment.refreshData();
+		}
+		if (historyFragment != null) {
+			historyFragment.refreshData();
+		}		
+	}
 }
