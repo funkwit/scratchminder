@@ -146,7 +146,11 @@ public class Lobby implements Serializable {
 
 	public void registerBadgeCode(String badgeCode, Player p) {
 		if (!Strings.isNullOrEmpty(p.getBadgeCode())) {
-			playersByBadgeCode.remove(p.getBadgeCode());
+			Player alreadyInUseBy = playersByBadgeCode.get(badgeCode);
+			if (alreadyInUseBy != null) {
+				alreadyInUseBy.setBadgeCode(null);
+				playersByBadgeCode.remove(p.getBadgeCode());
+			}
 		}
 		p.setBadgeCode(badgeCode);
 		if (Strings.isNullOrEmpty(badgeCode)) {

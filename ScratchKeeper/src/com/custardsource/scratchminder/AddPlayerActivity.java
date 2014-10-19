@@ -33,6 +33,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.custardsource.scratchminder.util.DialogUtils;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
@@ -340,10 +341,28 @@ public class AddPlayerActivity extends Activity {
 		if (requestCode == ACTIVITY_REGISTER_BADGE && resultCode == RESULT_OK) {
 			badgeCode = data
 					.getStringExtra(RegisterPlayerBadgeActivity.BADGE_CODE);
-			registerButton.setBackgroundColor(BADGE_SELECTED_COLOR);
+			if (editingPlayer != null && editingPlayer.getBadgeCode().equals(badgeCode)) {
+				return;
+			}
+			Runnable commit = new Runnable() {
+				@Override
+				public void run() {
+					registerButton.setBackgroundColor(BADGE_SELECTED_COLOR);
 
-			Toast.makeText(this, R.string.registered_badge, Toast.LENGTH_SHORT)
-					.show();
+					Toast.makeText(AddPlayerActivity.this,
+							R.string.registered_badge, Toast.LENGTH_SHORT)
+							.show();
+				}
+			};
+			Player inUseBy = state.getLobby().playerByBadgeCode(badgeCode);
+			if (inUseBy == null) {
+				commit.run();
+			} else {
+				DialogUtils.confirmDialog(this, commit,
+						R.string.badge_already_in_use_title,
+						R.string.badge_already_in_use_message,
+						inUseBy.getName());
+			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}

@@ -128,6 +128,8 @@
     <string name="status_in_progress">Status: swipe in progress</string>
     <string name="status_error">Status: error swiping</string>
     <string name="registered_badge">Successfully registered badge for user</string>
+    <string name="badge_already_in_use_title">Badge Already In Use</string>
+    <string name="badge_already_in_use_message">The swiped badge is already in use by player %1$s. Proceed?</string>
     <string name="unrecognized_badge_title">Unrecognized Badge</string>
     <string name="unrecognized_badge_message">The swiped badge was not recognized. Associate it with a player?</string>
     

@@ -184,6 +184,7 @@ public class RecordGameActivity extends Activity {
 	private void checkEnableButton() {
 		if (winner != null && loser != null) {
 			findViewById(R.id.recordGameButton).setEnabled(true);
+			findViewById(R.id.recordGameButton).requestFocus();
 		}
 	}
 

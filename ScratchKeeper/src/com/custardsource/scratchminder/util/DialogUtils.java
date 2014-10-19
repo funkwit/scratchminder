@@ -7,7 +7,13 @@ import android.content.DialogInterface;
 public class DialogUtils {
 
 	public static void confirmDialog(Context context, final Runnable runnable,
-			int title, int message) {
+			int title, int message, Object... messageArgs) {
+		confirmDialog(context, runnable, title, context.getResources()
+				.getString(message, messageArgs));
+	}
+
+	public static void confirmDialog(Context context, final Runnable runnable,
+			int title, String message) {
 		new AlertDialog.Builder(context)
 				.setTitle(title)
 				.setMessage(message)
@@ -18,7 +24,7 @@ public class DialogUtils {
 							public void onClick(DialogInterface dialog,
 									int which) {
 								runnable.run();
-	
+
 							}
 						}).setNegativeButton(android.R.string.no, null).show();
 	}
