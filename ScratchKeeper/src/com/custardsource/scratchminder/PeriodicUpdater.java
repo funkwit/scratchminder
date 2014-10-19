@@ -4,7 +4,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.os.Handler;
-import android.util.Log;
 
 public class PeriodicUpdater {
 
