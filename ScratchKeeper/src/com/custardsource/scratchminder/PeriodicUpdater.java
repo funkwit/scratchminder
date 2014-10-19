@@ -25,7 +25,6 @@ public class PeriodicUpdater {
 		timerTask = new TimerTask() {
 			@Override
 			public void run() {
-				Log.i("TICK", "TICK");
 				handler.post(runnable);
 
 			}
