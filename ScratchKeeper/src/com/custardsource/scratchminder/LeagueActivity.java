@@ -178,6 +178,9 @@ public class LeagueActivity extends FragmentActivity implements
 		if (historyFragment != null) {
 			historyFragment.refreshData();
 		}
+		if (graphFragment != null) {
+			graphFragment.refreshData();
+		}
 	}
 
 	@Override
