@@ -123,6 +123,7 @@ public class ScoreboardActivity extends Activity {
 				game.switchPlayTo(player);
 				speakPlayerChangeIfNecessary();
 				scoreboardAdapter.notifyDataSetChanged();
+				refocus();
 			}
 		});
 		scoreboard.setAdapter(scoreboardAdapter);
@@ -248,21 +249,27 @@ public class ScoreboardActivity extends Activity {
 		switch (item.getItemId()) {
 		case R.id.leave:
 			leave(info.id);
+			refocus();
 			return true;
 		case R.id.removeFromGame:
 			confirmRemove((int) info.id);
+			refocus();
 			return true;
 		case R.id.removeFromGameInactive:
 			confirmRemoveInactive((int) info.id);
+			refocus();
 			return true;
 		case R.id.rejoin:
 			rejoin(info.id);
+			refocus();
 			return true;
 		case R.id.rejoinnext:
 			rejoinNext(info.id);
+			refocus();
 			return true;
 		case R.id.rejoinlast:
 			rejoinLast(info.id);
+			refocus();
 			return true;
 			// TODO: show who's next down the bottom
 		case R.id.edit:
@@ -423,6 +430,7 @@ public class ScoreboardActivity extends Activity {
 						: View.VISIBLE);
 		findViewById(R.id.scoringPanel).setVisibility(
 				game.getParticipants().isEmpty() ? View.GONE : View.VISIBLE);
+		refocus();
 	}
 
 	@Override
@@ -566,6 +574,7 @@ public class ScoreboardActivity extends Activity {
 			speakPlayerChangeIfNecessary();
 			scoreboardAdapter.notifyDataSetChanged();
 			scoreboard.setSelection(game.currentPlayerActivePosition());
+			refocus();
 			return true;
 
 		case KeyEvent.KEYCODE_RIGHT_BRACKET:
@@ -573,6 +582,7 @@ public class ScoreboardActivity extends Activity {
 			speakPlayerChangeIfNecessary();
 			scoreboardAdapter.notifyDataSetChanged();
 			scoreboard.setSelection(game.currentPlayerActivePosition());
+			refocus();
 			return true;
 
 		default:
@@ -596,6 +606,7 @@ public class ScoreboardActivity extends Activity {
 		} else {
 			resumeParticipant(participant);
 		}
+		refocus();
 	}
 
 
@@ -726,6 +737,7 @@ public class ScoreboardActivity extends Activity {
 		inProgressScore += 1;
 		speakInProgressScoreIfNecessary();
 		inProgressScoreView.setText(Integer.toString(inProgressScore));
+		refocus();
 	}
 
 	private void playSfxIfEnabled(String earcon) {
@@ -739,6 +751,7 @@ public class ScoreboardActivity extends Activity {
 		inProgressScore -= 1;
 		speakInProgressScoreIfNecessary();
 		inProgressScoreView.setText(Integer.toString(inProgressScore));
+		refocus();
 	}
 
 	private void clickOk() {
@@ -751,5 +764,10 @@ public class ScoreboardActivity extends Activity {
 		scoreboardAdapter.notifyDataSetChanged();
 		scoreboard.setSelection(game.currentPlayerActivePosition());
 		updateTotalScoreDisplay();
+		refocus();
+	}
+	
+	private void refocus() {
+		findViewById(R.id.commitScore).requestFocus();
 	}
 }
