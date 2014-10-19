@@ -26,28 +26,48 @@
             android:key="text_to_speech_enabled"
             android:summary="@string/pref_description_text_to_speech"
             android:title="@string/pref_title_text_to_speech" />
-          <CheckBoxPreference
+          
+         <ListPreference
+            android:defaultValue="OFF"
+            android:dependency="text_to_speech_enabled"
+            android:entries="@array/pref_speech_verbosity_level_titles"
+            android:entryValues="@array/pref_speech_verbosity_level_values"
+            android:key="speak_next_player_verbosity"
             android:layout="?android:attr/preferenceLayoutChild"
-            android:defaultValue="false"
-            android:key="speak_scoreboard_names"
-            android:summary="@string/pref_description_speak_scoreboard_names"
-            android:title="@string/pref_title_speak_scoreboard_names"
-            android:dependency="text_to_speech_enabled" />
-          <CheckBoxPreference
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_speak_next_player" />
+         <ListPreference
+            android:defaultValue="OFF"
+            android:dependency="text_to_speech_enabled"
+            android:entries="@array/pref_speech_verbosity_level_titles"
+            android:entryValues="@array/pref_speech_verbosity_level_values"
+            android:key="speak_last_player_verbosity"
             android:layout="?android:attr/preferenceLayoutChild"
-            android:defaultValue="false"
-            android:key="speak_in_progress_scores"
-            android:summary="@string/pref_description_speak_in_progress_scores"
-            android:title="@string/pref_title_speak_in_progress_scores"
-            android:dependency="text_to_speech_enabled" />
-          <CheckBoxPreference
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_speak_last_player" />
+         <ListPreference
+            android:defaultValue="OFF"
+            android:dependency="text_to_speech_enabled"
+            android:entries="@array/pref_speech_verbosity_level_titles"
+            android:entryValues="@array/pref_speech_verbosity_level_values"
+            android:key="speak_in_progress_scores_verbosity"
             android:layout="?android:attr/preferenceLayoutChild"
-            android:defaultValue="false"
-            android:key="speak_player_changes"
-            android:summary="@string/pref_description_speak_player_changes"
-            android:title="@string/pref_title_speak_player_changes"
-            android:dependency="text_to_speech_enabled" />
-          <CheckBoxPreference
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_speak_in_progress_scores" />
+        <ListPreference
+            android:defaultValue="OFF"
+            android:dependency="text_to_speech_enabled"
+            android:entries="@array/pref_speech_verbosity_level_titles"
+            android:entryValues="@array/pref_speech_verbosity_level_values"
+            android:key="speak_player_changes_verbosity"
+            android:layout="?android:attr/preferenceLayoutChild"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_speak_player_changes" />
+        <CheckBoxPreference
             android:defaultValue="false"
             android:key="in_progress_sound_effects"
             android:summary="@string/pref_description_in_progress_sound_effects"
@@ -63,8 +83,14 @@
         android:key="debug_scoreboard_keys"
         android:summary="@string/pref_description_debug_scoreboard_keys"
         android:title="@string/pref_title_debug_scoreboard_keys" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="debug_speech_as_toast"
+        android:summary="@string/pref_description_debug_speech_as_toast"
+        android:title="@string/pref_title_debug_speech_as_toast" />
     
     </PreferenceCategory>
+    
     
     
     <!-- NOTE: EditTextPreference accepts EditText attributes. -->
@@ -83,17 +109,5 @@
     <!--
          NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
          dismiss it.
-    -->
-    <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
-    <!--
-    
-    <ListPreference
-        android:defaultValue="-1"
-        android:entries="@array/pref_example_list_titles"
-        android:entryValues="@array/pref_example_list_values"
-        android:key="example_list"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_title_add_friends_to_messages" />
     -->
 </PreferenceScreen>

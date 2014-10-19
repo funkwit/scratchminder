@@ -469,7 +469,8 @@ public class ScoreboardActivity extends Activity {
 			return true;
 		} else if (id == R.id.audio_toggle) {
 			audioOn = !audioOn;
-			item.setIcon(audioOn ? R.drawable.ic_action_volume_on : R.drawable.ic_action_volume_muted);
+			item.setIcon(audioOn ? R.drawable.ic_action_volume_on
+					: R.drawable.ic_action_volume_muted);
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -597,26 +598,6 @@ public class ScoreboardActivity extends Activity {
 		}
 	}
 
-	private void speakCurrentScoreIfNecessary() {
-		if (shouldSpeak("speak_scoreboard_names")) {
-			String toSpeak = getResources().getQuantityString(
-					R.plurals.commit_score_speech_text, inProgressScore,
-					game.getActiveParticipant().playerNameForTts(),
-					inProgressScore, game.getActiveParticipant().getScore());
-			if (inProgressScore == 0) {
-				toSpeak = getString(R.string.commit_score_zero_speech_text,
-						game.getActiveParticipant().playerNameForTts(),
-						inProgressScore, game.getActiveParticipant().getScore());
-			}
-			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
-		}
-	}
-
-	private boolean shouldSpeak(String pref) {
-		return this.audioOn
-				&& sharedPref.getBoolean("text_to_speech_enabled", false)
-				&& sharedPref.getBoolean(pref, false) && this.speechEnabled;
-	}
 
 	private boolean shouldPlaySfx() {
 		return this.audioOn
@@ -624,62 +605,120 @@ public class ScoreboardActivity extends Activity {
 				&& this.speechEnabled;
 	}
 
+	private void speakCurrentScoreIfNecessary() {
+		playPluralSpeechIfPrefEnabled("speak_last_player_verbosity",
+				R.plurals.commit_score_speech_text,
+				R.string.commit_score_zero_speech_text,
+				R.plurals.commit_score_speech_text_verbose,
+				R.string.commit_score_zero_speech_text_verbose,
+				inProgressScore,
+				game.getActiveParticipant().playerNameForTts(),
+				inProgressScore, game.getActiveParticipant().getScore());
+	}
+
 	private void speakNextPlayerIfNecessary() {
-		playSpeechIfPrefEnabled("speak_scoreboard_names",
-				R.string.next_player_speech_text, game.getActiveParticipant()
-						.playerNameForTts(), game.getActiveParticipant()
-						.getScore());
+		playPluralSpeechIfPrefEnabled("speak_next_player_verbosity",
+				R.plurals.next_player_speech_text,
+				R.string.next_player_zero_speech_text,
+				R.plurals.next_player_speech_text_verbose,
+				R.string.next_player_zero_speech_text_verbose, game
+						.getActiveParticipant().getScore(), game
+						.getActiveParticipant().playerNameForTts(), game
+						.getActiveParticipant().getScore());
 	}
 
 	private void speakPlayerChangeIfNecessary() {
-		if (shouldSpeak("speak_scoreboard_names")) {
-			String toSpeak = getString(R.string.player_change_speak_text, game
-					.getActiveParticipant().playerNameForTts(), game
-					.getActiveParticipant().getScore());
-			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
-		}
+		playSpeechIfPrefEnabled("speak_next_player_verbosity",
+				R.string.player_change_speak_text, R.string.player_change_speak_text_verbose, game.getActiveParticipant()
+						.playerNameForTts(), game.getActiveParticipant().getScore());
 	}
 
 	private void speakInProgressScoreIfNecessary() {
-		playSpeechIfPrefEnabled("speak_in_progress_scores",
-				R.string.change_score_speech_text, game.getActiveParticipant()
+		playSpeechIfPrefEnabled("speak_in_progress_scores_verbosity",
+				R.string.change_score_speech_text, R.string.change_score_speech_text, game.getActiveParticipant()
 						.playerNameForTts(), inProgressScore);
 	}
 
 	private void speakJoinIfNecessary(Player p) {
 		playSfxIfEnabled(EARCON_FANFARE);
-		playSpeechIfPrefEnabled("speak_player_changes",
-				R.string.player_join_speak_text, p.getNameForTts());
+		playSpeechIfPrefEnabled("speak_player_changes_verbosity",
+				R.string.player_join_speak_text, R.string.player_join_speak_text_verbose, p.getNameForTts());
 	}
 
 	private void speakRejoinIfNecessary(Participant participant) {
 		playSfxIfEnabled(EARCON_FANFARE);
-		playSpeechIfPrefEnabled("speak_player_changes",
-				R.string.player_rejoin_speak_text,
+		playSpeechIfPrefEnabled("speak_player_changes_verbosity",
+				R.string.player_rejoin_speak_text, R.string.player_change_speak_text_verbose,
 				participant.playerNameForTts(), participant.getScore());
 	}
 
 	private void speakLeaveIfNecessary(Participant participant) {
 		playSfxIfEnabled(EARCON_FAILFARE);
-		playSpeechIfPrefEnabled("speak_player_changes",
-				R.string.player_leave_speak_text,
+		playSpeechIfPrefEnabled("speak_player_changes_verbosity",
+				R.string.player_leave_speak_text, R.string.player_leave_speak_text_verbose,
 				participant.playerNameForTts(), participant.getScore());
 	}
 
 	private void speakRemoveIfNecessary(Participant participant) {
 		playSfxIfEnabled(EARCON_WAH_WAH_WAH);
-		playSpeechIfPrefEnabled("speak_player_changes",
-				R.string.player_remove_speak_text,
+		playSpeechIfPrefEnabled("speak_player_changes_verbosity",
+				R.string.player_remove_speak_text, R.string.player_remove_speak_text_verbose,
 				participant.playerNameForTts(), participant.getScore());
 	}
 
-	private void playSpeechIfPrefEnabled(String prefName, int stringId,
-			Object... stringArgs) {
-		if (shouldSpeak(prefName)) {
-			String toSpeak = getString(stringId, stringArgs);
-			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
+	private void playPluralSpeechIfPrefEnabled(String prefName, int pluralIdTerse,
+			int zeroStringTerse, int pluralIdVerbose, int zeroStringVerbose,
+			int count, Object... stringArgs) {
+		String verbosity = sharedPref.getString(prefName, "OFF");
+		int pluralId;
+		int zeroString;
+		if (verbosity.equals("OFF")) {
+			return;
+		} else if (verbosity.equals("TERSE")) {
+			pluralId = pluralIdTerse;
+			zeroString = zeroStringTerse;
+		} else {
+			pluralId = pluralIdVerbose;
+			zeroString = zeroStringVerbose;
 		}
+		String toSpeak;
 
+		if (count == 0) {
+			toSpeak = getString(zeroString, stringArgs);
+		} else {
+			toSpeak = getResources().getQuantityString(pluralId, count,
+					stringArgs);
+		}
+		
+		speakText(toSpeak);
+	}
+
+	private void speakText(String toSpeak) {
+		if (this.audioOn
+				&& sharedPref.getBoolean("text_to_speech_enabled", false)
+				&& this.speechEnabled) {
+			if (sharedPref.getBoolean("debug_speech_as_toast", false)) {
+				Toast.makeText(this, "SPEAK: " + toSpeak, Toast.LENGTH_SHORT)
+						.show();
+			} else {
+				this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
+			}
+		}
+	}
+
+	private void playSpeechIfPrefEnabled(String prefName, int terseStringId, int verboseStringId,
+			Object... stringArgs) {
+		String verbosity = sharedPref.getString(prefName, "OFF");
+		int stringId;
+		if (verbosity.equals("OFF")) {
+			return;
+		} else if (verbosity.equals("TERSE")) {
+			stringId = terseStringId; 
+		} else {
+			stringId = verboseStringId; 
+		}
+		
+		speakText(getString(stringId, stringArgs));
 	}
 
 	private void clickPlus() {

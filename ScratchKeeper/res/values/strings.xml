@@ -101,21 +101,44 @@
     <string name="_dummy_league_name">8-ball</string>
     <string name="last_game">Last game played: </string>
     <string name="never_played">never</string>
-    <string name="next_player_speech_text">Next is %1$s, on %2$d.</string>
+
     <string name="player_change_speak_text">%1$s; %2$d.</string>
-    <string name="player_join_speak_text">%1$s has joined the game!</string>
-    <string name="player_rejoin_speak_text">%1$s has rejoined the game on %2$d.</string>
-    <string name="player_leave_speak_text">%1$s has left on %2$d.</string>
-    <string name="player_remove_speak_text">%1$s has quit the game, on %2$d!</string>
-        
+    <string name="player_join_speak_text">%1$s has joined!</string>
+    <string name="player_rejoin_speak_text">%1$s has rejoined.</string>
+    <string name="player_leave_speak_text">%1$s has left.</string>
+    <string name="player_remove_speak_text">%1$s has quit.</string>
+    
+    <string name="player_change_speak_text_verbose">%1$s is on %2$d.</string>
+    <string name="player_join_speak_text_verbose">%1$s has joined the game!</string>
+    <string name="player_rejoin_speak_text_verbose">%1$s has rejoined the game on %2$d.</string>
+    <string name="player_leave_speak_text_verbose">%1$s has left on %2$d.</string>
+    <string name="player_remove_speak_text_verbose">%1$s has quit the game, on %2$d!</string>
+    
     <plurals name="commit_score_speech_text">
-        <item quantity="one">%2$d point; %1$s moves to %3$s.</item>
-        <item quantity="other">%2$d points; %1$s is now on %3$s.</item>
+        <item quantity="one">%1$s: %3$d.</item>
+        <item quantity="other">%1$s: %3$d.</item>
+        </plurals>
+    <string name="commit_score_zero_speech_text">%1$s: %3$d.</string>
+    <plurals name="commit_score_speech_text_verbose">
+        <item quantity="one">One point; %1$s moves to %3$d.</item>
+        <item quantity="other">%2$d points; %1$s is now on %3$d.</item>
     </plurals>
+    <string name="commit_score_zero_speech_text_verbose">No score; %1$s remains on %3$d.</string>
 
-    <string name="commit_score_zero_speech_text">No score; %1$s remains on %3$s.</string>
+     <plurals name="next_player_speech_text">
+        <item quantity="one">%1$s: one point.</item>
+        <item quantity="other">%1$s: %2$d points.</item>
+        </plurals>
+    <string name="next_player_zero_speech_text">%1$s, no points.</string>
+     <plurals name="next_player_speech_text_verbose">
+        <item quantity="one">Next is %1$s, one point.</item>
+        <item quantity="other">Next is %1$s, on %2$d points.</item>
+        </plurals>
+    <string name="next_player_zero_speech_text_verbose">Next is %1$s, yet to score.</string>
+    
+        
     <string name="change_score_speech_text">%2$d.</string>
-
+    
     <string-array name="league_play_tabs">
         <item>Rankings</item>
         <item>Game History</item>
@@ -137,5 +160,5 @@
     <string name="record_opposite_result">Record opposite result</string>
     <string name="delete_league_game">Delete game</string>
     <string name="toggle_audio">Toggle audio on/off</string>
-    
+
 </resources>
