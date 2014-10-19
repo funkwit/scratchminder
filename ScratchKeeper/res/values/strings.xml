@@ -38,6 +38,7 @@
         <item>Scoreboard</item>
         <item>League Play</item>
         <item>Player Roster</item>
+        <item>Settings</item>
         </string-array>
 
     <string name="title_activity_league_play">League Play</string>

@@ -18,6 +18,7 @@ import com.custardsource.scratchminder.LeaguePlayActivity;
 import com.custardsource.scratchminder.LobbyActivity;
 import com.custardsource.scratchminder.PlayerChooserActivity;
 import com.custardsource.scratchminder.R;
+import com.custardsource.scratchminder.SettingsActivity;
 import com.google.common.collect.ImmutableList;
 
 public class DrawerUtils {
@@ -26,7 +27,7 @@ public class DrawerUtils {
 			.<Class<? extends Activity>> of(LobbyActivity.class,
 					LeaguePlayActivity.class, PlayerChooserActivity.class);
 	private static final int[] ICONS = { R.drawable.ic_fa_table,
-			R.drawable.ic_fa_trophy, R.drawable.ic_fa_users };
+			R.drawable.ic_fa_trophy, R.drawable.ic_fa_users, R.drawable.ic_fa_gears};
 
 	public static ActionBarDrawerToggle configureDrawer(final Activity activity) {
 
@@ -59,6 +60,11 @@ public class DrawerUtils {
 				drawerList.setItemChecked(position, true);
 				// TODO: call setTitle();
 				drawerLayout.closeDrawers();
+				if (position == ICONS.length - 1) {
+					Intent intent = new Intent(activity, SettingsActivity.class);
+					activity.startActivity(intent);
+					return;
+				}
 				Class<? extends Activity> destination = DESTINATIONS
 						.get(position);
 				if (!destination.equals(activity.getClass())) {
