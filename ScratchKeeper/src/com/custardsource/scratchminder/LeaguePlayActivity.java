@@ -36,6 +36,7 @@ public class LeaguePlayActivity extends Activity {
 	private List<League> leagues;
 	private ArrayAdapter<League> leaguesAdapter;
 	private ActionBarDrawerToggle drawerToggle;
+	private PeriodicUpdater periodicUpdater;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +110,13 @@ public class LeaguePlayActivity extends Activity {
 		});
 		registerForContextMenu(leagueList);
 
-		updateAllDisplay();
+		periodicUpdater = new PeriodicUpdater(new Runnable() {
+			@Override
+			public void run() {
+				updateAllDisplay();
+			}
+		}, 60000);
+		
 		drawerToggle = DrawerUtils.configureDrawer(this);
 
 	}
@@ -169,12 +176,6 @@ public class LeaguePlayActivity extends Activity {
 	}
 
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		updateAllDisplay();
-	}
-
 	private void updateAllDisplay() {
 		leagues = lobby.getLeagues();
 		leaguesAdapter.notifyDataSetChanged();
@@ -208,5 +209,17 @@ public class LeaguePlayActivity extends Activity {
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@Override
+	protected void onPause() {
+		periodicUpdater.pause();
+		super.onPause();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		periodicUpdater.resume();
 	}
 }

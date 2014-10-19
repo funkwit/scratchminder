@@ -25,13 +25,13 @@ public class LeagueActivity extends FragmentActivity implements
 	private ActionBar actionBar;
 	private LeagueRankingsFragment rankingsFragment;
 	private LeagueHistoryFragment historyFragment;
+	private PeriodicUpdater periodicUpdater;
 
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_league);
-		this.lobby = ((GlobalState)getApplication()).getLobby();
+		this.lobby = ((GlobalState) getApplication()).getLobby();
 
 		this.league = lobby.leagueById(getIntent().getLongExtra(
 				LeagueActivity.LEAGUE_ID, 0));
@@ -41,7 +41,6 @@ public class LeagueActivity extends FragmentActivity implements
 		updateLeagueDetails();
 		viewPager.setAdapter(new FragmentPagerAdapter(
 				getSupportFragmentManager()) {
-
 
 			@Override
 			public int getCount() {
@@ -63,18 +62,18 @@ public class LeagueActivity extends FragmentActivity implements
 			}
 		});
 		viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-		    @Override
-		    public void onPageSelected(int position) {
-		        actionBar.setSelectedNavigationItem(position);
-		    }
-		 
-		    @Override
-		    public void onPageScrolled(int arg0, float arg1, int arg2) {
-		    }
-		 
-		    @Override
-		    public void onPageScrollStateChanged(int arg0) {
-		    }
+			@Override
+			public void onPageSelected(int position) {
+				actionBar.setSelectedNavigationItem(position);
+			}
+
+			@Override
+			public void onPageScrolled(int arg0, float arg1, int arg2) {
+			}
+
+			@Override
+			public void onPageScrollStateChanged(int arg0) {
+			}
 		});
 		actionBar.setHomeButtonEnabled(true);
 		actionBar.setDisplayHomeAsUpEnabled(true);
@@ -86,8 +85,21 @@ public class LeagueActivity extends FragmentActivity implements
 			actionBar.addTab(actionBar.newTab().setText(tab_name)
 					.setTabListener(this));
 		}
+
+		periodicUpdater = new PeriodicUpdater(new Runnable() {
+			@Override
+			public void run() {
+				if (rankingsFragment != null) {
+					rankingsFragment.periodicRefresh();
+				}
+				if (historyFragment != null) {
+					historyFragment.periodicRefresh();
+				}
+			}
+		}, 60000);
 	}
 
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -145,7 +157,8 @@ public class LeagueActivity extends FragmentActivity implements
 
 	@Override
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
-		viewPager.setCurrentItem(tab.getPosition());	}
+		viewPager.setCurrentItem(tab.getPosition());
+	}
 
 	@Override
 	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
@@ -168,6 +181,19 @@ public class LeagueActivity extends FragmentActivity implements
 		}
 		if (historyFragment != null) {
 			historyFragment.refreshData();
-		}		
+		}
+	}
+
+	@Override
+	protected void onPause() {
+		periodicUpdater.pause();
+		super.onPause();
+	}
+
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		periodicUpdater.resume();
 	}
 }

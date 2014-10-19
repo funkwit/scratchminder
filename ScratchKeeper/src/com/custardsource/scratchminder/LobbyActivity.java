@@ -36,6 +36,7 @@ public class LobbyActivity extends Activity {
 	private Lobby lobby;
 	private List<Game> sortedGames;
 	private ActionBarDrawerToggle drawerToggle;
+	private PeriodicUpdater periodicUpdater;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +99,12 @@ public class LobbyActivity extends Activity {
 			}
 		});
 		registerForContextMenu(gamesList);
+		periodicUpdater = new PeriodicUpdater(new Runnable() {
+			@Override
+			public void run() {
+				gamesAdapter.notifyDataSetChanged();
+			}
+		}, 60000);
 	}
 
 	private void updateGamesList() {
@@ -113,13 +120,15 @@ public class LobbyActivity extends Activity {
 
 	@Override
 	protected void onPause() {
+		periodicUpdater.pause();
 		super.onPause();
 	}
 
 	@Override
 	protected void onResume() {
-		super.onResume();
+		periodicUpdater.resume();
 		updateAllDisplay();
+		super.onResume();
 	}
 
 	private void updateAllDisplay() {
@@ -203,5 +212,4 @@ public class LobbyActivity extends Activity {
 		super.onConfigurationChanged(newConfig);
 		drawerToggle.onConfigurationChanged(newConfig);
 	}
-
 }

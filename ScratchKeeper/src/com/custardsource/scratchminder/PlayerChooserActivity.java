@@ -47,6 +47,7 @@ public class PlayerChooserActivity extends Activity {
 	private ActionBarDrawerToggle drawerToggle;
 	private boolean browseMode;
 	private boolean hideBadges;
+	private PeriodicUpdater periodicUpdater;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +136,12 @@ public class PlayerChooserActivity extends Activity {
 				}
 			});
 		}
+		periodicUpdater = new PeriodicUpdater(new Runnable() {
+			@Override
+			public void run() {
+				playerAdapter.notifyDataSetChanged();
+			}
+		}, 60000);
 
 	}
 
@@ -199,5 +206,17 @@ public class PlayerChooserActivity extends Activity {
 		if (browseMode) {
 			drawerToggle.onConfigurationChanged(newConfig);
 		}
+	}
+
+	@Override
+	protected void onPause() {
+		periodicUpdater.pause();
+		super.onPause();
+	}
+
+	@Override
+	protected void onResume() {
+		periodicUpdater.resume();
+		super.onResume();
 	}
 }

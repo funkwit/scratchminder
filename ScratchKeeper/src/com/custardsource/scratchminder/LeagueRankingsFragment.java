@@ -198,4 +198,9 @@ public class LeagueRankingsFragment extends Fragment {
 		recentGamesAdapter.insert(game, 0);
 		listener.onGameAdded(game);
 	}
+
+	public void periodicRefresh() {
+		// Refresh data on a timer tick.
+		recentGamesAdapter.notifyDataSetChanged();
+	}
 }

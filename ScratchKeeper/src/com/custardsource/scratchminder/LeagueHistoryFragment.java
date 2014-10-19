@@ -9,17 +9,17 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.format.DateUtils;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class LeagueHistoryFragment extends Fragment {
 	private Lobby lobby;
@@ -159,4 +159,8 @@ public class LeagueHistoryFragment extends Fragment {
 		recentGamesAdapter.addAll(recentGames);
 	}
 
+	public void periodicRefresh() {
+		// Refresh data on a timer tick.
+		recentGamesAdapter.notifyDataSetChanged();
+	}
 }
