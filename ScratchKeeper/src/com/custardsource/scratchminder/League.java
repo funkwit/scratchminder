@@ -4,11 +4,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
 
 public class League implements Serializable {
@@ -21,10 +26,10 @@ public class League implements Serializable {
 	private static final double DEFAULT_POW_BASE = 10;
 	private static final double DEFAULT_DIVISOR = 400;
 	private static final int DEFAULT_K_FACTOR = 32;
-	@SuppressWarnings("unused")  // throw away for deserialization purposes
+	@SuppressWarnings("unused")
+	// throw away for deserialization purposes
 	private int drawable = 0;
 	private Avatar avatar = Avatar.caveman;
-
 
 	public League(String name) {
 		this.name = name;
@@ -51,20 +56,24 @@ public class League implements Serializable {
 	}
 
 	private void updateRankings(LeagueGame game) {
+		updateRankings(game, rankings);
+
+	}
+
+	private void updateRankings(LeagueGame game, Map<Player, Double> rankings) {
 		// Taken from
 		// https://svn.apache.org/repos/asf/labs/openelo/src/main/java/org/apache/openelo/RankingCalculator.java
-		double qWinner = calculateQFactor(rankingFor(game.winner()));
-		double qLoser = calculateQFactor(rankingFor(game.loser()));
+		double qWinner = calculateQFactor(rankingFor(game.winner(), rankings));
+		double qLoser = calculateQFactor(rankingFor(game.loser(), rankings));
 
 		double eWinner = calculateEFactor(qWinner, qLoser);
 		double eLoser = calculateEFactor(qLoser, qWinner);
 
-		setRanking(game.winner(), DEFAULT_K_FACTOR, 1, eWinner);
-		setRanking(game.loser(), DEFAULT_K_FACTOR, 0, eLoser);
-
+		setRanking(game.winner(), DEFAULT_K_FACTOR, 1, eWinner, rankings);
+		setRanking(game.loser(), DEFAULT_K_FACTOR, 0, eLoser, rankings);
 	}
 
-	private double rankingFor(Player player) {
+	private double rankingFor(Player player, Map<Player, Double> rankings) {
 		if (rankings.containsKey(player)) {
 			return rankings.get(player);
 		}
@@ -80,8 +89,8 @@ public class League implements Serializable {
 	}
 
 	private void setRanking(Player player, double kFactor, double sFactor,
-			double eFactor) {
-		double newRanking = rankingFor(player)
+			double eFactor, Map<Player, Double> rankings) {
+		double newRanking = rankingFor(player, rankings)
 				+ (kFactor * (sFactor - eFactor));
 		rankings.put(player, newRanking);
 	}
@@ -120,7 +129,7 @@ public class League implements Serializable {
 		}
 		return games.get(games.size() - 1).timestamp();
 	}
-	
+
 	public int getDrawable() {
 		if (this.avatar == null) {
 			this.avatar = Avatar.ic_poolballs_barkerbaggies_13;
@@ -142,7 +151,7 @@ public class League implements Serializable {
 
 	public void deleteGame(LeagueGame g) {
 		games.remove(g);
-		recalculateAllRankings();		
+		recalculateAllRankings();
 	}
 
 	private void recalculateAllRankings() {
@@ -150,5 +159,17 @@ public class League implements Serializable {
 		for (LeagueGame game : games) {
 			updateRankings(game);
 		}
+	}
+
+	public Iterable<Map<Player, Double>> rankingsOverTime() {
+		final Map<Player, Double> scoresCopy = Maps.newHashMap();
+		return Iterables.transform(games,
+				new Function<LeagueGame, Map<Player, Double>>() {
+					public Map<Player, Double> apply(LeagueGame game) {
+						updateRankings(game, scoresCopy);
+						return scoresCopy;
+					}
+				});
+
 	}
 }

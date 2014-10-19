@@ -142,7 +142,8 @@
     <string-array name="league_play_tabs">
         <item>Rankings</item>
         <item>Game History</item>
-    </string-array>
+        <item>Graphs</item>
+        </string-array>
 
     <string name="swap">Swap</string>
     <string name="register_badge_button">Register badge</string>

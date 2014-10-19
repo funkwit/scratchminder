@@ -25,6 +25,7 @@ public class LeagueActivity extends FragmentActivity implements
 	private ActionBar actionBar;
 	private LeagueRankingsFragment rankingsFragment;
 	private LeagueHistoryFragment historyFragment;
+	private LeagueGraphFragment graphFragment;
 	private PeriodicUpdater periodicUpdater;
 
 	@Override
@@ -42,9 +43,10 @@ public class LeagueActivity extends FragmentActivity implements
 		viewPager.setAdapter(new FragmentPagerAdapter(
 				getSupportFragmentManager()) {
 
+
 			@Override
 			public int getCount() {
-				return 2;
+				return 3;
 			}
 
 			@Override
@@ -56,6 +58,9 @@ public class LeagueActivity extends FragmentActivity implements
 				case 1:
 					historyFragment = new LeagueHistoryFragment();
 					return historyFragment;
+				case 2:
+					graphFragment = new LeagueGraphFragment();
+					return graphFragment;
 				}
 
 				return null;
@@ -85,7 +90,8 @@ public class LeagueActivity extends FragmentActivity implements
 			actionBar.addTab(actionBar.newTab().setText(tab_name)
 					.setTabListener(this));
 		}
-
+		
+	   
 		periodicUpdater = new PeriodicUpdater(new Runnable() {
 			@Override
 			public void run() {
@@ -181,6 +187,9 @@ public class LeagueActivity extends FragmentActivity implements
 		}
 		if (historyFragment != null) {
 			historyFragment.refreshData();
+		}
+		if (graphFragment != null) {
+			graphFragment.refreshData();
 		}
 	}
 
