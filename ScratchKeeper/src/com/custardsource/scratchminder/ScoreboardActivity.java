@@ -43,6 +43,9 @@ public class ScoreboardActivity extends Activity {
 	protected static final String GAME_ID = "GAME_ID";
 	protected static final String EARCON_BELL = "[bell]";
 	protected static final String EARCON_BUZZER = "[buzzer]";
+	protected static final String EARCON_FANFARE = "[fanfare]";
+	protected static final String EARCON_FAILFARE = "[failfare]";
+	protected static final String EARCON_WAH_WAH_WAH = "[wahwahwah]";
 
 	private int inProgressScore = 0;
 
@@ -196,6 +199,15 @@ public class ScoreboardActivity extends Activity {
 							textToSpeech.addEarcon(EARCON_BUZZER,
 									getApplication().getPackageName(),
 									R.raw.buzzer);
+							textToSpeech.addEarcon(EARCON_FANFARE,
+									getApplication().getPackageName(),
+									R.raw.fanfare);
+							textToSpeech.addEarcon(EARCON_FAILFARE,
+									getApplication().getPackageName(),
+									R.raw.failfare);
+							textToSpeech.addEarcon(EARCON_WAH_WAH_WAH,
+									getApplication().getPackageName(),
+									R.raw.wah_wah_wah);
 						}
 
 					}
@@ -607,12 +619,10 @@ public class ScoreboardActivity extends Activity {
 	}
 
 	private void speakNextPlayerIfNecessary() {
-		if (shouldSpeak("speak_scoreboard_names")) {
-			String toSpeak = getString(R.string.next_player_speech_text, game
-					.getActiveParticipant().playerNameForTts(), game
-					.getActiveParticipant().getScore());
-			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
-		}
+		playSpeechIfPrefEnabled("speak_scoreboard_names",
+				R.string.next_player_speech_text, game.getActiveParticipant()
+						.playerNameForTts(), game.getActiveParticipant()
+						.getScore());
 	}
 
 	private void speakPlayerChangeIfNecessary() {
@@ -625,60 +635,62 @@ public class ScoreboardActivity extends Activity {
 	}
 
 	private void speakInProgressScoreIfNecessary() {
-		if (shouldSpeak("speak_in_progress_scores")) {
-			String toSpeak = getString(R.string.change_score_speech_text, game
-					.getActiveParticipant().playerNameForTts(), inProgressScore);
-			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
-		}
+		playSpeechIfPrefEnabled("speak_in_progress_scores",
+				R.string.change_score_speech_text, game.getActiveParticipant()
+						.playerNameForTts(), inProgressScore);
 	}
 
 	private void speakJoinIfNecessary(Player p) {
-		if (shouldSpeak("speak_player_changes")) {
-			String toSpeak = getString(R.string.player_join_speak_text,
-					p.getNameForTts());
-			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
-		}
+		playSfxIfEnabled(EARCON_FANFARE);
+		playSpeechIfPrefEnabled("speak_player_changes",
+				R.string.player_join_speak_text, p.getNameForTts());
 	}
 
 	private void speakRejoinIfNecessary(Participant participant) {
-		if (shouldSpeak("speak_player_changes")) {
-			String toSpeak = getString(R.string.player_rejoin_speak_text,
-					participant.playerNameForTts(), participant.getScore());
-			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
-		}
+		playSfxIfEnabled(EARCON_FANFARE);
+		playSpeechIfPrefEnabled("speak_player_changes",
+				R.string.player_rejoin_speak_text,
+				participant.playerNameForTts(), participant.getScore());
 	}
 
 	private void speakLeaveIfNecessary(Participant participant) {
-		if (shouldSpeak("speak_player_changes")) {
-			String toSpeak = getString(R.string.player_leave_speak_text,
-					participant.playerNameForTts(), participant.getScore());
-			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
-		}
+		playSfxIfEnabled(EARCON_FAILFARE);
+		playSpeechIfPrefEnabled("speak_player_changes",
+				R.string.player_leave_speak_text,
+				participant.playerNameForTts(), participant.getScore());
 	}
 
 	private void speakRemoveIfNecessary(Participant participant) {
-		if (shouldSpeak("speak_player_changes")) {
-			String toSpeak = getString(R.string.player_remove_speak_text,
-					participant.playerNameForTts(), participant.getScore());
+		playSfxIfEnabled(EARCON_WAH_WAH_WAH);
+		playSpeechIfPrefEnabled("speak_player_changes",
+				R.string.player_remove_speak_text,
+				participant.playerNameForTts(), participant.getScore());
+	}
+
+	private void playSpeechIfPrefEnabled(String prefName, int stringId,
+			Object... stringArgs) {
+		if (shouldSpeak(prefName)) {
+			String toSpeak = getString(stringId, stringArgs);
 			this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
 		}
+
 	}
 
 	private void clickPlus() {
-		if (shouldPlaySfx()) {
-			this.textToSpeech.playEarcon(EARCON_BELL, TextToSpeech.QUEUE_ADD,
-					null);
-		}
+		playSfxIfEnabled(EARCON_BELL);
 		inProgressScore += 1;
 		speakInProgressScoreIfNecessary();
 		inProgressScoreView.setText(Integer.toString(inProgressScore));
 	}
 
-	private void clickMinus() {
+	private void playSfxIfEnabled(String earcon) {
 		if (shouldPlaySfx()) {
-			this.textToSpeech.playEarcon(EARCON_BUZZER, TextToSpeech.QUEUE_ADD,
-					null);
+			this.textToSpeech.playEarcon(earcon, TextToSpeech.QUEUE_ADD, null);
 		}
+	}
+
+	private void clickMinus() {
+		playSfxIfEnabled(EARCON_BUZZER);
 		inProgressScore -= 1;
 		speakInProgressScoreIfNecessary();
 		inProgressScoreView.setText(Integer.toString(inProgressScore));
