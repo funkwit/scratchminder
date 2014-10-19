@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <item
+        android:id="@+id/record_same_result"
+        android:title="@string/record_same_result">
+    </item>
+    <item
+        android:id="@+id/record_opposite_result"
+        android:title="@string/record_opposite_result">
+    </item>
+    
+</menu>

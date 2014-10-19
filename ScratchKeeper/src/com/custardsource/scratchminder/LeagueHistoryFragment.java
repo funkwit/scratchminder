@@ -2,18 +2,24 @@ package com.custardsource.scratchminder;
 
 import java.util.List;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.format.DateUtils;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class LeagueHistoryFragment extends Fragment {
 	private Lobby lobby;
@@ -21,6 +27,22 @@ public class LeagueHistoryFragment extends Fragment {
 	private League league;
 	private List<LeagueGame> recentGames;
 	private ArrayAdapter<LeagueGame> recentGamesAdapter;
+	private LeagueGameListener listener;
+
+	public interface LeagueGameListener {
+		public void onGameAdded(LeagueGame game);
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		try {
+			this.listener = (LeagueGameListener) activity;
+		} catch (ClassCastException e) {
+			throw new ClassCastException(activity.toString()
+					+ " must implement LeagueGameListener");
+		}
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater,
@@ -81,8 +103,10 @@ public class LeagueHistoryFragment extends Fragment {
 				return rowView;
 			}
 		};
-		((ListView) root.findViewById(R.id.leagueRecentGamesTable))
-				.setAdapter(recentGamesAdapter);
+		ListView gamesList = (ListView) root
+				.findViewById(R.id.leagueRecentGamesTable);
+		gamesList.setAdapter(recentGamesAdapter);
+		registerForContextMenu(gamesList);
 	}
 
 	private void checkVisibility() {
@@ -93,6 +117,40 @@ public class LeagueHistoryFragment extends Fragment {
 			root.findViewById(R.id.noRankingsLabel).setVisibility(View.VISIBLE);
 			root.findViewById(R.id.rankingsLayout).setVisibility(View.GONE);
 		}
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		MenuInflater inflater = getActivity().getMenuInflater();
+		if (v.getId() == R.id.leagueRecentGamesTable) {
+			inflater.inflate(R.menu.league_games_history, menu);
+		}
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+				.getMenuInfo();
+		switch (item.getItemId()) {
+		case R.id.record_same_result:
+			LeagueGame g = recentGamesAdapter.getItem(info.position);
+			recordResult(g.winner(), g.loser());
+			return true;
+		case R.id.record_opposite_result:
+			LeagueGame g2 = recentGamesAdapter.getItem(info.position);
+			recordResult(g2.loser(), g2.winner());
+			return true;
+		default:
+			return super.onContextItemSelected(item);
+		}
+	}
+
+	private void recordResult(Player winner, Player loser) {
+		LeagueGame game = league.recordResult(winner, loser);
+		recentGamesAdapter.insert(game, 0);
+		listener.onGameAdded(game);
 	}
 
 }

@@ -129,4 +129,14 @@ public class LeagueRankingsFragment extends Fragment {
 		}
 	}
 
+	public void refreshData() {
+		recentGames = league.recentGames(LeagueActivity.RECENT_GAME_COUNT);
+		recentGamesAdapter.clear();
+		recentGamesAdapter.addAll(recentGames);
+
+		rankedPlayers = league.playersByRank();
+		rankingAdapter.clear();
+		rankingAdapter.addAll(rankedPlayers);
+		checkVisibility();
+	}
 }

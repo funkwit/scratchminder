@@ -132,5 +132,7 @@
     <string name="badge_already_in_use_message">The swiped badge is already in use by player %1$s. Proceed?</string>
     <string name="unrecognized_badge_title">Unrecognized Badge</string>
     <string name="unrecognized_badge_message">The swiped badge was not recognized. Associate it with a player?</string>
+    <string name="record_same_result">Record same result</string>
+    <string name="record_opposite_result">Record opposite result</string>
     
 </resources>

@@ -38,7 +38,7 @@ public class League implements Serializable {
 		return name;
 	}
 
-	public void recordResult(Player winner, Player loser) {
+	public LeagueGame recordResult(Player winner, Player loser) {
 		LeagueGame game = new LeagueGame(winner, loser);
 		if (games == null) {
 			games = new ArrayList<LeagueGame>();
@@ -47,6 +47,7 @@ public class League implements Serializable {
 		winner.recordPlay();
 		loser.recordPlay();
 		updateRankings(game);
+		return game;
 	}
 
 	private void updateRankings(LeagueGame game) {
