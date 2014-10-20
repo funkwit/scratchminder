@@ -609,7 +609,6 @@ public class ScoreboardActivity extends Activity {
 		refocus();
 	}
 
-
 	private boolean shouldPlaySfx() {
 		return this.audioOn
 				&& sharedPref.getBoolean("in_progress_sound_effects", false)
@@ -618,7 +617,7 @@ public class ScoreboardActivity extends Activity {
 
 	private void speakCurrentScoreIfNecessary() {
 		playPluralSpeechIfPrefEnabled("speak_last_player_verbosity",
-				R.plurals.commit_score_speech_text,
+				1.0f, R.plurals.commit_score_speech_text,
 				R.string.commit_score_zero_speech_text,
 				R.plurals.commit_score_speech_text_verbose,
 				R.string.commit_score_zero_speech_text_verbose,
@@ -628,7 +627,7 @@ public class ScoreboardActivity extends Activity {
 	}
 
 	private void speakNextPlayerIfNecessary() {
-		playPluralSpeechIfPrefEnabled("speak_next_player_verbosity",
+		playPluralSpeechIfPrefEnabled("speak_next_player_verbosity", 1.0f,
 				R.plurals.next_player_speech_text,
 				R.string.next_player_zero_speech_text,
 				R.plurals.next_player_speech_text_verbose,
@@ -640,46 +639,58 @@ public class ScoreboardActivity extends Activity {
 
 	private void speakPlayerChangeIfNecessary() {
 		playSpeechIfPrefEnabled("speak_next_player_verbosity",
-				R.string.player_change_speak_text, R.string.player_change_speak_text_verbose, game.getActiveParticipant()
-						.playerNameForTts(), game.getActiveParticipant().getScore());
+				R.string.player_change_speak_text,
+				R.string.player_change_speak_text_verbose, game
+						.getActiveParticipant().playerNameForTts(), game
+						.getActiveParticipant().getScore());
 	}
 
 	private void speakInProgressScoreIfNecessary() {
+		float pitchFactor = 1.0f;
+		if (inProgressScore > 3) {
+			pitchFactor += (inProgressScore - 3) * 0.1f;
+		}
 		playSpeechIfPrefEnabled("speak_in_progress_scores_verbosity",
-				R.string.change_score_speech_text, R.string.change_score_speech_text, game.getActiveParticipant()
+				pitchFactor, R.string.change_score_speech_text,
+				R.string.change_score_speech_text, game.getActiveParticipant()
 						.playerNameForTts(), inProgressScore);
 	}
 
 	private void speakJoinIfNecessary(Player p) {
 		playSfxIfEnabled(EARCON_FANFARE);
 		playSpeechIfPrefEnabled("speak_player_changes_verbosity",
-				R.string.player_join_speak_text, R.string.player_join_speak_text_verbose, p.getNameForTts());
+				R.string.player_join_speak_text,
+				R.string.player_join_speak_text_verbose, p.getNameForTts());
 	}
 
 	private void speakRejoinIfNecessary(Participant participant) {
 		playSfxIfEnabled(EARCON_FANFARE);
 		playSpeechIfPrefEnabled("speak_player_changes_verbosity",
-				R.string.player_rejoin_speak_text, R.string.player_rejoin_speak_text_verbose,
+				R.string.player_rejoin_speak_text,
+				R.string.player_rejoin_speak_text_verbose,
 				participant.playerNameForTts(), participant.getScore());
 	}
 
 	private void speakLeaveIfNecessary(Participant participant) {
 		playSfxIfEnabled(EARCON_FAILFARE);
 		playSpeechIfPrefEnabled("speak_player_changes_verbosity",
-				R.string.player_leave_speak_text, R.string.player_leave_speak_text_verbose,
+				R.string.player_leave_speak_text,
+				R.string.player_leave_speak_text_verbose,
 				participant.playerNameForTts(), participant.getScore());
 	}
 
 	private void speakRemoveIfNecessary(Participant participant) {
 		playSfxIfEnabled(EARCON_WAH_WAH_WAH);
 		playSpeechIfPrefEnabled("speak_player_changes_verbosity",
-				R.string.player_remove_speak_text, R.string.player_remove_speak_text_verbose,
+				R.string.player_remove_speak_text,
+				R.string.player_remove_speak_text_verbose,
 				participant.playerNameForTts(), participant.getScore());
 	}
 
-	private void playPluralSpeechIfPrefEnabled(String prefName, int pluralIdTerse,
-			int zeroStringTerse, int pluralIdVerbose, int zeroStringVerbose,
-			int count, Object... stringArgs) {
+	private void playPluralSpeechIfPrefEnabled(String prefName,
+			float pitchFactor, int pluralIdTerse, int zeroStringTerse,
+			int pluralIdVerbose, int zeroStringVerbose, int count,
+			Object... stringArgs) {
 		String verbosity = sharedPref.getString(prefName, "OFF");
 		int pluralId;
 		int zeroString;
@@ -700,36 +711,43 @@ public class ScoreboardActivity extends Activity {
 			toSpeak = getResources().getQuantityString(pluralId, count,
 					stringArgs);
 		}
-		
-		speakText(toSpeak);
+
+		speakText(toSpeak, pitchFactor);
 	}
 
-	private void speakText(String toSpeak) {
+	private void speakText(String toSpeak, float pitchFactor) {
 		if (this.audioOn
 				&& sharedPref.getBoolean("text_to_speech_enabled", false)
 				&& this.speechEnabled) {
 			if (sharedPref.getBoolean("debug_speech_as_toast", false)) {
-				Toast.makeText(this, "SPEAK: " + toSpeak, Toast.LENGTH_SHORT)
-						.show();
+				Toast.makeText(this, "SPEAK: " + toSpeak + " " + pitchFactor,
+						Toast.LENGTH_SHORT).show();
 			} else {
+				this.textToSpeech.setPitch(pitchFactor);
 				this.textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
 			}
 		}
 	}
 
-	private void playSpeechIfPrefEnabled(String prefName, int terseStringId, int verboseStringId,
-			Object... stringArgs) {
+	private void playSpeechIfPrefEnabled(String prefName, int terseStringId,
+			int verboseStringId, Object... stringArgs) {
+		playSpeechIfPrefEnabled(prefName, 1.0f, terseStringId, verboseStringId,
+				stringArgs);
+	}
+
+	private void playSpeechIfPrefEnabled(String prefName, float pitchFactor,
+			int terseStringId, int verboseStringId, Object... stringArgs) {
 		String verbosity = sharedPref.getString(prefName, "OFF");
 		int stringId;
 		if (verbosity.equals("OFF")) {
 			return;
 		} else if (verbosity.equals("TERSE")) {
-			stringId = terseStringId; 
+			stringId = terseStringId;
 		} else {
-			stringId = verboseStringId; 
+			stringId = verboseStringId;
 		}
-		
-		speakText(getString(stringId, stringArgs));
+
+		speakText(getString(stringId, stringArgs), pitchFactor);
 	}
 
 	private void clickPlus() {
@@ -766,7 +784,7 @@ public class ScoreboardActivity extends Activity {
 		updateTotalScoreDisplay();
 		refocus();
 	}
-	
+
 	private void refocus() {
 		findViewById(R.id.commitScore).requestFocus();
 	}
