@@ -659,7 +659,7 @@ public class ScoreboardActivity extends Activity {
 	private void speakRejoinIfNecessary(Participant participant) {
 		playSfxIfEnabled(EARCON_FANFARE);
 		playSpeechIfPrefEnabled("speak_player_changes_verbosity",
-				R.string.player_rejoin_speak_text, R.string.player_change_speak_text_verbose,
+				R.string.player_rejoin_speak_text, R.string.player_rejoin_speak_text_verbose,
 				participant.playerNameForTts(), participant.getScore());
 	}
 
