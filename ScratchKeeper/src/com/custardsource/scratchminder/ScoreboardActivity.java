@@ -616,8 +616,9 @@ public class ScoreboardActivity extends Activity {
 	}
 
 	private void speakCurrentScoreIfNecessary() {
-		playPluralSpeechIfPrefEnabled("speak_last_player_verbosity",
-				1.0f, R.plurals.commit_score_speech_text,
+		playPluralSpeechIfPrefEnabled("speak_last_player_verbosity", 1.0f,
+				isChris(game.getActiveParticipant()),
+				R.plurals.commit_score_speech_text,
 				R.string.commit_score_zero_speech_text,
 				R.plurals.commit_score_speech_text_verbose,
 				R.string.commit_score_zero_speech_text_verbose,
@@ -628,6 +629,7 @@ public class ScoreboardActivity extends Activity {
 
 	private void speakNextPlayerIfNecessary() {
 		playPluralSpeechIfPrefEnabled("speak_next_player_verbosity", 1.0f,
+				isChris(game.getActiveParticipant()),
 				R.plurals.next_player_speech_text,
 				R.string.next_player_zero_speech_text,
 				R.plurals.next_player_speech_text_verbose,
@@ -639,6 +641,7 @@ public class ScoreboardActivity extends Activity {
 
 	private void speakPlayerChangeIfNecessary() {
 		playSpeechIfPrefEnabled("speak_next_player_verbosity",
+				isChris(game.getActiveParticipant()),
 				R.string.player_change_speak_text,
 				R.string.player_change_speak_text_verbose, game
 						.getActiveParticipant().playerNameForTts(), game
@@ -651,14 +654,23 @@ public class ScoreboardActivity extends Activity {
 			pitchFactor += (inProgressScore - 3) * 0.1f;
 		}
 		playSpeechIfPrefEnabled("speak_in_progress_scores_verbosity",
-				pitchFactor, R.string.change_score_speech_text,
+				pitchFactor, isChris(game.getActiveParticipant()),
+				R.string.change_score_speech_text,
 				R.string.change_score_speech_text, game.getActiveParticipant()
 						.playerNameForTts(), inProgressScore);
 	}
 
+	private boolean isChris(Participant participant) {
+		return participant.playerName().equalsIgnoreCase("krijesta");
+	}
+
+	private boolean isChris(Player p) {
+		return p.getName().equalsIgnoreCase("krijesta");
+	}
+
 	private void speakJoinIfNecessary(Player p) {
 		playSfxIfEnabled(EARCON_FANFARE);
-		playSpeechIfPrefEnabled("speak_player_changes_verbosity",
+		playSpeechIfPrefEnabled("speak_player_changes_verbosity", isChris(p),
 				R.string.player_join_speak_text,
 				R.string.player_join_speak_text_verbose, p.getNameForTts());
 	}
@@ -666,7 +678,7 @@ public class ScoreboardActivity extends Activity {
 	private void speakRejoinIfNecessary(Participant participant) {
 		playSfxIfEnabled(EARCON_FANFARE);
 		playSpeechIfPrefEnabled("speak_player_changes_verbosity",
-				R.string.player_rejoin_speak_text,
+				isChris(participant), R.string.player_rejoin_speak_text,
 				R.string.player_rejoin_speak_text_verbose,
 				participant.playerNameForTts(), participant.getScore());
 	}
@@ -674,7 +686,7 @@ public class ScoreboardActivity extends Activity {
 	private void speakLeaveIfNecessary(Participant participant) {
 		playSfxIfEnabled(EARCON_FAILFARE);
 		playSpeechIfPrefEnabled("speak_player_changes_verbosity",
-				R.string.player_leave_speak_text,
+				isChris(participant), R.string.player_leave_speak_text,
 				R.string.player_leave_speak_text_verbose,
 				participant.playerNameForTts(), participant.getScore());
 	}
@@ -682,15 +694,15 @@ public class ScoreboardActivity extends Activity {
 	private void speakRemoveIfNecessary(Participant participant) {
 		playSfxIfEnabled(EARCON_WAH_WAH_WAH);
 		playSpeechIfPrefEnabled("speak_player_changes_verbosity",
-				R.string.player_remove_speak_text,
+				isChris(participant), R.string.player_remove_speak_text,
 				R.string.player_remove_speak_text_verbose,
 				participant.playerNameForTts(), participant.getScore());
 	}
 
 	private void playPluralSpeechIfPrefEnabled(String prefName,
-			float pitchFactor, int pluralIdTerse, int zeroStringTerse,
-			int pluralIdVerbose, int zeroStringVerbose, int count,
-			Object... stringArgs) {
+			float pitchFactor, boolean chrisify, int pluralIdTerse,
+			int zeroStringTerse, int pluralIdVerbose, int zeroStringVerbose,
+			int count, Object... stringArgs) {
 		String verbosity = sharedPref.getString(prefName, "OFF");
 		int pluralId;
 		int zeroString;
@@ -712,6 +724,10 @@ public class ScoreboardActivity extends Activity {
 					stringArgs);
 		}
 
+		if (chrisify) {
+			toSpeak = chrisify(toSpeak);
+		}
+
 		speakText(toSpeak, pitchFactor);
 	}
 
@@ -729,14 +745,15 @@ public class ScoreboardActivity extends Activity {
 		}
 	}
 
-	private void playSpeechIfPrefEnabled(String prefName, int terseStringId,
-			int verboseStringId, Object... stringArgs) {
-		playSpeechIfPrefEnabled(prefName, 1.0f, terseStringId, verboseStringId,
-				stringArgs);
+	private void playSpeechIfPrefEnabled(String prefName, boolean chrisify,
+			int terseStringId, int verboseStringId, Object... stringArgs) {
+		playSpeechIfPrefEnabled(prefName, 1.0f, chrisify, terseStringId,
+				verboseStringId, stringArgs);
 	}
 
 	private void playSpeechIfPrefEnabled(String prefName, float pitchFactor,
-			int terseStringId, int verboseStringId, Object... stringArgs) {
+			boolean chrisify, int terseStringId, int verboseStringId,
+			Object... stringArgs) {
 		String verbosity = sharedPref.getString(prefName, "OFF");
 		int stringId;
 		if (verbosity.equals("OFF")) {
@@ -746,8 +763,23 @@ public class ScoreboardActivity extends Activity {
 		} else {
 			stringId = verboseStringId;
 		}
+		String text = getString(stringId, stringArgs);
+		if (chrisify) {
+			text = chrisify(text);
+		}
+		speakText(text, pitchFactor);
+	}
 
-		speakText(getString(stringId, stringArgs), pitchFactor);
+	private String chrisify(String text) {
+		String result = text;
+		result = result.replaceAll("-6\\b", "minus sux");
+		result = result.replaceAll("\\b6\\b", "sux");
+		result = result.replaceAll("\\b16\\b", "sucksteen");
+		result = result.replaceAll("\\b26\\b", "twenty-sux");
+		result = result.replaceAll("\\b36\\b", "thirty-sux");
+		// Doesn't sound as good...
+		 result = result.replaceAll("(\\d)6\\b", "$10 sux");
+		return result;
 	}
 
 	private void clickPlus() {
