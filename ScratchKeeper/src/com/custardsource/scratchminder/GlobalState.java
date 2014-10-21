@@ -18,7 +18,6 @@ import java.util.concurrent.TimeUnit;
 import android.app.Application;
 import android.app.backup.BackupManager;
 import android.content.Context;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.Toast;
 
