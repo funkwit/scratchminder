@@ -32,9 +32,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.custardsource.scratchminder.BadgeSwipeWatcher.BadgeSwipeListener;
 import com.custardsource.scratchminder.util.DialogUtils;
 
-public class ScoreboardActivity extends Activity {
+public class ScoreboardActivity extends Activity implements BadgeSwipeListener {
 	private static final int ACTION_ADD = 1;
 	private static final int ACTION_EDIT = 2;
 	private static final int ACTION_SETTINGS = 3;
@@ -61,8 +62,8 @@ public class ScoreboardActivity extends Activity {
 	private TextToSpeech textToSpeech;
 	private boolean speechEnabled;
 	private boolean audioOn = true;
-	private boolean swipeInProgress;
-	private StringBuilder code;
+	private String lastBadgeCode;
+	private BadgeSwipeWatcher swipeWatcher = new BadgeSwipeWatcher(this);
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -392,7 +393,7 @@ public class ScoreboardActivity extends Activity {
 				&& resultCode == RESULT_OK) {
 			Player p = lobby.playerById(data.getLongExtra(
 					AddPlayerActivity.PLAYER_ID, 0));
-			lobby.registerBadgeCode(code.toString(), p);
+			lobby.registerBadgeCode(lastBadgeCode, p);
 			handleBadgeIn(p);
 
 		}
@@ -504,48 +505,9 @@ public class ScoreboardActivity extends Activity {
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		int pressed = event.getUnicodeChar();
-		if (pressed == Constants.BADGE_START) {
-			swipeInProgress = true;
-			code = new StringBuilder();
+		if (swipeWatcher.onKeyUp(keyCode, event)) {
 			return true;
-		} else if (swipeInProgress) {
-			if (pressed == Constants.BADGE_END) {
-				swipeInProgress = false;
-				if (code.length() != 0) {
-					String badge = code.toString();
-					Player p = lobby.playerByBadgeCode(badge);
-					if (p == null) {
-						DialogUtils.confirmDialog(
-								this,
-								new Runnable() {
-									@Override
-									public void run() {
-										Intent intent = new Intent(
-												ScoreboardActivity.this,
-												PlayerChooserActivity.class);
-										intent.putExtra(
-												PlayerChooserActivity.FOR_BADGE_ASSOCIATION,
-												true);
-										startActivityForResult(intent,
-												ACTION_ASSOCIATE_BADGE);
-									}
-								}, R.string.unrecognized_badge_title,
-								R.string.unrecognized_badge_message);
-					} else {
-						handleBadgeIn(p);
-					}
-				}
-				return true;
-			} else if (pressed != 0) {
-				code.appendCodePoint(pressed);
-				return true;
-			}
-			return super.onKeyUp(keyCode, event);
-		} else if (game.getParticipants().isEmpty()) {
-			return super.onKeyUp(keyCode, event);
 		}
-		swipeInProgress = false;
 
 		switch (keyCode) {
 		case KeyEvent.KEYCODE_PLUS:
@@ -778,7 +740,7 @@ public class ScoreboardActivity extends Activity {
 		result = result.replaceAll("\\b26\\b", "twenty-sux");
 		result = result.replaceAll("\\b36\\b", "thirty-sux");
 		// Doesn't sound as good...
-		 result = result.replaceAll("(\\d)6\\b", "$10 sux");
+		result = result.replaceAll("(\\d)6\\b", "$10 sux");
 		return result;
 	}
 
@@ -819,5 +781,27 @@ public class ScoreboardActivity extends Activity {
 
 	private void refocus() {
 		findViewById(R.id.commitScore).requestFocus();
+	}
+
+	@Override
+	public void onBadgeSwipe(String badgeCode) {
+		Player p = lobby.playerByBadgeCode(badgeCode);
+		if (p == null) {
+			lastBadgeCode = badgeCode;
+			DialogUtils.confirmDialog(this, new Runnable() {
+				@Override
+				public void run() {
+					Intent intent = new Intent(ScoreboardActivity.this,
+							PlayerChooserActivity.class);
+					intent.putExtra(
+							PlayerChooserActivity.FOR_BADGE_ASSOCIATION, true);
+					startActivityForResult(intent, ACTION_ASSOCIATE_BADGE);
+				}
+			}, R.string.unrecognized_badge_title,
+					R.string.unrecognized_badge_message);
+		} else {
+			handleBadgeIn(p);
+		}
+
 	}
 }
