@@ -2,8 +2,10 @@ package com.custardsource.scratchminder;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,6 +29,7 @@ public class RecordGameActivity extends Activity {
 	private boolean winnerActiveForBadgeInput = true;
 	private boolean swipeInProgress;
 	private StringBuilder code;
+	private SharedPreferences sharedPref;
 
 	// TODO: calculate this programatically
 	private static final int PANEL_INITIAL_COLOUR = Color.rgb(102, 102, 102);
@@ -39,6 +42,7 @@ public class RecordGameActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.lobby = ((GlobalState) getApplication()).getLobby();
+		this.sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 		setContentView(R.layout.activity_record_game);
 	}
 
@@ -77,12 +81,9 @@ public class RecordGameActivity extends Activity {
 				new OnClickListener() {
 					@Override
 					public void onClick(View view) {
-						Intent result = new Intent("foo");
-						result.putExtra(WINNER_ID, winner.id());
-						result.putExtra(LOSER_ID, loser.id());
-						setResult(Activity.RESULT_OK, result);
-						finish();
+						recordGameAndFinish();
 					}
+
 				});
 		findViewById(R.id.swapButton).setOnClickListener(new OnClickListener() {
 			@Override
@@ -260,5 +261,19 @@ public class RecordGameActivity extends Activity {
 		}
 		checkEnableButton();
 		updateBadgeIndicators();
+		if (winner != null
+				&& loser != null
+				&& sharedPref
+						.getBoolean("league_record_on_second_badge", false)) {
+			recordGameAndFinish();
+		}
+	}
+
+	private void recordGameAndFinish() {
+		Intent result = new Intent("foo");
+		result.putExtra(WINNER_ID, winner.id());
+		result.putExtra(LOSER_ID, loser.id());
+		setResult(Activity.RESULT_OK, result);
+		finish();
 	}
 }

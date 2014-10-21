@@ -75,6 +75,19 @@
           
           
     </PreferenceCategory>
+    
+    <PreferenceCategory
+        android:title="@string/league_preference_category">
+     
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="league_record_on_second_badge"
+        android:summary="@string/pref_description_league_record_on_second_badge"
+        android:title="@string/pref_title_league_record_on_second_badge" />
+    
+    </PreferenceCategory>
+     
+         
     <PreferenceCategory
         android:title="@string/debug_preference_category">
      

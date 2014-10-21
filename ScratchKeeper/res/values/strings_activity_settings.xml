@@ -21,8 +21,11 @@
     <string name="pref_title_speak_player_changes">Speak player roster changes?</string>
     <string name="pref_title_in_progress_sound_effects">Sound effects?</string>
     <string name="pref_description_in_progress_sound_effects">Play sound effects on score increment/decrement.</string>
+    <string name="pref_title_league_record_on_second_badge">Auto-record on badge in?</string>
+    <string name="pref_description_league_record_on_second_badge">Automatically record game result after all players have badged in.</string>
     
     <string name="scoreboard_preference_category">Scoreboard Play</string>
+    <string name="league_preference_category">League Play</string>
     <string name="audio_preference_category">Audio</string>
     <string name="debug_preference_category">Debug</string>
     <string-array name="pref_speech_verbosity_level_titles">
