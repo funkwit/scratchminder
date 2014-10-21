@@ -51,7 +51,7 @@ public class League implements Serializable {
 			ClassNotFoundException {
 		in.defaultReadObject();
 		// Temporary data migration.
-		if (trueSkillRatings == null || eloRatings == null) {
+		if (trueSkillRatings == null || eloRatings == null || true) {
 			trueSkillRatings = Maps.newHashMap();
 			eloRatings = Maps.newHashMap();
 			recalculateAllRatings();

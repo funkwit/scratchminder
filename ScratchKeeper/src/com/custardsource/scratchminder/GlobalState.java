@@ -37,20 +37,31 @@ public class GlobalState extends Application {
 	}
 
 	void restoreGameState() {
-		doBackup();
 		try {
 			ObjectInputStream inputStream = new ObjectInputStream(
 					openFileInput(STATE_FILE));
 
 			lobby = (Lobby) inputStream.readObject();
 			inputStream.close();
-			lobby.resetIfNecessary();
 		} catch (FileNotFoundException e) {
 			// OK; new install, no data.
 			lobby = new Lobby();
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			try {
+				ObjectInputStream inputStream = new ObjectInputStream(
+						openFileInput(STATE_FILE + ".bak"));
+
+				lobby = (Lobby) inputStream.readObject();
+				inputStream.close();
+			} catch (FileNotFoundException e2) {
+				// OK; new install, no data.
+				lobby = new Lobby();
+			} catch (Exception e2) {
+				lobby = new Lobby();
+			}
 		}
+		lobby.resetIfNecessary();
+		doBackup();
 		Log.d(Constants.TAG, "restoreGameState of GlobalState");
 	}
 
