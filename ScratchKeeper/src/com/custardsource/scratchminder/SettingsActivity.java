@@ -12,6 +12,8 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.view.Menu;
+import android.view.MenuItem;
 
 public class SettingsActivity extends PreferenceActivity {
 	/**
@@ -153,5 +155,20 @@ public class SettingsActivity extends PreferenceActivity {
 			bindPreferenceSummaryToValue(findPreference("speak_in_progress_scores_verbosity"));
 			bindPreferenceSummaryToValue(findPreference("speak_player_changes_verbosity"));
 		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.settings, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		if (id == R.id.backup_to_external_storage) {
+			((GlobalState) getApplication()).backupToExternalStorage();
+		}
+		return super.onOptionsItemSelected(item);
 	}
 }

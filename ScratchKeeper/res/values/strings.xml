@@ -209,5 +209,6 @@ or implied, of Jeff Moser or Nate Parsons.
     <string name="rating_system">Rating system:</string>
     <string name="rating_system_trueskill">TrueSkill</string>
     <string name="rating_system_elo">Elo</string>
+    <string name="backup_to_external_storage">Backup to external storage</string>
 
 </resources>

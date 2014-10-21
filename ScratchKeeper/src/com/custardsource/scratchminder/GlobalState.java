@@ -1,10 +1,16 @@
 package com.custardsource.scratchminder;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -12,7 +18,9 @@ import java.util.concurrent.TimeUnit;
 import android.app.Application;
 import android.app.backup.BackupManager;
 import android.content.Context;
+import android.text.format.DateFormat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.common.io.ByteStreams;
 
@@ -23,8 +31,9 @@ public class GlobalState extends Application {
 
 	private Timer timer;
 
-	private static final long SAVE_PERIODICITY = TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES);
-	
+	private static final long SAVE_PERIODICITY = TimeUnit.MILLISECONDS.convert(
+			1, TimeUnit.MINUTES);
+
 	public GlobalState() {
 		super();
 		this.timer = new Timer();
@@ -67,10 +76,9 @@ public class GlobalState extends Application {
 
 	private void doBackup() {
 		try {
-			InputStream inputStream = 
-					openFileInput(STATE_FILE);
-			OutputStream outputStream = 
-					openFileOutput(STATE_FILE + ".bak", Context.MODE_PRIVATE);
+			InputStream inputStream = openFileInput(STATE_FILE);
+			OutputStream outputStream = openFileOutput(STATE_FILE + ".bak",
+					Context.MODE_PRIVATE);
 			ByteStreams.copy(inputStream, outputStream);
 			inputStream.close();
 			outputStream.close();
@@ -93,6 +101,27 @@ public class GlobalState extends Application {
 			outputStream.writeObject(lobby);
 			outputStream.close();
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		new BackupManager(this).dataChanged();
+	}
+
+	public void backupToExternalStorage() {
+		TimeZone tz = TimeZone.getTimeZone("UTC");
+		SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd-HHmm", Locale.US);
+		df.setTimeZone(tz);
+		String nowAsISO = df.format(new Date());
+		File f = new File(getExternalFilesDir(null), "scratchminder."
+				+ nowAsISO + ".bak");
+		try {
+			ObjectOutputStream outputStream = new ObjectOutputStream(
+					new FileOutputStream(f));
+			outputStream.writeObject(lobby);
+			outputStream.close();
+			Toast.makeText(this, "Backed up " + f, Toast.LENGTH_SHORT).show();
+		} catch (Exception e) {
+			Toast.makeText(this, "Error backing up to file system",
+					Toast.LENGTH_SHORT).show();
 			e.printStackTrace();
 		}
 		new BackupManager(this).dataChanged();
