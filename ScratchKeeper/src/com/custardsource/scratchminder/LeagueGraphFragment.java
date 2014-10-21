@@ -35,6 +35,12 @@ public class LeagueGraphFragment extends Fragment {
 	private LineChartView chart;
 	private Axis axisY;
 	private ArrayAdapter<Player> legendAdapter;
+	private boolean useTrueSkill;
+
+	public LeagueGraphFragment(boolean useTrueSkill) {
+		super();
+		this.useTrueSkill = useTrueSkill;
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater,
@@ -67,20 +73,19 @@ public class LeagueGraphFragment extends Fragment {
 				TextView playerName = (TextView) rowView
 						.findViewById(android.R.id.text1);
 				playerName.setText(getItem(position).getName());
-				
-				ColorDrawable colour = new ColorDrawable(getItem(position).getColor());
+
+				ColorDrawable colour = new ColorDrawable(getItem(position)
+						.getColor());
 				// TODO: scale size not per-pixel
 				colour.setBounds(new Rect(0, 0, 30, 30));
 				playerName.setCompoundDrawables(colour, null, null, null);
-				
+
 				return rowView;
 			}
 		};
-		ListView legend = (ListView) root
-				.findViewById(R.id.chartLegend);
+		ListView legend = (ListView) root.findViewById(R.id.chartLegend);
 		legend.setAdapter(legendAdapter);
 
-		
 		this.chart = (LineChartView) root.findViewById(R.id.chart);
 		axisY = new Axis().setHasLines(true);
 		chart.setInteractive(true);
@@ -92,17 +97,16 @@ public class LeagueGraphFragment extends Fragment {
 					PointValue value) {
 				int a = selectedLine;
 				int b = selectedValue;
-				PointValue v = value
-						;
+				PointValue v = value;
 				Log.i("Touch", "Ouch!");
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void onNothingTouched() {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
 		refreshData();
@@ -111,12 +115,16 @@ public class LeagueGraphFragment extends Fragment {
 	public void refreshData() {
 		Map<Player, List<PointValue>> graphData = Maps.newHashMap();
 		int point = 0;
-		for (Map<Player, Double> m: league.eloRatingsOverTime()) {
+		Iterable<Map<Player, Double>> ratingsOverTime = useTrueSkill ? league
+				.trueSkillConservativeRatingsOverTime() : league
+				.eloRatingsOverTime();
+
+		for (Map<Player, Double> m : ratingsOverTime) {
 			for (Map.Entry<Player, Double> entry : m.entrySet()) {
 				Player player = entry.getKey();
 				Double score = entry.getValue();
 				if (!graphData.containsKey(player)) {
-					graphData.put(player, Lists.<PointValue>newArrayList());
+					graphData.put(player, Lists.<PointValue> newArrayList());
 				}
 				List<PointValue> dataForPlayer = graphData.get(player);
 				dataForPlayer.add(new PointValue(point, score.floatValue()));
@@ -124,25 +132,32 @@ public class LeagueGraphFragment extends Fragment {
 			point++;
 		}
 
-	    List<Line> lines = new ArrayList<Line>();
-	    for (Map.Entry<Player, List<PointValue>> data : graphData.entrySet()) {
-		    Line line = new Line(data.getValue()).setColor(data.getKey().getColor()).setCubic(true).setHasPoints(true);
-		    line.setHasLabelsOnlyForSelected(true);
-		    lines.add(line);
-	    }
+		List<Line> lines = new ArrayList<Line>();
+		for (Map.Entry<Player, List<PointValue>> data : graphData.entrySet()) {
+			Line line = new Line(data.getValue())
+					.setColor(data.getKey().getColor()).setCubic(true)
+					.setHasPoints(true).setPointRadius(2);
+			line.setHasLabelsOnlyForSelected(true);
+			lines.add(line);
+		}
 
-	    LineChartData data = new LineChartData();
-	    data.setLines(lines);
-	    data.setAxisYLeft(axisY);
-	    chart.setLineChartData(data);
-	    final Viewport v = new Viewport(chart.getMaxViewport());
-	    v.inset(0, -10);
-	    chart.setMaxViewport(v);
-	    chart.setCurrentViewport(v, false);
-	    
-	    List<Player> players = Lists.newArrayList(graphData.keySet());
-	    legendAdapter.clear();
-	    // TODO: sort
-	    legendAdapter.addAll(players);
+		LineChartData data = new LineChartData();
+		data.setLines(lines);
+		data.setAxisYLeft(axisY);
+		chart.setLineChartData(data);
+		final Viewport v = new Viewport(chart.getMaxViewport());
+		v.inset(0, -10);
+		chart.setMaxViewport(v);
+		chart.setCurrentViewport(v, false);
+
+		List<Player> players = Lists.newArrayList(graphData.keySet());
+		legendAdapter.clear();
+		// TODO: sort
+		legendAdapter.addAll(players);
+	}
+
+	public void setUseTrueSkill(boolean useTrueSkill) {
+		this.useTrueSkill = useTrueSkill;
+		refreshData();
 	}
 }

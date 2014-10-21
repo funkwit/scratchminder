@@ -1,5 +1,6 @@
 package com.custardsource.scratchminder;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -31,7 +32,12 @@ public class LeagueRankingsFragment extends Fragment {
 	private List<LeagueGame> recentGames;
 	private ArrayAdapter<LeagueGame> recentGamesAdapter;
 	private LeagueGameListener listener;
+	private boolean useTrueSkill;
 
+	public LeagueRankingsFragment(boolean useTrueSkill) {
+		super();
+		this.useTrueSkill = useTrueSkill;
+	}
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -62,7 +68,11 @@ public class LeagueRankingsFragment extends Fragment {
 				LeagueActivity.LEAGUE_ID, 0));
 
 		checkVisibility();
-		rankedPlayers = league.playersByRank();
+		rankedPlayers = useTrueSkill ? league
+				.playersByConservativeTrueSkillRating() : league
+				.playersByEloRating();
+
+		final DecimalFormat decimalFormat = new DecimalFormat("#.##");
 		rankingAdapter = new ArrayAdapter<Entry<Player, Double>>(getActivity(),
 				android.R.layout.simple_list_item_1, rankedPlayers) {
 			@Override
@@ -87,7 +97,7 @@ public class LeagueRankingsFragment extends Fragment {
 				imageView.setImageResource(player.getDrawable());
 				nameView.setText(player.getName());
 				positionView.setText(Integer.toString(position + 1));
-				rankingView.setText(Integer.toString((int) ranking));
+				rankingView.setText(decimalFormat.format(ranking));
 				rowView.setBackgroundColor(player.getColor());
 				return rowView;
 			}
@@ -134,9 +144,9 @@ public class LeagueRankingsFragment extends Fragment {
 				return rowView;
 			}
 		};
-		ListView historyList = (ListView) root.findViewById(R.id.leagueRecentGamesTable);
-		historyList
-				.setAdapter(recentGamesAdapter);
+		ListView historyList = (ListView) root
+				.findViewById(R.id.leagueRecentGamesTable);
+		historyList.setAdapter(recentGamesAdapter);
 		registerForContextMenu(historyList);
 	}
 
@@ -155,12 +165,13 @@ public class LeagueRankingsFragment extends Fragment {
 		recentGamesAdapter.clear();
 		recentGamesAdapter.addAll(recentGames);
 
-		rankedPlayers = league.playersByRank();
+		rankedPlayers = useTrueSkill ? league
+				.playersByConservativeTrueSkillRating() : league
+				.playersByEloRating();
 		rankingAdapter.clear();
 		rankingAdapter.addAll(rankedPlayers);
 		checkVisibility();
 	}
-
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
@@ -202,5 +213,10 @@ public class LeagueRankingsFragment extends Fragment {
 	public void periodicRefresh() {
 		// Refresh data on a timer tick.
 		recentGamesAdapter.notifyDataSetChanged();
+	}
+
+	public void setUseTrueSkill(boolean useTrueSkill) {
+		this.useTrueSkill = useTrueSkill;
+		refreshData();
 	}
 }

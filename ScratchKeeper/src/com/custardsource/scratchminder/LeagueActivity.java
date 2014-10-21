@@ -14,6 +14,9 @@ import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
 public class LeagueActivity extends FragmentActivity implements
 		ActionBar.TabListener, LeagueGameListener, BadgeSwipeListener {
@@ -31,6 +34,7 @@ public class LeagueActivity extends FragmentActivity implements
 	private LeagueGraphFragment graphFragment;
 	private PeriodicUpdater periodicUpdater;
 	private BadgeSwipeWatcher swipeWatcher = new BadgeSwipeWatcher(this);
+	private boolean useTrueSkill = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +48,10 @@ public class LeagueActivity extends FragmentActivity implements
 		viewPager = (ViewPager) findViewById(R.id.leaguePager);
 		actionBar = getActionBar();
 		updateLeagueDetails();
+
 		viewPager.setAdapter(new FragmentPagerAdapter(
 				getSupportFragmentManager()) {
+
 
 
 			@Override
@@ -57,13 +63,13 @@ public class LeagueActivity extends FragmentActivity implements
 			public Fragment getItem(int index) {
 				switch (index) {
 				case 0:
-					rankingsFragment = new LeagueRankingsFragment();
+					rankingsFragment = new LeagueRankingsFragment(useTrueSkill);
 					return rankingsFragment;
 				case 1:
 					historyFragment = new LeagueHistoryFragment();
 					return historyFragment;
 				case 2:
-					graphFragment = new LeagueGraphFragment();
+					graphFragment = new LeagueGraphFragment(useTrueSkill);
 					return graphFragment;
 				}
 
@@ -88,6 +94,24 @@ public class LeagueActivity extends FragmentActivity implements
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
+		Switch ratingsSwitch = (Switch) findViewById(R.id.ratingSystemSwitch);
+		ratingsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if (isChecked != useTrueSkill) {
+					if (rankingsFragment != null) {
+						rankingsFragment.setUseTrueSkill(isChecked);
+					}
+					if (graphFragment != null) {
+						graphFragment.setUseTrueSkill(isChecked);
+					}
+				}
+				useTrueSkill = isChecked;
+			}
+		});
+		if (!league.supportsElo()) {
+			ratingsSwitch.setVisibility(View.GONE);
+		}
 		// Adding Tabs
 		for (String tab_name : getResources().getStringArray(
 				R.array.league_play_tabs)) {

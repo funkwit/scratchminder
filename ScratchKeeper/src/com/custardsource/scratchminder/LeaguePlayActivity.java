@@ -83,7 +83,7 @@ public class LeaguePlayActivity extends Activity {
 				
 				if (league.hasResults()) {
 					rowView.findViewById(R.id.leagueLeaderLayout).setVisibility(View.VISIBLE);
-					Player p = league.playersByRank().get(0).getKey();
+					Player p = league.playersByEloRating().get(0).getKey();
 					TextView leaderName = (TextView) rowView.findViewById(R.id.leagueLeader);
 					ImageView leaderIcon = (ImageView) rowView.findViewById(R.id.leagueLeaderIcon);
 					leaderName.setText(p.getName());

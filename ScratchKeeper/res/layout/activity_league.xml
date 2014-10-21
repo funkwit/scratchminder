@@ -4,11 +4,21 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+
     <android.support.v4.view.ViewPager
         android:id="@+id/leaguePager"
         android:layout_width="match_parent"
         android:layout_height="0px"
         android:layout_weight="1" >
     </android.support.v4.view.ViewPager>
-
+    <Switch
+        android:id="@+id/ratingSystemSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/rating_system"
+        android:textOn="@string/rating_system_trueskill"
+        android:textOff="@string/rating_system_elo"
+        android:checked="true"
+        android:layout_gravity="center_horizontal" />
+    
 </LinearLayout>

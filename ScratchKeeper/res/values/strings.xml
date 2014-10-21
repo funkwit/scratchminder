@@ -206,5 +206,8 @@ or implied, of Jeff Moser or Nate Parsons.
     <string name="record_opposite_result">Record opposite result</string>
     <string name="delete_league_game">Delete game</string>
     <string name="toggle_audio">Toggle audio on/off</string>
+    <string name="rating_system">Rating system:</string>
+    <string name="rating_system_trueskill">TrueSkill</string>
+    <string name="rating_system_elo">Elo</string>
 
 </resources>

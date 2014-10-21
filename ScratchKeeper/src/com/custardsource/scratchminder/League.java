@@ -36,6 +36,17 @@ public class League implements Serializable {
 	private long id = UUID.randomUUID().getLeastSignificantBits();
 	private List<LeagueGame> games = new ArrayList<LeagueGame>();
 	private Avatar avatar = Avatar.caveman;
+	private static final Ordering<Map.Entry<Player, Double>> RATING_ENTRY_COMPARATOR = new Ordering<Map.Entry<Player, Double>>() {
+		public int compare(Map.Entry<Player, Double> x,
+				Map.Entry<Player, Double> y) {
+			return Double.compare(y.getValue(), x.getValue());
+		}
+	};
+	private static final Function<Rating, Double> RATING_TO_CONSERVATIVE_RATING = new Function<Rating, Double>() {
+		public Double apply(Rating r) {
+			return r.getConservativeRating();
+		}
+	};
 
 	// throw away for deserialization purposes
 	// @SuppressWarnings("unused")
@@ -83,15 +94,18 @@ public class League implements Serializable {
 		return !games.isEmpty();
 	}
 
-	public List<Map.Entry<Player, Double>> playersByRank() {
+	public List<Map.Entry<Player, Double>> playersByEloRating() {
 		List<Map.Entry<Player, Double>> sorted = Lists.newArrayList(eloRatings
 				.entrySet());
-		Collections.sort(sorted, new Ordering<Map.Entry<Player, Double>>() {
-			public int compare(Map.Entry<Player, Double> x,
-					Map.Entry<Player, Double> y) {
-				return Double.compare(y.getValue(), x.getValue());
-			}
-		});
+		Collections.sort(sorted, RATING_ENTRY_COMPARATOR);
+		return sorted;
+	}
+
+	public List<Map.Entry<Player, Double>> playersByConservativeTrueSkillRating() {
+		List<Map.Entry<Player, Double>> sorted = Lists.newArrayList(Maps
+				.transformValues(trueSkillRatings,
+						RATING_TO_CONSERVATIVE_RATING).entrySet());
+		Collections.sort(sorted, RATING_ENTRY_COMPARATOR);
 		return sorted;
 	}
 
@@ -226,6 +240,16 @@ public class League implements Serializable {
 		return loserRating;
 	}
 
+	public Iterable<Map<Player, Double>> trueSkillConservativeRatingsOverTime() {
+		return Iterables.transform(trueSkillRatingsOverTime(),
+				new Function<Map<Player, Rating>, Map<Player, Double>>() {
+					public Map<Player, Double> apply(Map<Player, Rating> in) {
+						return Maps.transformValues(in,
+								RATING_TO_CONSERVATIVE_RATING);
+					}
+				});
+	}
+
 	public Iterable<Map<Player, Rating>> trueSkillRatingsOverTime() {
 		final Map<Player, Rating> scoresCopy = Maps.newHashMap();
 		return Iterables.transform(games,
@@ -236,7 +260,7 @@ public class League implements Serializable {
 					}
 				});
 	}
-	
+
 	public boolean supportsElo() {
 		return true;
 	}
