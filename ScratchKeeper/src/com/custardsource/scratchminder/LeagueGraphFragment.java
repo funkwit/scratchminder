@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import lecho.lib.hellocharts.gesture.ZoomType;
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.Line;
 import lecho.lib.hellocharts.model.LineChartData;
@@ -16,6 +17,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,13 +83,35 @@ public class LeagueGraphFragment extends Fragment {
 		
 		this.chart = (LineChartView) root.findViewById(R.id.chart);
 		axisY = new Axis().setHasLines(true);
+		chart.setInteractive(true);
+		chart.setValueSelectionEnabled(true);
+		chart.setZoomType(ZoomType.HORIZONTAL);
+		chart.setOnValueTouchListener(new LineChartView.LineChartOnValueTouchListener() {
+			@Override
+			public void onValueTouched(int selectedLine, int selectedValue,
+					PointValue value) {
+				int a = selectedLine;
+				int b = selectedValue;
+				PointValue v = value
+						;
+				Log.i("Touch", "Ouch!");
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onNothingTouched() {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		refreshData();
 	}
 
 	public void refreshData() {
 		Map<Player, List<PointValue>> graphData = Maps.newHashMap();
 		int point = 0;
-		for (Map<Player, Double> m: league.rankingsOverTime()) {
+		for (Map<Player, Double> m: league.eloRatingsOverTime()) {
 			for (Map.Entry<Player, Double> entry : m.entrySet()) {
 				Player player = entry.getKey();
 				Double score = entry.getValue();
@@ -102,7 +126,8 @@ public class LeagueGraphFragment extends Fragment {
 
 	    List<Line> lines = new ArrayList<Line>();
 	    for (Map.Entry<Player, List<PointValue>> data : graphData.entrySet()) {
-		    Line line = new Line(data.getValue()).setColor(data.getKey().getColor()).setCubic(true).setHasPoints(false);
+		    Line line = new Line(data.getValue()).setColor(data.getKey().getColor()).setCubic(true).setHasPoints(true);
+		    line.setHasLabelsOnlyForSelected(true);
 		    lines.add(line);
 	    }
 

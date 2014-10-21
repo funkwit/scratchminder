@@ -3,9 +3,12 @@ package com.custardsource.scratchminder;
 import java.io.Serializable;
 import java.util.UUID;
 
+import jskills.IPlayer;
+
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 
-public class Player implements Serializable {
+public class Player implements Serializable, IPlayer {
 	private static final long serialVersionUID = 1L;
 	private String name;
 	@SuppressWarnings("unused")  // throw away for deserialization purposes
@@ -88,5 +91,11 @@ public class Player implements Serializable {
 
 	public void setBadgeCode(String badgeCode) {
 		this.badgeCode = badgeCode;
+	}
+
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this).add("name", name).add("id", id).toString();
 	}
 }

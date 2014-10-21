@@ -1,5 +1,7 @@
 package com.custardsource.scratchminder;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,6 +10,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import jskills.GameInfo;
+import jskills.IPlayer;
+import jskills.ITeam;
+import jskills.Rating;
+import jskills.Team;
+import jskills.TrueSkillCalculator;
+
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -15,22 +24,38 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
 
 public class League implements Serializable {
-	private static final int DEFAULT_RANKING = 1200;
-	private static final long serialVersionUID = 1L;
-	private String name;
-	private Map<Player, Double> rankings = new HashMap<Player, Double>();
-	private long id = UUID.randomUUID().getLeastSignificantBits();
-	private List<LeagueGame> games = new ArrayList<LeagueGame>();
+	private static final GameInfo GAME_INFO = GameInfo.getDefaultGameInfo();
 	private static final double DEFAULT_POW_BASE = 10;
 	private static final double DEFAULT_DIVISOR = 400;
 	private static final int DEFAULT_K_FACTOR = 32;
-	@SuppressWarnings("unused")
-	// throw away for deserialization purposes
-	private int drawable = 0;
+	private static final int DEFAULT_RATING = 1200;
+	private static final long serialVersionUID = 1L;
+	private String name;
+	private Map<Player, Rating> trueSkillRatings = Maps.newHashMap();
+	private Map<Player, Double> eloRatings = new HashMap<Player, Double>();
+	private long id = UUID.randomUUID().getLeastSignificantBits();
+	private List<LeagueGame> games = new ArrayList<LeagueGame>();
 	private Avatar avatar = Avatar.caveman;
+
+	// throw away for deserialization purposes
+	// @SuppressWarnings("unused")
+	// private transient int drawable = 0;
+	// @SuppressWarnings("unused")
+	// private Map<Player, Double> rankings = new HashMap<Player, Double>();
 
 	public League(String name) {
 		this.name = name;
+	}
+
+	private void readObject(ObjectInputStream in) throws IOException,
+			ClassNotFoundException {
+		in.defaultReadObject();
+		// Temporary data migration.
+		if (trueSkillRatings == null || eloRatings == null) {
+			trueSkillRatings = Maps.newHashMap();
+			eloRatings = Maps.newHashMap();
+			recalculateAllRatings();
+		}
 	}
 
 	public long id() {
@@ -49,48 +74,9 @@ public class League implements Serializable {
 		games.add(game);
 		winner.recordPlay();
 		loser.recordPlay();
-		updateRankings(game);
+		updateEloRatings(game);
+		updateTrueSkillRatings(game);
 		return game;
-	}
-
-	private void updateRankings(LeagueGame game) {
-		updateRankings(game, rankings);
-
-	}
-
-	private void updateRankings(LeagueGame game, Map<Player, Double> rankings) {
-		// Taken from
-		// https://svn.apache.org/repos/asf/labs/openelo/src/main/java/org/apache/openelo/RankingCalculator.java
-		double qWinner = calculateQFactor(rankingFor(game.winner(), rankings));
-		double qLoser = calculateQFactor(rankingFor(game.loser(), rankings));
-
-		double eWinner = calculateEFactor(qWinner, qLoser);
-		double eLoser = calculateEFactor(qLoser, qWinner);
-
-		setRanking(game.winner(), DEFAULT_K_FACTOR, 1, eWinner, rankings);
-		setRanking(game.loser(), DEFAULT_K_FACTOR, 0, eLoser, rankings);
-	}
-
-	private double rankingFor(Player player, Map<Player, Double> rankings) {
-		if (rankings.containsKey(player)) {
-			return rankings.get(player);
-		}
-		return DEFAULT_RANKING;
-	}
-
-	private static double calculateQFactor(double ranking) {
-		return Math.pow(DEFAULT_POW_BASE, ranking / DEFAULT_DIVISOR);
-	}
-
-	private static double calculateEFactor(double qA, double qB) {
-		return qA / (qA + qB);
-	}
-
-	private void setRanking(Player player, double kFactor, double sFactor,
-			double eFactor, Map<Player, Double> rankings) {
-		double newRanking = rankingFor(player, rankings)
-				+ (kFactor * (sFactor - eFactor));
-		rankings.put(player, newRanking);
 	}
 
 	public boolean hasResults() {
@@ -98,7 +84,7 @@ public class League implements Serializable {
 	}
 
 	public List<Map.Entry<Player, Double>> playersByRank() {
-		List<Map.Entry<Player, Double>> sorted = Lists.newArrayList(rankings
+		List<Map.Entry<Player, Double>> sorted = Lists.newArrayList(eloRatings
 				.entrySet());
 		Collections.sort(sorted, new Ordering<Map.Entry<Player, Double>>() {
 			public int compare(Map.Entry<Player, Double> x,
@@ -149,25 +135,109 @@ public class League implements Serializable {
 
 	public void deleteGame(LeagueGame g) {
 		games.remove(g);
-		recalculateAllRankings();
+		recalculateAllRatings();
 	}
 
-	private void recalculateAllRankings() {
-		rankings.clear();
+	private void recalculateAllRatings() {
+		eloRatings.clear();
+		trueSkillRatings.clear();
 		for (LeagueGame game : games) {
-			updateRankings(game);
+			updateEloRatings(game);
+			updateTrueSkillRatings(game);
 		}
 	}
 
-	public Iterable<Map<Player, Double>> rankingsOverTime() {
+	private void updateEloRatings(LeagueGame game) {
+		updateEloRatings(game, eloRatings);
+	}
+
+	private void updateEloRatings(LeagueGame game, Map<Player, Double> ratings) {
+		// Taken from
+		// https://svn.apache.org/repos/asf/labs/openelo/src/main/java/org/apache/openelo/RankingCalculator.java
+		double qWinner = calculateQFactor(eloRatingFor(game.winner(), ratings));
+		double qLoser = calculateQFactor(eloRatingFor(game.loser(), ratings));
+
+		double eWinner = calculateEFactor(qWinner, qLoser);
+		double eLoser = calculateEFactor(qLoser, qWinner);
+
+		setEloRating(game.winner(), DEFAULT_K_FACTOR, 1, eWinner, ratings);
+		setEloRating(game.loser(), DEFAULT_K_FACTOR, 0, eLoser, ratings);
+	}
+
+	private double eloRatingFor(Player player, Map<Player, Double> ratings) {
+		if (ratings.containsKey(player)) {
+			return ratings.get(player);
+		}
+		return DEFAULT_RATING;
+	}
+
+	private static double calculateQFactor(double rating) {
+		return Math.pow(DEFAULT_POW_BASE, rating / DEFAULT_DIVISOR);
+	}
+
+	private static double calculateEFactor(double qA, double qB) {
+		return qA / (qA + qB);
+	}
+
+	private void setEloRating(Player player, double kFactor, double sFactor,
+			double eFactor, Map<Player, Double> ratings) {
+		double newRating = eloRatingFor(player, ratings)
+				+ (kFactor * (sFactor - eFactor));
+		ratings.put(player, newRating);
+	}
+
+	public Iterable<Map<Player, Double>> eloRatingsOverTime() {
 		final Map<Player, Double> scoresCopy = Maps.newHashMap();
 		return Iterables.transform(games,
 				new Function<LeagueGame, Map<Player, Double>>() {
 					public Map<Player, Double> apply(LeagueGame game) {
-						updateRankings(game, scoresCopy);
+						updateEloRatings(game, scoresCopy);
 						return scoresCopy;
 					}
 				});
 
+	}
+
+	private void updateTrueSkillRatings(LeagueGame game) {
+		updateTrueSkillRatings(game, trueSkillRatings);
+	}
+
+	private void updateTrueSkillRatings(LeagueGame game,
+			Map<Player, Rating> ratings) {
+		Player winner = game.winner();
+		Player loser = game.loser();
+		Rating winnerRating = trueSkillRatingFor(ratings, winner);
+		Rating loserRating = trueSkillRatingFor(ratings, loser);
+		ITeam t1 = new Team(winner, winnerRating);
+		ITeam t2 = new Team(loser, loserRating);
+
+		for (Map.Entry<IPlayer, Rating> newRating : TrueSkillCalculator
+				.calculateNewRatings(GAME_INFO, Team.concat(t1, t2),
+						new int[] { 1, 2 }).entrySet()) {
+			ratings.put((Player) newRating.getKey(), newRating.getValue());
+		}
+	}
+
+	private Rating trueSkillRatingFor(Map<Player, Rating> ratings, Player loser) {
+		Rating loserRating = ratings.get(loser);
+		if (loserRating == null) {
+			loserRating = GAME_INFO.getDefaultRating();
+		}
+		return loserRating;
+	}
+
+	public Iterable<Map<Player, Rating>> trueSkillRatingsOverTime() {
+		final Map<Player, Rating> scoresCopy = Maps.newHashMap();
+		return Iterables.transform(games,
+				new Function<LeagueGame, Map<Player, Rating>>() {
+					public Map<Player, Rating> apply(LeagueGame game) {
+						updateTrueSkillRatings(game, scoresCopy);
+						return scoresCopy;
+					}
+				});
+	}
+	
+	public boolean supportsElo() {
+		return true;
 	}
 }
