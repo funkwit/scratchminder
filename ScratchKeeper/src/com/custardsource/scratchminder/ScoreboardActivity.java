@@ -420,6 +420,13 @@ public class ScoreboardActivity extends Activity implements BadgeSwipeListener {
 		updateTotalScoreDisplay();
 	}
 
+	@Override 
+	public void onPause() {
+		getWindow().clearFlags(
+				WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		super.onPause();
+	}
+	
 	private void updateAllDisplay() {
 		notPlayingAdapter.clear();
 		notPlayingAdapter.addAll(game.getInactiveParticipants());
