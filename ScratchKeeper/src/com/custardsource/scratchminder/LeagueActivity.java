@@ -1,5 +1,7 @@
 package com.custardsource.scratchminder;
 
+import com.custardsource.scratchminder.BadgeSwipeWatcher.BadgeSwipeListener;
+
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
@@ -9,11 +11,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class LeagueActivity extends FragmentActivity implements
-		ActionBar.TabListener, LeagueGameListener {
+		ActionBar.TabListener, LeagueGameListener, BadgeSwipeListener {
 
 	private Lobby lobby;
 	private League league;
@@ -27,6 +30,7 @@ public class LeagueActivity extends FragmentActivity implements
 	private LeagueHistoryFragment historyFragment;
 	private LeagueGraphFragment graphFragment;
 	private PeriodicUpdater periodicUpdater;
+	private BadgeSwipeWatcher swipeWatcher = new BadgeSwipeWatcher(this);
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -207,5 +211,20 @@ public class LeagueActivity extends FragmentActivity implements
 	protected void onResume() {
 		super.onResume();
 		periodicUpdater.resume();
+	}
+
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		if (swipeWatcher.onKeyUp(keyCode, event)) {
+			return true;
+		}
+		return super.onKeyUp(keyCode, event);
+	}
+	
+	@Override
+	public void onBadgeSwipe(String badgeCode) {
+		Intent intent = new Intent(this, RecordGameActivity.class);
+		intent.putExtra(RecordGameActivity.INITIAL_BADGE_SWIPE, badgeCode);
+		startActivityForResult(intent, ACTIVITY_RECORD_GAME);
 	}
 }

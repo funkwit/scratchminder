@@ -1,5 +1,7 @@
 package com.custardsource.scratchminder;
 
+import com.custardsource.scratchminder.util.DialogUtils;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,9 +16,7 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.custardsource.scratchminder.util.DialogUtils;
-
-public class RecordGameActivity extends Activity {
+public class RecordGameActivity extends Activity implements BadgeSwipeWatcher.BadgeSwipeListener {
 
 	protected static final int ACTION_CHOOSE_WINNER = 1;
 	protected static final int ACTION_CHOOSE_LOSER = 2;
@@ -27,9 +27,9 @@ public class RecordGameActivity extends Activity {
 	private Player winner;
 	private Player loser;
 	private boolean winnerActiveForBadgeInput = true;
-	private boolean swipeInProgress;
-	private StringBuilder code;
 	private SharedPreferences sharedPref;
+	private String lastBadgeCode;
+	private BadgeSwipeWatcher swipeWatcher = new BadgeSwipeWatcher(this);
 
 	// TODO: calculate this programatically
 	private static final int PANEL_INITIAL_COLOUR = Color.rgb(102, 102, 102);
@@ -37,6 +37,7 @@ public class RecordGameActivity extends Activity {
 	private static final int WINNER_INITIAL_TEXT = R.string.click_to_choose_winner;
 	private static final int LOSER_INITIAL_DRAWABLE = R.drawable.ic_action_person_sad;
 	private static final int LOSER_INITIAL_TEXT = R.string.click_to_choose_loser;
+	public static final String INITIAL_BADGE_SWIPE = "INITIAL_BADGE_SWIPE";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +45,9 @@ public class RecordGameActivity extends Activity {
 		this.lobby = ((GlobalState) getApplication()).getLobby();
 		this.sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 		setContentView(R.layout.activity_record_game);
+		if (getIntent().hasExtra(INITIAL_BADGE_SWIPE)) {
+			onBadgeSwipe(getIntent().getStringExtra(INITIAL_BADGE_SWIPE));
+		}
 	}
 
 	@Override
@@ -149,7 +153,7 @@ public class RecordGameActivity extends Activity {
 				&& resultCode == RESULT_OK) {
 			Player p = lobby.playerById(data.getLongExtra(
 					AddPlayerActivity.PLAYER_ID, 0));
-			lobby.registerBadgeCode(code.toString(), p);
+			lobby.registerBadgeCode(lastBadgeCode, p);
 			handleBadgeIn(p);
 		}
 	}
@@ -205,47 +209,9 @@ public class RecordGameActivity extends Activity {
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		int pressed = event.getUnicodeChar();
-		if (pressed == Constants.BADGE_START) {
-			swipeInProgress = true;
-			code = new StringBuilder();
+		if (swipeWatcher.onKeyUp(keyCode, event)) {
 			return true;
-		} else if (swipeInProgress) {
-			if (pressed == Constants.BADGE_END) {
-				swipeInProgress = false;
-				if (code.length() != 0) {
-					String badge = code.toString();
-					Player p = lobby.playerByBadgeCode(badge);
-					if (p == null) {
-						DialogUtils.confirmDialog(
-								this,
-								new Runnable() {
-									@Override
-									public void run() {
-										Intent intent = new Intent(
-												RecordGameActivity.this,
-												PlayerChooserActivity.class);
-										intent.putExtra(
-												PlayerChooserActivity.FOR_BADGE_ASSOCIATION,
-												true);
-										startActivityForResult(intent,
-												ACTION_ASSOCIATE_BADGE);
-									}
-								}, R.string.unrecognized_badge_title,
-								R.string.unrecognized_badge_message);
-					} else {
-						handleBadgeIn(p);
-					}
-				}
-				return true;
-			} else if (pressed != 0) {
-				code.appendCodePoint(pressed);
-				return true;
-			}
-			return super.onKeyUp(keyCode, event);
 		}
-		swipeInProgress = false;
-
 		return super.onKeyUp(keyCode, event);
 	}
 
@@ -275,5 +241,32 @@ public class RecordGameActivity extends Activity {
 		result.putExtra(LOSER_ID, loser.id());
 		setResult(Activity.RESULT_OK, result);
 		finish();
+	}
+
+	@Override
+	public void onBadgeSwipe(String badgeCode) {
+		Player p = lobby.playerByBadgeCode(badgeCode);
+		if (p == null) {
+			lastBadgeCode = badgeCode;
+			DialogUtils.confirmDialog(
+					this,
+					new Runnable() {
+						@Override
+						public void run() {
+							Intent intent = new Intent(
+									RecordGameActivity.this,
+									PlayerChooserActivity.class);
+							intent.putExtra(
+									PlayerChooserActivity.FOR_BADGE_ASSOCIATION,
+									true);
+							startActivityForResult(intent,
+									ACTION_ASSOCIATE_BADGE);
+						}
+					}, R.string.unrecognized_badge_title,
+					R.string.unrecognized_badge_message);
+		} else {
+			handleBadgeIn(p);
+		}
+		
 	}
 }
