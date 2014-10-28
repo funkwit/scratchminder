@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +25,39 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
 
 public class League implements Serializable {
+	public static class HeadToHeadSummary {
+
+		private final Player otherPlayer;
+		private int wins;
+		private int losses;
+
+		public HeadToHeadSummary(Player other) {
+			this.otherPlayer = other;
+		}
+
+		public void recordWin() {
+			wins++;
+
+		}
+
+		public void recordLoss() {
+			losses++;
+		}
+
+		public int wins() {
+			return wins;
+		}
+
+		public int losses() {
+			return losses;
+		}
+
+		public Player otherPlayer() {
+			return otherPlayer;
+		}
+
+	}
+
 	private static final GameInfo GAME_INFO = GameInfo.getDefaultGameInfo();
 	private static final double DEFAULT_POW_BASE = 10;
 	private static final double DEFAULT_DIVISOR = 400;
@@ -47,12 +81,6 @@ public class League implements Serializable {
 			return r.getConservativeRating();
 		}
 	};
-
-	// throw away for deserialization purposes
-	// @SuppressWarnings("unused")
-	// private transient int drawable = 0;
-	// @SuppressWarnings("unused")
-	// private Map<Player, Double> rankings = new HashMap<Player, Double>();
 
 	public League(String name) {
 		this.name = name;
@@ -263,5 +291,31 @@ public class League implements Serializable {
 
 	public boolean supportsElo() {
 		return true;
+	}
+
+	public Collection<HeadToHeadSummary> summaryForPlayer(Player p) {
+		Map<Player, HeadToHeadSummary> byPlayer = Maps.newHashMap();
+		for (LeagueGame g : games) {
+			Player other = null;
+			if (p.id() == g.winner().id()) {
+				other = g.loser();
+			} else if (p.id() == g.loser().id()) {
+				other = g.winner();
+			}
+
+			if (other != null) {
+				HeadToHeadSummary summary = byPlayer.get(other);
+				if (summary == null) {
+					summary = new HeadToHeadSummary(other);
+					byPlayer.put(other, summary);
+				}
+				if (p.id() == g.winner().id()) {
+					summary.recordWin();
+				} else {
+					summary.recordLoss();
+				}
+			}
+		}
+		return byPlayer.values();
 	}
 }

@@ -39,7 +39,7 @@
         <item>League Play</item>
         <item>Player Roster</item>
         <item>Settings</item>
-        </string-array>
+    </string-array>
 
     <string name="title_activity_league_play">League Play</string>
     <string name="_dummy_number">0</string>
@@ -146,49 +146,51 @@ or implied, of Jeff Moser or Nate Parsons.
     <string name="_dummy_league_name">8-ball</string>
     <string name="last_game">Last game played: </string>
     <string name="never_played">never</string>
-
     <string name="player_change_speak_text">%1$s; %2$d.</string>
     <string name="player_join_speak_text">%1$s has joined!</string>
     <string name="player_rejoin_speak_text">%1$s has rejoined.</string>
     <string name="player_leave_speak_text">%1$s has left.</string>
     <string name="player_remove_speak_text">%1$s has quit.</string>
-    
     <string name="player_change_speak_text_verbose">%1$s is on %2$d.</string>
     <string name="player_join_speak_text_verbose">%1$s has joined the game!</string>
     <string name="player_rejoin_speak_text_verbose">%1$s has rejoined the game on %2$d.</string>
     <string name="player_leave_speak_text_verbose">%1$s has left on %2$d.</string>
     <string name="player_remove_speak_text_verbose">%1$s has quit the game, on %2$d!</string>
-    
+
     <plurals name="commit_score_speech_text">
         <item quantity="one">%1$s: %3$d.</item>
         <item quantity="other">%1$s: %3$d.</item>
-        </plurals>
+    </plurals>
+
     <string name="commit_score_zero_speech_text">%1$s: %3$d.</string>
+
     <plurals name="commit_score_speech_text_verbose">
         <item quantity="one">One point; %1$s moves to %3$d.</item>
         <item quantity="other">%2$d points; %1$s is now on %3$d.</item>
     </plurals>
+
     <string name="commit_score_zero_speech_text_verbose">No score; %1$s remains on %3$d.</string>
 
-     <plurals name="next_player_speech_text">
+    <plurals name="next_player_speech_text">
         <item quantity="one">%1$s: one point.</item>
         <item quantity="other">%1$s: %2$d points.</item>
-        </plurals>
+    </plurals>
+
     <string name="next_player_zero_speech_text">%1$s, no points.</string>
-     <plurals name="next_player_speech_text_verbose">
+
+    <plurals name="next_player_speech_text_verbose">
         <item quantity="one">Next is %1$s, one point.</item>
         <item quantity="other">Next is %1$s, on %2$d points.</item>
-        </plurals>
+    </plurals>
+
     <string name="next_player_zero_speech_text_verbose">Next is %1$s, yet to score.</string>
-    
-        
     <string name="change_score_speech_text">%2$d.</string>
-    
+
     <string-array name="league_play_tabs">
         <item>Rankings</item>
         <item>Game History</item>
         <item>Graphs</item>
-        </string-array>
+    </string-array>
 
     <string name="swap">Swap</string>
     <string name="register_badge_button">Register badge</string>
@@ -210,5 +212,15 @@ or implied, of Jeff Moser or Nate Parsons.
     <string name="rating_system_trueskill">TrueSkill</string>
     <string name="rating_system_elo">Elo</string>
     <string name="backup_to_external_storage">Backup to external storage</string>
+    <string name="title_activity_player_stats">Player Stats</string>
+    <string name="title_playerleaguestat_list">Player League Stats</string>
+    <string name="title_playerleaguestat_detail">Player League Stat Detail</string>
+    <string name="head_to_head">Head-To-Head</string>
+    <string name="player_stats_heading_opponent">Opponent</string>
+    <string name="player_stats_heading_games">Games</string>
+    <string name="player_stats_heading_wins">Wins</string>
+    <string name="player_stats_heading_losses">Losses</string>
+    <string name="player_stats_heading_delta">Δ</string>
+    <string name="player_stats_heading_percent">%</string>
 
 </resources>

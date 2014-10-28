@@ -118,9 +118,9 @@ public class PlayerChooserActivity extends Activity {
 						int position, long id) {
 					Player p = playerAdapter.getItem(position);
 					Intent intent = new Intent(PlayerChooserActivity.this,
-							AddPlayerActivity.class);
-					intent.putExtra(AddPlayerActivity.PLAYER_ID, p.id());
-					startActivityForResult(intent, ACTION_EDIT);
+							PlayerLeagueStatListActivity.class);
+					intent.putExtra(PlayerLeagueStatListActivity.PLAYER_ID, p.id());
+					startActivity(intent);
 				}
 			});
 		} else {
