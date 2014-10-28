@@ -3,77 +3,128 @@
     android:id="@+id/playerleaguestat_detail_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:baselineAligned="false"
+    android:orientation="horizontal"
     tools:context="com.custardsource.scratchminder.PlayerLeagueStatDetailActivity"
     tools:ignore="MergeRootFrame" >
 
-    <TextView
-        android:id="@+id/headToHeadHeading"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/headToHeadPanel"
+        android:layout_width="0px"
         android:layout_height="wrap_content"
-        android:text="@string/head_to_head"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:layout_weight="1"
+        android:orientation="vertical" >
 
-    <TableLayout
-        android:id="@+id/headToHeadTable"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <TableRow
-            android:id="@+id/tableRow1"
+        <TextView
+            android:id="@+id/headToHeadHeading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#aaaaaa"
-            tools:ignore="UselessParent" >
+            android:text="@string/head_to_head"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-            <TextView
-                android:id="@+id/textView1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5sp"
-                android:text="@string/player_stats_heading_opponent"
-                android:textStyle="bold" />
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
 
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5sp"
-                android:text="@string/player_stats_heading_games"
-                android:textStyle="bold" />
+            <TableLayout
+                android:id="@+id/headToHeadTable"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
 
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5sp"
-                android:text="@string/player_stats_heading_wins"
-                android:textStyle="bold" />
+                <TableRow
+                    android:id="@+id/tableRow1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#aaaaaa"
+                    tools:ignore="UselessParent" >
 
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5sp"
-                android:text="@string/player_stats_heading_losses"
-                android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/textView1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5sp"
+                        android:text="@string/player_stats_heading_opponent"
+                        android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/textView5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5sp"
-                android:text="@string/player_stats_heading_delta"
-                android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5sp"
+                        android:text="@string/player_stats_heading_games"
+                        android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/textView6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5sp"
-                android:text="@string/player_stats_heading_percent"
-                android:textStyle="bold" />
-        </TableRow>
-    </TableLayout>
+                    <TextView
+                        android:id="@+id/textView3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5sp"
+                        android:text="@string/player_stats_heading_wins"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/textView4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5sp"
+                        android:text="@string/player_stats_heading_losses"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/textView5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5sp"
+                        android:text="@string/player_stats_heading_delta"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/textView6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5sp"
+                        android:text="@string/player_stats_heading_percent"
+                        android:textStyle="bold" />
+                </TableRow>
+            </TableLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/graphsPanel"
+        android:layout_width="0px"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_weight="2"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/scoreOverTimeHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/score_over_time"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <lecho.lib.hellocharts.view.LineChartView
+            android:id="@+id/scoreOverTimeChart"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/rankingOverTimeHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/ranking_over_time"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <lecho.lib.hellocharts.view.LineChartView
+            android:id="@+id/rankingOverTimeChart"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="1" />
+    </LinearLayout>
 
 </LinearLayout>

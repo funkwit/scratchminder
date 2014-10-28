@@ -19,6 +19,7 @@ import jskills.Team;
 import jskills.TrueSkillCalculator;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -130,11 +131,23 @@ public class League implements Serializable {
 	}
 
 	public List<Map.Entry<Player, Double>> playersByConservativeTrueSkillRating() {
+		return playersByConservativeTrueSkillRating(trueSkillRatings);
+	}
+
+	public List<Map.Entry<Player, Double>> playersByConservativeTrueSkillRating(Map<Player, Rating> data) {
 		List<Map.Entry<Player, Double>> sorted = Lists.newArrayList(Maps
-				.transformValues(trueSkillRatings,
+				.transformValues(data,
 						RATING_TO_CONSERVATIVE_RATING).entrySet());
 		Collections.sort(sorted, RATING_ENTRY_COMPARATOR);
 		return sorted;
+	}
+	
+	public List<Player> playerRankingsByConservativeTrueSkillRating(Map<Player, Rating> data) {
+		return Lists.transform(playersByConservativeTrueSkillRating(data), new Function<Map.Entry<Player, Double>, Player>(){
+			public Player apply(Map.Entry<Player, Double> in) {
+				return in.getKey();
+			}
+		});
 	}
 
 	public List<LeagueGame> recentGames(int count) {
@@ -266,6 +279,15 @@ public class League implements Serializable {
 			loserRating = GAME_INFO.getDefaultRating();
 		}
 		return loserRating;
+	}
+
+	public Iterable<Rating> trueSkillRatingsOverTimeFor(final Player p) {
+		return Iterables.filter(Iterables.transform(trueSkillRatingsOverTime(),
+				new Function<Map<Player, Rating>, Rating>() {
+					public Rating apply(Map<Player, Rating> in) {
+						return in.get(p);
+					}
+				}), Predicates.notNull());
 	}
 
 	public Iterable<Map<Player, Double>> trueSkillConservativeRatingsOverTime() {

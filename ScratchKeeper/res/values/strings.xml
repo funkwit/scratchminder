@@ -222,5 +222,7 @@ or implied, of Jeff Moser or Nate Parsons.
     <string name="player_stats_heading_losses">Losses</string>
     <string name="player_stats_heading_delta">Δ</string>
     <string name="player_stats_heading_percent">%</string>
-
+    <string name="score_over_time">Score over time</string>
+    <string name="ranking_over_time">Ranking over time</string>
+    
 </resources>
