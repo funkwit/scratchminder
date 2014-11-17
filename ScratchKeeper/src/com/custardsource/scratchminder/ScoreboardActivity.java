@@ -517,12 +517,14 @@ public class ScoreboardActivity extends Activity implements BadgeSwipeListener {
 		}
 
 		switch (keyCode) {
+		case KeyEvent.KEYCODE_DPAD_DOWN:
 		case KeyEvent.KEYCODE_PLUS:
 		case KeyEvent.KEYCODE_NUMPAD_ADD:
 		case KeyEvent.KEYCODE_EQUALS:
 			clickPlus();
 			return true;
 
+		case KeyEvent.KEYCODE_DPAD_UP:
 		case KeyEvent.KEYCODE_MINUS:
 		case KeyEvent.KEYCODE_NUMPAD_SUBTRACT:
 			clickMinus();
@@ -531,11 +533,8 @@ public class ScoreboardActivity extends Activity implements BadgeSwipeListener {
 		case KeyEvent.KEYCODE_ENTER:
 		case KeyEvent.KEYCODE_NUMPAD_ENTER:
 		case KeyEvent.KEYCODE_SPACE:
+		case KeyEvent.KEYCODE_B:
 			clickOk();
-			return true;
-
-		case KeyEvent.KEYCODE_DPAD_DOWN:
-			clickMinus();
 			return true;
 
 		case KeyEvent.KEYCODE_LEFT_BRACKET:
