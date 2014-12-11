@@ -32,12 +32,6 @@ public class LeagueRankingsFragment extends Fragment {
 	private List<LeagueGame> recentGames;
 	private ArrayAdapter<LeagueGame> recentGamesAdapter;
 	private LeagueGameListener listener;
-	private boolean useTrueSkill;
-
-	public LeagueRankingsFragment(boolean useTrueSkill) {
-		super();
-		this.useTrueSkill = useTrueSkill;
-	}
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -68,9 +62,7 @@ public class LeagueRankingsFragment extends Fragment {
 				LeagueActivity.LEAGUE_ID, 0));
 
 		checkVisibility();
-		rankedPlayers = useTrueSkill ? league
-				.playersByConservativeTrueSkillRating() : league
-				.playersByEloRating();
+		rankedPlayers = league.playersByConservativeTrueSkillRating();
 
 		final DecimalFormat decimalFormat = new DecimalFormat("#.##");
 		rankingAdapter = new ArrayAdapter<Entry<Player, Double>>(getActivity(),
@@ -165,9 +157,7 @@ public class LeagueRankingsFragment extends Fragment {
 		recentGamesAdapter.clear();
 		recentGamesAdapter.addAll(recentGames);
 
-		rankedPlayers = useTrueSkill ? league
-				.playersByConservativeTrueSkillRating() : league
-				.playersByEloRating();
+		rankedPlayers = league.playersByConservativeTrueSkillRating();
 		rankingAdapter.clear();
 		rankingAdapter.addAll(rankedPlayers);
 		checkVisibility();
@@ -213,10 +203,5 @@ public class LeagueRankingsFragment extends Fragment {
 	public void periodicRefresh() {
 		// Refresh data on a timer tick.
 		recentGamesAdapter.notifyDataSetChanged();
-	}
-
-	public void setUseTrueSkill(boolean useTrueSkill) {
-		this.useTrueSkill = useTrueSkill;
-		refreshData();
 	}
 }

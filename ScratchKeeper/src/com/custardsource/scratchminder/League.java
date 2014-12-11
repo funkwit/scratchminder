@@ -60,17 +60,22 @@ public class League implements Serializable {
 	}
 
 	private static final GameInfo GAME_INFO = GameInfo.getDefaultGameInfo();
-	private static final double DEFAULT_POW_BASE = 10;
-	private static final double DEFAULT_DIVISOR = 400;
-	private static final int DEFAULT_K_FACTOR = 32;
-	private static final int DEFAULT_RATING = 1200;
 	private static final long serialVersionUID = 1L;
 	private String name;
 	private Map<Player, Rating> trueSkillRatings = Maps.newHashMap();
-	private Map<Player, Double> eloRatings = new HashMap<Player, Double>();
+	
 	private long id = UUID.randomUUID().getLeastSignificantBits();
 	private List<LeagueGame> games = new ArrayList<LeagueGame>();
 	private Avatar avatar = Avatar.caveman;
+	private int minTeamSize = 1;
+	private int maxTeamSize = 1;
+	private int minTeamCount = 2;
+	private int maxTeamCount = 2;
+	
+	@SuppressWarnings("unused")
+	private Map<Player, Double> eloRatings = new HashMap<Player, Double>();
+
+	
 	private static final Ordering<Map.Entry<Player, Double>> RATING_ENTRY_COMPARATOR = new Ordering<Map.Entry<Player, Double>>() {
 		public int compare(Map.Entry<Player, Double> x,
 				Map.Entry<Player, Double> y) {
@@ -82,7 +87,7 @@ public class League implements Serializable {
 			return r.getConservativeRating();
 		}
 	};
-
+	
 	public League(String name) {
 		this.name = name;
 	}
@@ -91,10 +96,15 @@ public class League implements Serializable {
 			ClassNotFoundException {
 		in.defaultReadObject();
 		// Temporary data migration.
-		if (trueSkillRatings == null || eloRatings == null || true) {
+		if (trueSkillRatings == null) {
 			trueSkillRatings = Maps.newHashMap();
-			eloRatings = Maps.newHashMap();
 			recalculateAllRatings();
+		}
+		if (minTeamCount == 0) {
+			minTeamCount = 2;
+			maxTeamCount = 2;
+			minTeamSize = 1;
+			maxTeamSize = 1;
 		}
 	}
 
@@ -114,7 +124,6 @@ public class League implements Serializable {
 		games.add(game);
 		winner.recordPlay();
 		loser.recordPlay();
-		updateEloRatings(game);
 		updateTrueSkillRatings(game);
 		return game;
 	}
@@ -123,12 +132,6 @@ public class League implements Serializable {
 		return !games.isEmpty();
 	}
 
-	public List<Map.Entry<Player, Double>> playersByEloRating() {
-		List<Map.Entry<Player, Double>> sorted = Lists.newArrayList(eloRatings
-				.entrySet());
-		Collections.sort(sorted, RATING_ENTRY_COMPARATOR);
-		return sorted;
-	}
 
 	public List<Map.Entry<Player, Double>> playersByConservativeTrueSkillRating() {
 		return playersByConservativeTrueSkillRating(trueSkillRatings);
@@ -194,63 +197,10 @@ public class League implements Serializable {
 	}
 
 	private void recalculateAllRatings() {
-		eloRatings.clear();
 		trueSkillRatings.clear();
 		for (LeagueGame game : games) {
-			updateEloRatings(game);
 			updateTrueSkillRatings(game);
 		}
-	}
-
-	private void updateEloRatings(LeagueGame game) {
-		updateEloRatings(game, eloRatings);
-	}
-
-	private void updateEloRatings(LeagueGame game, Map<Player, Double> ratings) {
-		// Taken from
-		// https://svn.apache.org/repos/asf/labs/openelo/src/main/java/org/apache/openelo/RankingCalculator.java
-		double qWinner = calculateQFactor(eloRatingFor(game.winner(), ratings));
-		double qLoser = calculateQFactor(eloRatingFor(game.loser(), ratings));
-
-		double eWinner = calculateEFactor(qWinner, qLoser);
-		double eLoser = calculateEFactor(qLoser, qWinner);
-
-		setEloRating(game.winner(), DEFAULT_K_FACTOR, 1, eWinner, ratings);
-		setEloRating(game.loser(), DEFAULT_K_FACTOR, 0, eLoser, ratings);
-	}
-
-	private double eloRatingFor(Player player, Map<Player, Double> ratings) {
-		if (ratings.containsKey(player)) {
-			return ratings.get(player);
-		}
-		return DEFAULT_RATING;
-	}
-
-	private static double calculateQFactor(double rating) {
-		return Math.pow(DEFAULT_POW_BASE, rating / DEFAULT_DIVISOR);
-	}
-
-	private static double calculateEFactor(double qA, double qB) {
-		return qA / (qA + qB);
-	}
-
-	private void setEloRating(Player player, double kFactor, double sFactor,
-			double eFactor, Map<Player, Double> ratings) {
-		double newRating = eloRatingFor(player, ratings)
-				+ (kFactor * (sFactor - eFactor));
-		ratings.put(player, newRating);
-	}
-
-	public Iterable<Map<Player, Double>> eloRatingsOverTime() {
-		final Map<Player, Double> scoresCopy = Maps.newHashMap();
-		return Iterables.transform(games,
-				new Function<LeagueGame, Map<Player, Double>>() {
-					public Map<Player, Double> apply(LeagueGame game) {
-						updateEloRatings(game, scoresCopy);
-						return scoresCopy;
-					}
-				});
-
 	}
 
 	private void updateTrueSkillRatings(LeagueGame game) {
@@ -259,16 +209,27 @@ public class League implements Serializable {
 
 	private void updateTrueSkillRatings(LeagueGame game,
 			Map<Player, Rating> ratings) {
-		Player winner = game.winner();
-		Player loser = game.loser();
-		Rating winnerRating = trueSkillRatingFor(ratings, winner);
-		Rating loserRating = trueSkillRatingFor(ratings, loser);
-		ITeam t1 = new Team(winner, winnerRating);
-		ITeam t2 = new Team(loser, loserRating);
-
+		int rank = 1;
+		List<ITeam> teams = Lists.newArrayList();
+		List<Integer> rankings = Lists.newArrayList();
+		for (Collection<com.custardsource.scratchminder.Team> orderedTeams : game.results()) {
+			for (com.custardsource.scratchminder.Team evenlyRankedTeam : orderedTeams) {
+				ITeam team = new Team();
+				for (Player p : evenlyRankedTeam.players()) {
+					team.put(p, trueSkillRatingFor(ratings, p));
+				}
+				teams.add(team);
+				rankings.add(rank);
+			}
+			rank++;
+		}
+		int[] rankingsInts = new int[rankings.size()];
+		for (int index = 0; index < rankings.size(); index++) {
+			rankingsInts[index] = rankings.get(index);
+		}
 		for (Map.Entry<IPlayer, Rating> newRating : TrueSkillCalculator
-				.calculateNewRatings(GAME_INFO, Team.concat(t1, t2),
-						new int[] { 1, 2 }).entrySet()) {
+				.calculateNewRatings(GAME_INFO, teams,
+						rankingsInts).entrySet()) {
 			ratings.put((Player) newRating.getKey(), newRating.getValue());
 		}
 	}
@@ -311,18 +272,20 @@ public class League implements Serializable {
 				});
 	}
 
-	public boolean supportsElo() {
-		return true;
-	}
-
 	public Collection<HeadToHeadSummary> summaryForPlayer(Player p) {
+		if (!isHeadToHead()) {
+			return Collections.emptyList();
+		}
 		Map<Player, HeadToHeadSummary> byPlayer = Maps.newHashMap();
 		for (LeagueGame g : games) {
 			Player other = null;
-			if (p.id() == g.winner().id()) {
-				other = g.loser();
-			} else if (p.id() == g.loser().id()) {
-				other = g.winner();
+			List<Collection<com.custardsource.scratchminder.Team>> results = g.results();
+			Player winner = Iterables.getOnlyElement(Iterables.getOnlyElement(results.get(0)).players());
+			Player loser = Iterables.getOnlyElement(Iterables.getOnlyElement(results.get(1)).players());
+			if (p.id() == winner.id()) {
+				other = loser;
+			} else	if (p.id() == loser.id()) {
+				other = winner;
 			}
 
 			if (other != null) {
@@ -331,7 +294,7 @@ public class League implements Serializable {
 					summary = new HeadToHeadSummary(other);
 					byPlayer.put(other, summary);
 				}
-				if (p.id() == g.winner().id()) {
+				if (p.id() == winner.id()) {
 					summary.recordWin();
 				} else {
 					summary.recordLoss();
@@ -339,5 +302,9 @@ public class League implements Serializable {
 			}
 		}
 		return byPlayer.values();
+	}
+
+	private boolean isHeadToHead() {
+		return (minTeamCount == 2 && maxTeamCount == 2 && minTeamSize == 1 && maxTeamSize == 1);
 	}
 }

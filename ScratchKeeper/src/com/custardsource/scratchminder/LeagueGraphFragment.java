@@ -35,12 +35,6 @@ public class LeagueGraphFragment extends Fragment {
 	private LineChartView chart;
 	private Axis axisY;
 	private ArrayAdapter<Player> legendAdapter;
-	private boolean useTrueSkill;
-
-	public LeagueGraphFragment(boolean useTrueSkill) {
-		super();
-		this.useTrueSkill = useTrueSkill;
-	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater,
@@ -115,9 +109,8 @@ public class LeagueGraphFragment extends Fragment {
 	public void refreshData() {
 		Map<Player, List<PointValue>> graphData = Maps.newHashMap();
 		int point = 0;
-		Iterable<Map<Player, Double>> ratingsOverTime = useTrueSkill ? league
-				.trueSkillConservativeRatingsOverTime() : league
-				.eloRatingsOverTime();
+		Iterable<Map<Player, Double>> ratingsOverTime = league
+				.trueSkillConservativeRatingsOverTime();
 
 		for (Map<Player, Double> m : ratingsOverTime) {
 			for (Map.Entry<Player, Double> entry : m.entrySet()) {
@@ -154,10 +147,5 @@ public class LeagueGraphFragment extends Fragment {
 		legendAdapter.clear();
 		// TODO: sort
 		legendAdapter.addAll(players);
-	}
-
-	public void setUseTrueSkill(boolean useTrueSkill) {
-		this.useTrueSkill = useTrueSkill;
-		refreshData();
 	}
 }

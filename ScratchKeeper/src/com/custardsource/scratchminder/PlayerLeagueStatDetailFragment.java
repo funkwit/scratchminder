@@ -3,7 +3,6 @@ package com.custardsource.scratchminder;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +24,6 @@ import android.widget.TextView;
 
 import com.custardsource.scratchminder.League.HeadToHeadSummary;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * A fragment representing a single Player League Stat detail screen. This
